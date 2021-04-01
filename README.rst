@@ -26,20 +26,18 @@ Commands Supported
 Installation
 ------------
 
-TBD
+- Install `ff` using PIP
+`pip install furiousflemingo-mohithg`
+
+- Once installed successfully, you can start using `ff`
+
+- eg: `ff init` should trigger the init command
 
 Docker support
 --------------
 
-TBD
+- To run `ff` with docker, first pull the docker image
+`docker pull mohithg/furiousflemingo`
 
-Dev instructions
-----------------
-
--  Test your setup.py
--  ``python3 setup.py install``
--  Build your package
--  ``python3 setup.py sdist``
--  Publish your package
--  ``twine upload dist/*``
-
+- Then run with docker
+`docker run mohithg/furiousflemingo <supported_command>`
