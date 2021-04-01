@@ -1,15 +1,15 @@
-from ff.domain.commands import Commands
-from ff.logger import Logger
-from ff.services.dvc_service import DVCService
-from ff.services.ff_service import FFService
-from ff.services.git_service import GitService
+from fds.domain.commands import Commands
+from fds.logger import Logger
+from fds.services.dvc_service import DVCService
+from fds.services.fds_service import FdsService
+from fds.services.git_service import GitService
 
 
 class Run(object):
     def __init__(self, arguments: dict):
-        self.logger = Logger.get_logger("ff.Run")
+        self.logger = Logger.get_logger("fds.Run")
         self.arguments = arguments
-        self.service = FFService(GitService(), DVCService())
+        self.service = FdsService(GitService(), DVCService())
 
     def execute(self):
         arguments = self.arguments

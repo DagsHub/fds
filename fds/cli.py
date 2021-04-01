@@ -2,14 +2,14 @@ import argparse
 import logging
 import sys
 
-from ff.logger import Logger
+from fds.logger import Logger
 
 # Argument parser stuff
-from ff.run import Run
-from ff.utils import str2bool
+from fds.run import Run
+from fds.utils import str2bool
 
 arg_parser = argparse.ArgumentParser(description="One command for all your git and dvc needs",
-                                     prog="ff")
+                                     prog="fds")
 # Command choice
 arg_parser.add_argument("command", choices=["init", "status"], help="command (refer commands section in documentation)")
 

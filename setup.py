@@ -12,7 +12,7 @@ with open('requirements.txt') as f:
 version = "0.0.7"
 
 setuptools.setup(
-    name="furiousflemingo-mohithg",
+    name="fds-dags-hub",
     version=version,
     author="Mohith G",
     license='MIT License',
@@ -24,7 +24,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=("tests",)),
     entry_points={
         'console_scripts': [
-            'ff=ff.cli:main'
+            'fds=fds.cli:main'
         ]
     },
     install_requires=requirements,

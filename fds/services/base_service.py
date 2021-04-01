@@ -3,7 +3,7 @@ from typing import List
 
 class BaseService(object):
     """
-    Base Service responsible for all the commands of ff
+    Base Service responsible for all the commands of fds
     """
     def init(self) -> bool:
         """

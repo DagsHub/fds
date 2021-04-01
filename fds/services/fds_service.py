@@ -1,11 +1,11 @@
-from ff.services.dvc_service import DVCService
-from ff.services.git_service import GitService
-from ff.services.pretty_print import PrettyPrint
+from fds.services.dvc_service import DVCService
+from fds.services.git_service import GitService
+from fds.services.pretty_print import PrettyPrint
 
 
-class FFService(object):
+class FdsService(object):
     """
-    FF Service responsible for all the commands of ff
+    Fds Service responsible for all the commands of fds
     """
     # Todo: May be use dependency injection if required
     def __init__(
@@ -19,7 +19,7 @@ class FFService(object):
 
     def init(self):
         """
-        ff init
+        fds init
         """
         # Git init
         if self.git_service.init():
@@ -34,7 +34,7 @@ class FFService(object):
 
     def status(self):
         """
-        ff status
+        fds status
         """
         # Git status
         try:

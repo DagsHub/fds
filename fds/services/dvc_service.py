@@ -1,12 +1,12 @@
 import os
 from dvc.api import Repo
 
-from ff.services.base_service import BaseService
+from fds.services.base_service import BaseService
 
 
 class DVCService(BaseService):
     """
-    DVC Service responsible for all the dvc commands of ff
+    DVC Service responsible for all the dvc commands of fds
     """
 
     def __init__(self):

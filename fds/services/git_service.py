@@ -3,12 +3,12 @@ from typing import List
 
 import pygit2
 
-from ff.services.base_service import BaseService
+from fds.services.base_service import BaseService
 
 
 class GitService(BaseService):
     """
-    Git Service responsible for all the git commands of ff
+    Git Service responsible for all the git commands of fds
     """
     def __init__(self):
         self.repo_path = os.path.curdir
