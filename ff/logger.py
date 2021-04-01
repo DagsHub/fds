@@ -8,6 +8,7 @@ logging.basicConfig(format='%(asctime)s at %(name)s.%(funcName)s'
 class Logger(object):
 
     logging_level = logging.INFO
+    _logger = None
 
     @classmethod
     def set_logging_level(cls, level):

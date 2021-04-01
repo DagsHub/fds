@@ -1,4 +1,5 @@
 from ff.services.base_service import BaseService
+from git import Repo
 
 
 class GitService(BaseService):
@@ -10,11 +11,11 @@ class GitService(BaseService):
         Responsible for running git init
         :return:
         """
-        pass
+        Repo.init()
 
     def status(self):
         """
         Responsible for running git status
         :return:
         """
-        pass
+        print("prints status")

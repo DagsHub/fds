@@ -31,5 +31,6 @@ def main(args=None):
     result = Run(arguments=parsed_args).execute()
     sys.exit(result)
 
+
 if __name__ == "__main__":
     main()
