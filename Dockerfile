@@ -1,4 +1,4 @@
-FROM python:3.6-buster
+FROM python:3.7-buster
 RUN apt-get update && apt-get -y upgrade
 
 ARG APP_USER=appuser

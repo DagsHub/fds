@@ -1,42 +1,37 @@
 import os
+from typing import List
+
 import pygit2
 
 from ff.services.base_service import BaseService
-from ff.services.pretty_print import PrettyPrint
 
 
 class GitService(BaseService):
     """
     Git Service responsible for all the git commands of ff
     """
-
     def __init__(self):
         self.repo_path = os.path.curdir
-        self.printer = PrettyPrint()
 
-    def init(self):
+    def init(self) -> bool:
         """
         Responsible for running git init
         :return:
         """
         try:
             pygit2.init_repository(self.repo_path)
-            self.printer.success("Git repo initialized successfully")
+            return True
         except:
-            self.printer.error("Git repo failed to initialize")
+            return False
 
-    def status(self):
+    def status(self) -> List[str]:
         """
         Responsible for running git status
         :return:
         """
-        try:
-            repo = pygit2.Repository(self.repo_path)
-            repo_status = repo.status()
-            if not repo_status:
-                self.printer.success("Git repo clean")
-            else:
-                files = "\n".join(repo_status.keys())
-                self.printer.warn(f"Dirty files are:\n{files}")
-        except:
-            self.printer.error("Failed to compute git status")
+        repo = pygit2.Repository(self.repo_path)
+        repo_status = repo.status()
+        if not repo_status:
+            return []
+        else:
+            return repo_status.keys()
