@@ -1,2 +1,1 @@
 gitpython==3.1.14
-pyCLI==2.0.3
