@@ -9,7 +9,7 @@ except Exception:
 with open('requirements.txt') as f:
     requirements = f.readlines()
 
-version = "0.0.5"
+version = "0.0.6"
 
 setuptools.setup(
     name="furiousflemingo-mohithg",

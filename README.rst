@@ -1,5 +1,10 @@
 Furious Flemingo aka ``ff``
 ===========================
+.. image:: https://circleci.com/gh/mohithg/furious-flemingo.svg?style=svg
+    :target: https://app.circleci.com/pipelines/github/mohithg/furious-flemingo
+
+.. image:: https://badge.fury.io/py/furiousflemingo-mohithg.svg
+    :target: https://badge.fury.io/py/furiousflemingo-mohithg
 
 ``ff`` is a tool for Data Scientists made by DAGsHub to version control
 data and code at once.
