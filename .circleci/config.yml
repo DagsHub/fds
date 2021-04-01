@@ -37,15 +37,15 @@ run_tests: &run_tests
     name: run tests
     command: |
       . venv/bin/activate
-      pytest --cov=ff tests
+      pytest --cov=fds tests
 
 setup_remote_docker_env: &setup_remote_docker_env
   setup_remote_docker:
     docker_layer_caching: true
 
-build_ff_docker_image: &build_ff_docker_image
+build_fds_docker_image: &build_fds_docker_image
   run:
-    name: Build ff Image
+    name: Build fds Image
     command: |
       # People use slashes in their branch names, so replace that with an underscore
       export IMAGE_TAG=$(echo $CIRCLE_BRANCH | tr / -).${CIRCLE_SHA1}
@@ -58,7 +58,7 @@ build_ff_docker_image: &build_ff_docker_image
 
       docker build -t ${IMAGE_NAME} .
 
-      echo "Built ff image '${IMAGE_NAME}' successfully."
+      echo "Built fds image '${IMAGE_NAME}' successfully."
 
 push_built_image: &push_built_image
   run:
@@ -99,7 +99,7 @@ jobs:
   publish:
     <<: *image_build_env
     environment:
-      - IMAGE_BASE_NAME: "mohithg/furiousflemingo"
+      - IMAGE_BASE_NAME: "dagshub/fds"
       - BRANCH_TO_TAG_LATEST: "main"
     steps:
       - checkout
@@ -108,19 +108,14 @@ jobs:
       - *restore_checkout
       - *save_checkout
       - *run_tests
-      - *setup_remote_docker_env
-      - *build_ff_docker_image
-      - *push_built_image
-      - publish_to_pypi:
-          package: furiousflemingo
+#      - *setup_remote_docker_env
+#      - *build_fds_docker_image
+#      - *push_built_image
+#      - publish_to_pypi:
+#          package: fds
 
 workflows:
   version: 2
   default:
     jobs:
-      - publish:
-          filters:
-            branches:
-              only:
-                - /main.*/
-
+      - publish
