@@ -1,7 +1,7 @@
 import setuptools
 
 try:
-    with open('README.rst', 'r') as readme:
+    with open('README.md', 'r') as readme:
         long_description = readme.read()
 except Exception:
     long_description = None
@@ -19,7 +19,7 @@ setuptools.setup(
     author_email="mohithgm@gmail.com",
     description="Command line wrapper for git and dvc",
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     url="https://github.com/mohithg/furious-flemingo",
     packages=setuptools.find_packages(exclude=("tests",)),
     entry_points={
