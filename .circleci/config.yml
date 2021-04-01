@@ -1,0 +1,126 @@
+version: 2.1
+
+image_build_env: &image_build_env
+  docker:
+    - image: circleci/python:3.7
+  working_directory: ~/ci
+
+setup_virtual_env: &setup_virtual_env
+  run:
+    name: "Run Venv"
+    command: "python -m venv venv"
+
+install_dependencies: &install_dependencies
+  run:
+    name: "Install Dependencies"
+    command: |
+      source ./venv/bin/activate &&
+      pip install twine==3.3.0 bump==1.2.0 &&
+      pip install -r requirements.txt &&
+      pip install -r requirements-dev.txt
+
+restore_checkout: &restore_checkout
+  restore_cache:
+    keys:
+      - v1-dependencies-{{ checksum "requirements.txt" }}
+      - v1-dependencies-{{ checksum "requirements-dev.txt" }}
+      - v1-dependencies-
+
+save_checkout: &save_checkout
+  save_cache:
+    paths:
+      - ./venv
+    key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+run_tests: &run_tests
+  run:
+    name: run tests
+    command: |
+      . venv/bin/activate
+      pytest --cov=ff tests
+
+setup_remote_docker_env: &setup_remote_docker_env
+  setup_remote_docker:
+    docker_layer_caching: true
+
+build_ff_docker_image: &build_ff_docker_image
+  run:
+    name: Build ff Image
+    command: |
+      # People use slashes in their branch names, so replace that with an underscore
+      export IMAGE_TAG=$(echo $CIRCLE_BRANCH | tr / -).${CIRCLE_SHA1}
+      export BRANCH_NAME_IMAGE_TAG=$(echo $CIRCLE_BRANCH | tr / -)
+
+      export IMAGE_NAME="${IMAGE_BASE_NAME}:${IMAGE_TAG}"
+
+      echo "export IMAGE_NAME='${IMAGE_NAME}'" >> $BASH_ENV
+      echo "export BRANCH_NAME_IMAGE_TAG='${BRANCH_NAME_IMAGE_TAG}'" >> $BASH_ENV
+
+      docker build -t ${IMAGE_NAME} .
+
+      echo "Built ff image '${IMAGE_NAME}' successfully."
+
+push_built_image: &push_built_image
+  run:
+    name: Push Built Image to docker hub
+    command: ci/push_built_image.sh
+
+commands:
+  generate_package:
+    description: "Generate package"
+    parameters:
+      package:
+        type: string
+    steps:
+      - run:
+          name: Generate the << parameters.package >> package
+          command: source ./venv/bin/activate && python setup.py sdist
+  publish_package:
+    description: "Publish to PYPI Package"
+    parameters:
+      package:
+        type: string
+    steps:
+      - run:
+          name: Deploy the << parameters.package >> package
+          command: source ./venv/bin/activate && twine upload --username ${PYPI_USERNAME} --password ${PYPI_PASSWORD} dist/<< parameters.package >>*
+  publish_to_pypi:
+    description: "Publish package to PYPI"
+    parameters:
+      package:
+        type: string
+    steps:
+      - generate_package:
+          package: << parameters.package >>
+      - publish_package:
+          package: << parameters.package >>
+
+jobs:
+  publish:
+    <<: *image_build_env
+    environment:
+      - IMAGE_BASE_NAME: "mohithg/furiousflemingo"
+      - BRANCH_TO_TAG_LATEST: "main"
+    steps:
+      - checkout
+      - *setup_virtual_env
+      - *install_dependencies
+      - *restore_checkout
+      - *save_checkout
+      - *run_tests
+      - *setup_remote_docker_env
+      - *build_ff_docker_image
+      - *push_built_image
+      - publish_to_pypi:
+          package: furiousflemingo
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - publish:
+          filters:
+            branches:
+              only:
+                - /main.*/
+
