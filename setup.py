@@ -12,7 +12,7 @@ with open('requirements.txt') as f:
 version = "0.0.7"
 
 setuptools.setup(
-    name="fds-dags-hub",
+    name="FDS",
     version=version,
     author="Mohith G",
     license='MIT License',

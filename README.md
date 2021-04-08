@@ -27,17 +27,17 @@ can use `fds` instead of `git` and `dvc` separately.
 
 - To run `fds` with docker, first pull the docker image
 `docker pull mohithg/furiousflemingo` if exists, or you can build your own docker image
-- `docker build . -t fds:1`
+- `docker build . -t fds`
 
 - Then run with docker
 ```
-docker run -v $PWD:/usr/src/app/repo fds:1 <supported_command>
+docker run -v "$PWD:/repo" fds:1 <supported_command>
 ```
 
 Example
 
 ```
-➜ docker run -v $PWD:/usr/src/app/repo fds:1 status
+➜ docker run -v "$PWD:/repo" fds:1 status
 Untracked git files are:
 .dvc/cache/
 .dvc/tmp/

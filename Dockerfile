@@ -7,7 +7,7 @@ RUN groupadd -r ${APP_USER} && useradd --no-log-init -r -g ${APP_USER} ${APP_USE
 
 RUN mkdir -p /usr/src/app/fds
 
-RUN mkdir -p /usr/src/app/repo
+RUN mkdir -p /repo
 
 COPY . /usr/src/app/fds
 
@@ -20,6 +20,6 @@ ENV PYTHONPATH /usr/src/app/fds
 # Change to a non-root user
 USER ${APP_USER}:${APP_USER}
 
-WORKDIR /usr/src/app/repo
+WORKDIR /repo
 
 ENTRYPOINT ["python", "/usr/src/app/fds/fds/cli.py"]
