@@ -1,8 +1,7 @@
 import os
-from typing import List
+from typing import List, Dict, Any
 
 import pygit2
-from pygit2 import GIT_STATUS_CURRENT
 
 from fds.services.base_service import BaseService
 
@@ -25,14 +24,11 @@ class GitService(BaseService):
         except:
             return False
 
-    def status(self) -> List[str]:
+    def status(self) -> Any:
         """
         Responsible for running git status
         :return:
         """
-        repo = pygit2.Repository(self.repo_path)
-        repo_status = repo.status()
-        if not repo_status:
-            return []
-        else:
-            return repo_status.keys()
+        import subprocess
+        return subprocess.run(["git", "status"], capture_output=True)
+

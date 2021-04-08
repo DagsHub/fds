@@ -17,3 +17,6 @@ class PrettyPrint(object):
 
     def success(self, text: str):
         print(Fore.GREEN + text)
+
+    def convert_bytes_to_str(self, bytes_data: bytes) -> str:
+        return bytes_data.decode("utf-8")

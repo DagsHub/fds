@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any
 
 
 class BaseService(object):
@@ -12,9 +12,9 @@ class BaseService(object):
         """
         pass
 
-    def status(self) -> List[str]:
+    def status(self) -> Any:
         """
         The status command
-        :return: List of untracked changes
+        :return: Nothing
         """
         pass

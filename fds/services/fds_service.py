@@ -38,21 +38,17 @@ class FdsService(object):
         """
         # Git status
         try:
-            git_files = self.git_service.status()
-            if len(git_files) == 0:
-                self.printer.success("Git repo clean")
-            else:
-                files_to_print = "\n".join(git_files)
-                self.printer.warn(f"Untracked git files are:\n{files_to_print}")
+            self.printer.success("========== Git repo status ==========")
+            status = self.git_service.status()
+            self.printer.success(self.printer.convert_bytes_to_str(status.stdout))
+            self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
         except:
             self.printer.error("Git status failed to execute")
         # Dvc status
         try:
-            dvc_files = self.dvc_service.status()
-            if len(dvc_files) == 0:
-                self.printer.success("DVC repo clean")
-            else:
-                files_to_print = "\n".join(dvc_files)
-                self.printer.warn(f"Untracked dvc files are:\n{files_to_print}")
+            self.printer.warn("========== DVC repo status ==========")
+            status = self.dvc_service.status()
+            self.printer.warn(self.printer.convert_bytes_to_str(status.stdout))
+            self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
         except:
             self.printer.error("DVC status failed to execute")
