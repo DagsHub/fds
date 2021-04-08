@@ -2,6 +2,7 @@ import os
 from typing import List
 
 import pygit2
+from pygit2 import GIT_STATUS_CURRENT
 
 from fds.services.base_service import BaseService
 

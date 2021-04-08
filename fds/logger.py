@@ -18,6 +18,10 @@ class Logger(object):
     @classmethod
     def get_logger(cls, logger_name: str):
         if cls._logger is None:
+            # Ignoring the logger of dvc, by setting it to highest level
+            logging.getLogger('dvc').setLevel(logging.CRITICAL)
+
+            # Logger for fds
             cls._logger = logging.getLogger(logger_name)
             cls._logger.setLevel(cls.logging_level)
 
