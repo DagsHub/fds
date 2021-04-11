@@ -118,4 +118,8 @@ workflows:
   version: 2
   default:
     jobs:
-      - publish
+      - publish:
+          filters:
+            branches:
+              only:
+                - /main.*/
