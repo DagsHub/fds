@@ -1,9 +1,9 @@
-from typing import List
+from typing import Any
 
 
 class BaseService(object):
     """
-    Base Service responsible for all the commands of ff
+    Base Service responsible for all the commands of fds
     """
     def init(self) -> bool:
         """
@@ -12,9 +12,9 @@ class BaseService(object):
         """
         pass
 
-    def status(self) -> List[str]:
+    def status(self) -> Any:
         """
         The status command
-        :return: List of untracked changes
+        :return: Nothing
         """
         pass

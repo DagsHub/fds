@@ -1,12 +1,14 @@
 import os
+from typing import Any, Dict
+
 from dvc.api import Repo
 
-from ff.services.base_service import BaseService
+from fds.services.base_service import BaseService
 
 
 class DVCService(BaseService):
     """
-    DVC Service responsible for all the dvc commands of ff
+    DVC Service responsible for all the dvc commands of fds
     """
 
     def __init__(self):
@@ -23,17 +25,10 @@ class DVCService(BaseService):
         except:
             return False
 
-    def status(self):
+    def status(self) -> Any:
         """
         Responsible for running dvc status
         :return:
         """
-        try:
-            repo = Repo(self.repo_path)
-            repo_status = repo.status()
-            if not repo_status:
-                return []
-            else:
-                return repo_status
-        except:
-            raise Exception("Failed to compute dvc status")
+        import subprocess
+        return subprocess.run(["dvc", "status"], capture_output=True)

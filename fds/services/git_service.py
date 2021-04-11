@@ -1,14 +1,14 @@
 import os
-from typing import List
+from typing import List, Dict, Any
 
 import pygit2
 
-from ff.services.base_service import BaseService
+from fds.services.base_service import BaseService
 
 
 class GitService(BaseService):
     """
-    Git Service responsible for all the git commands of ff
+    Git Service responsible for all the git commands of fds
     """
     def __init__(self):
         self.repo_path = os.path.curdir
@@ -24,14 +24,11 @@ class GitService(BaseService):
         except:
             return False
 
-    def status(self) -> List[str]:
+    def status(self) -> Any:
         """
         Responsible for running git status
         :return:
         """
-        repo = pygit2.Repository(self.repo_path)
-        repo_status = repo.status()
-        if not repo_status:
-            return []
-        else:
-            return repo_status.keys()
+        import subprocess
+        return subprocess.run(["git", "status"], capture_output=True)
+

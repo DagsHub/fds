@@ -18,4 +18,4 @@ repos:
             args: [
                 '--max-line-length=120',
             ]
-files: (ff/|tests/)
+files: (fds/|tests/)
