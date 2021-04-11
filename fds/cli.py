@@ -11,7 +11,13 @@ from fds.utils import str2bool
 arg_parser = argparse.ArgumentParser(description="One command for all your git and dvc needs",
                                      prog="fds")
 # Command choice
-arg_parser.add_argument("command", choices=["init", "status"], help="command (refer commands section in documentation)")
+command_subparser = arg_parser.add_subparsers(dest="command", help="command (refer commands section in documentation)")
+
+# init
+parser_init = command_subparser.add_parser('init', help='initialize a git and dvc repository')
+
+# status
+parser_status = command_subparser.add_parser('status', help='get status of your git and dvc repository')
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
@@ -20,7 +26,6 @@ arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
 def parse_args(args):
     arguments = vars(arg_parser.parse_args(args=args or ["--help"]))
     return arguments
-
 
 def main(args=None):
     if args is None:
