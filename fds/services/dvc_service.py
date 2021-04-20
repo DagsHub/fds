@@ -88,11 +88,11 @@ class DVCService(BaseService):
                     }
                 ]
                 answers = PyInquirer.prompt(questions)
-                if answers["dir_choice"] is True:
+                if answers["dir_choice"] == "add":
                     chosen_folders_to_add.append(dir_to_add)
                     # Dont need to traverse deep
                     [dirs.remove(d) for d in list(dirs)]
-                elif answers["dir_choice"] is False:
+                elif answers["dir_choice"] == "skip":
                     # Dont need to traverse deep
                     [dirs.remove(d) for d in list(dirs)]
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_folders_to_add}")
