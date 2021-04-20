@@ -18,3 +18,10 @@ class BaseService(object):
         :return: Nothing
         """
         pass
+
+    def add(self, add_argument: str) -> Any:
+        """
+        The add command
+        :return: Nothing
+        """
+        pass

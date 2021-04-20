@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 
 def str2bool(v):
@@ -10,3 +11,7 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def get_size_of_path(path: str) -> int:
+    return sum(p.stat().st_size for p in Path(path).rglob('*'))

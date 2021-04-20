@@ -6,3 +6,6 @@ class Commands(Enum):
     INIT = "init"
     STATUS = "status"
     ADD = "add"
+
+class AddCommands(Enum):
+    ALL = "."
