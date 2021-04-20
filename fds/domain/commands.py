@@ -5,3 +5,4 @@ from enum import Enum
 class Commands(Enum):
     INIT = "init"
     STATUS = "status"
+    ADD = "add"
