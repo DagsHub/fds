@@ -62,8 +62,8 @@ class FdsService(object):
         # Dvc add
         try:
             self.printer.warn("========== DVC add ==========")
-            self.dvc_service.add(add_command)
-            self.printer.success("DVC add successfully executed")
+            add_msg = self.dvc_service.add(add_command)
+            self.printer.success(add_msg)
         except:
             self.printer.error("DVC add failed to execute")
 

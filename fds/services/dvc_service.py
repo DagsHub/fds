@@ -81,6 +81,9 @@ class DVCService(BaseService):
                     # Dont need to traverse deep
                     [dirs.remove(d) for d in list(dirs)]
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_folders_to_add}")
+        if len(chosen_folders_to_add) == 0:
+            return "Nothing to add in DVC"
         for dir_to_add_to_dvc in chosen_folders_to_add:
             import subprocess
             subprocess.run(f"dvc add {dir_to_add_to_dvc} --no-commit", shell=True, capture_output=True)
+        return "DVC add successfully executed"
