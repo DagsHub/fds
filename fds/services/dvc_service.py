@@ -83,4 +83,4 @@ class DVCService(BaseService):
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_folders_to_add}")
         for dir_to_add_to_dvc in chosen_folders_to_add:
             import subprocess
-            subprocess.run(f"dvc add {dir_to_add_to_dvc} --no-commit", shell=True)
+            subprocess.run(f"dvc add {dir_to_add_to_dvc} --no-commit", shell=True, capture_output=True)
