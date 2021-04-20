@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 
+import humanize
+
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -15,3 +17,7 @@ def str2bool(v):
 
 def get_size_of_path(path: str) -> int:
     return sum(p.stat().st_size for p in Path(path).rglob('*'))
+
+
+def convert_bytes_to_readable(bytes: int) -> str:
+    return humanize.naturalsize(bytes)

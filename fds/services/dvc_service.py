@@ -7,7 +7,7 @@ from dvc.api import Repo
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
-from fds.utils import get_size_of_path
+from fds.utils import get_size_of_path, convert_bytes_to_readable
 
 
 class DVCService(BaseService):
@@ -68,16 +68,31 @@ class DVCService(BaseService):
                     continue
                 questions = [
                     {
-                        "type": "confirm",
-                        "message": f"We have detected {dir_to_add} to be a large folder, would you like to add this to DVC?"
-                                   f" Choosing No will let you traverse through the folders inside:",
+                        "type": "expand",
+                        "message": f"We have detected that {dir_to_add} is {convert_bytes_to_readable(dir_size)}",
                         "name": "dir_choice",
+                        "choices": [{
+                            "key": "y",
+                            "name": "Add to DVC",
+                            "value": "add"
+                        },{
+                            "key": "n",
+                            "name": "Skip",
+                            "value": "skip"
+                        },{
+                            "key": "s",
+                            "name": "Step Into",
+                            "value": "step"
+                        }],
                         "default": True
                     }
                 ]
                 answers = PyInquirer.prompt(questions)
                 if answers["dir_choice"] is True:
                     chosen_folders_to_add.append(dir_to_add)
+                    # Dont need to traverse deep
+                    [dirs.remove(d) for d in list(dirs)]
+                elif answers["dir_choice"] is False:
                     # Dont need to traverse deep
                     [dirs.remove(d) for d in list(dirs)]
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_folders_to_add}")
