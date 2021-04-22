@@ -56,7 +56,7 @@ class DVCService(BaseService):
         chosen_folders_to_add = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        for (root, dirs, files) in os.walk(self.repo_path, topdown=True, followlinks=True):
+        for (root, dirs, files) in os.walk(self.repo_path, topdown=True, followlinks=False):
             # We only care about dirs
             dir_to_add = root
             # Now skip the un-necessary folders
@@ -69,7 +69,7 @@ class DVCService(BaseService):
                 questions = [
                     {
                         "type": "expand",
-                        "message": f"We have detected that {dir_to_add} is {convert_bytes_to_readable(dir_size)}",
+                        "message": f"Dir {dir_to_add} is {convert_bytes_to_readable(dir_size)}",
                         "name": "dir_choice",
                         "choices": [{
                             "key": "y",
