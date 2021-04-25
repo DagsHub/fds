@@ -41,3 +41,31 @@ class TestFds(unittest.TestCase):
         self.assertRaises(Exception, mock_dvc_service.status)
         assert mock_git_service.status.called
         assert mock_dvc_service.status.called
+
+    @patch('fds.services.dvc_service.DVCService')
+    @patch('fds.services.git_service.GitService')
+    def test_add_success(self, mock_git_service, mock_dvc_service):
+        fds_service = FdsService(mock_git_service, mock_dvc_service)
+        fds_service.add(".")
+        assert mock_git_service.add.called
+        assert mock_dvc_service.add.called
+
+    @patch('fds.services.dvc_service.DVCService')
+    @patch('fds.services.git_service.GitService')
+    def test_add_git_failure(self, mock_git_service, mock_dvc_service):
+        mock_git_service.add.side_effect = Exception
+        fds_service = FdsService(mock_git_service, mock_dvc_service)
+        fds_service.add(".")
+        self.assertRaises(Exception, mock_git_service.add)
+        assert mock_git_service.add.called
+        assert mock_dvc_service.add.called
+
+    @patch('fds.services.dvc_service.DVCService')
+    @patch('fds.services.git_service.GitService')
+    def test_add_dvc_failure(self, mock_git_service, mock_dvc_service):
+        mock_dvc_service.add.side_effect = Exception
+        fds_service = FdsService(mock_git_service, mock_dvc_service)
+        fds_service.add(".")
+        self.assertRaises(Exception, mock_dvc_service.add)
+        assert mock_git_service.add.called
+        assert mock_dvc_service.add.called

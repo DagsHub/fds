@@ -19,6 +19,10 @@ parser_init = command_subparser.add_parser('init', help='initialize a git and dv
 # status
 parser_status = command_subparser.add_parser('status', help='get status of your git and dvc repository')
 
+# add
+parser_add = command_subparser.add_parser('add', help='add files/folders to git and dvc repository')
+parser_add.add_argument('add_command', help="choose what to add using . will add everything")
+
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
                     type=str2bool, nargs='?', const=True, default=False)

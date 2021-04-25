@@ -52,3 +52,23 @@ class FdsService(object):
             self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
         except:
             self.printer.error("DVC status failed to execute")
+
+    def add(self, add_command: str):
+        """
+        fds add
+        """
+        # First let the user add files into dvc
+        # Then remaining goes to git by default
+        # Dvc add
+        try:
+            add_msg = self.dvc_service.add(add_command)
+            self.printer.warn(add_msg)
+        except:
+            self.printer.error("DVC add failed to execute")
+
+        # Add remaining to git
+        try:
+            self.git_service.add(add_command)
+            self.printer.success("Git add successfully executed")
+        except:
+            self.printer.error("Git status failed to execute")

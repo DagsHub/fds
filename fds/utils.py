@@ -1,4 +1,8 @@
 import argparse
+from pathlib import Path
+import os
+
+import humanize
 
 
 def str2bool(v):
@@ -10,3 +14,13 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def get_size_of_path(path: str) -> int:
+    if os.path.isdir(path):
+        return sum(p.stat().st_size for p in Path(path).rglob('*'))
+    else:
+        return os.stat(path).st_size
+
+def convert_bytes_to_readable(bytes: int) -> str:
+    return humanize.naturalsize(bytes)

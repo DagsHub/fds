@@ -22,5 +22,9 @@ class Run(object):
             # Run status command stuff
             self.service.status()
             return 0
+        elif arguments["command"] == Commands.ADD.value:
+            # Run add command stuff
+            self.service.add(arguments["add_command"])
+            return 0
         else:
             raise Exception("Invalid operation")

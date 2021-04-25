@@ -32,3 +32,11 @@ class GitService(BaseService):
         import subprocess
         return subprocess.run(["git", "status"], capture_output=True)
 
+    def add(self, add_argument: str) -> Any:
+        """
+        Responsible for running git add
+        :param add_argument: extra agruments of git add
+        :return: 
+        """
+        import subprocess
+        return subprocess.run(f"git add {add_argument}", shell=True, capture_output=True)
