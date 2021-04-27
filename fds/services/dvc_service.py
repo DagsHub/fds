@@ -2,8 +2,6 @@ import os
 from typing import Any, List, Optional
 import PyInquirer
 
-from dvc.api import Repo
-
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
@@ -25,7 +23,8 @@ class DVCService(BaseService):
         :return:
         """
         try:
-            Repo.init()
+            import subprocess
+            subprocess.run(["dvc", "init"], capture_output=True)
             return True
         except:
             return False
