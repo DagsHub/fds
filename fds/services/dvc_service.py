@@ -59,11 +59,11 @@ class DVCService(BaseService):
                     "name": "selection_choice",
                     "choices": [{
                         "key": "y",
-                        "name": "Add to DVC",
+                        "name": "Add to DVC?",
                         "value": "add"
                     },{
                         "key": "n",
-                        "name": "Skip",
+                        "name": "Skip - Add to Git?",
                         "value": "skip"
                     },{
                         "key": "s",
