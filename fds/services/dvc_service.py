@@ -82,6 +82,10 @@ class DVCService(BaseService):
                         "key": "s",
                         "name": "Step Into",
                         "value": "step"
+                    },{
+                        "key": "i",
+                        "name": "Ignore - Add to .gitignore",
+                        "value": "ignore"
                     }],
                     "default": "add"
                 }
@@ -92,6 +96,11 @@ class DVCService(BaseService):
                 [dirs.remove(d) for d in list(dirs)]
                 return file_or_dir_to_check
             elif answers["selection_choice"] == "skip":
+                # Dont need to traverse deep
+                [dirs.remove(d) for d in list(dirs)]
+                return
+            elif answers["selection_choice"] == "ignore":
+                subprocess.run(f"echo {file_or_dir_to_check} >> .gitignore", shell=True, capture_output=True)
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
