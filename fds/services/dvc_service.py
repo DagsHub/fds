@@ -1,11 +1,12 @@
 import os
+import subprocess
 from typing import Any, List, Optional
 import PyInquirer
 
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
-from fds.utils import get_size_of_path, convert_bytes_to_readable
+from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string
 
 
 class DVCService(BaseService):
@@ -23,7 +24,6 @@ class DVCService(BaseService):
         :return:
         """
         try:
-            import subprocess
             subprocess.run(["dvc", "init"], capture_output=True)
             return True
         except:
@@ -34,7 +34,6 @@ class DVCService(BaseService):
         Responsible for running dvc status
         :return:
         """
-        import subprocess
         return subprocess.run(["dvc", "status"], capture_output=True)
 
     def __should_skip_list_add(self, dir: str) -> bool:
@@ -45,7 +44,21 @@ class DVCService(BaseService):
         """
         if dir == ".":
             return True
+        git_output = subprocess.run(f"git check-ignore {dir}", shell=True, capture_output=True)
+        if convert_bytes_to_string(git_output.stdout) != '':
+            return True
+        dvc_output = subprocess.run(f"dvc check-ignore {dir}", shell=True, capture_output=True)
+        if convert_bytes_to_string(dvc_output.stdout) != '':
+            return True
         return False
+
+    def __skip_already_added(self, root, dirs) -> None:
+        # Check if current file is git ignored (this is very similar to adding to dvc also, because as soon as we
+        # add to dvc it gets ignored)
+        for d in dirs:
+            dir = f"{root}/{d}"
+            if self.__should_skip_list_add(dir):
+                dirs.remove(d)
 
     def __get_to_add_to_dvc(self, file_or_dir_to_check: str, dirs: List[str], type: str) -> Optional[str]:
         if not self.__should_skip_list_add(file_or_dir_to_check):
@@ -94,6 +107,8 @@ class DVCService(BaseService):
         for (root, dirs, files) in os.walk(self.repo_path, topdown=True, followlinks=False):
             # Now skip the un-necessary folders
             [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]
+            # Skip the already added files/folders
+            self.__skip_already_added(root, dirs)
             # First check root
             folder_to_add = self.__get_to_add_to_dvc(root, dirs, "Dir")
             if folder_to_add is not None:
@@ -111,6 +126,7 @@ class DVCService(BaseService):
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
-            import subprocess
-            subprocess.run(f"dvc add {add_to_dvc} --no-commit", shell=True, capture_output=True)
+            output = subprocess.run(f"dvc add {add_to_dvc} --no-commit", shell=True, capture_output=True)
+            if convert_bytes_to_string(output.stderr) != '':
+                self.logger.error(convert_bytes_to_string(output.stderr))
         return "DVC add successfully executed"
