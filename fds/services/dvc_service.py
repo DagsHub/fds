@@ -68,39 +68,40 @@ class DVCService(BaseService):
             questions = [
                 {
                     "type": "expand",
-                    "message": f"{type} {file_or_dir_to_check} is {convert_bytes_to_readable(dir_size)}",
+                    "message": f"What would you like to do with {type} {file_or_dir_to_check} of {convert_bytes_to_readable(dir_size)}?",
                     "name": "selection_choice",
                     "choices": [{
-                        "key": "y",
-                        "name": "Add to DVC?",
-                        "value": "add"
+                        "key": "d",
+                        "name": "Add to DVC",
+                        "value": "Add to DVC"
                     },{
-                        "key": "n",
-                        "name": "Skip - Add to Git?",
-                        "value": "skip"
+                        "key": "g",
+                        "name": "Add to Git",
+                        "value": "Add to Git"
                     },{
                         "key": "s",
                         "name": "Step Into",
-                        "value": "step"
+                        "value": "Step Into"
                     },{
                         "key": "i",
                         "name": "Ignore - Add to .gitignore",
-                        "value": "ignore"
+                        "value": "Ignore"
                     }],
-                    "default": "add"
+                    "default": "Add to DVC"
                 }
             ]
             answers = PyInquirer.prompt(questions)
-            if answers["selection_choice"] == "add":
+            if answers["selection_choice"] == "Add to DVC":
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return file_or_dir_to_check
-            elif answers["selection_choice"] == "skip":
+            elif answers["selection_choice"] == "Add to Git":
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
-            elif answers["selection_choice"] == "ignore":
-                subprocess.run(f"echo {file_or_dir_to_check} >> .gitignore", shell=True, capture_output=True)
+            elif answers["selection_choice"] == "Ignore":
+                # We should ignore the ./ in beginning when adding to gitignore
+                subprocess.run(f"echo {file_or_dir_to_check[2:]} >> .gitignore", shell=True, capture_output=True)
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
