@@ -4,6 +4,7 @@ from typing import List, Dict, Any
 import pygit2
 
 from fds.services.base_service import BaseService
+from fds.utils import execute_shell_command
 
 
 class GitService(BaseService):
@@ -40,3 +41,11 @@ class GitService(BaseService):
         """
         import subprocess
         return subprocess.run(f"git add {add_argument}", shell=True, capture_output=True)
+
+    def commit(self, message: str) -> Any:
+        """
+        Responsible for committing into DVC
+        :param message: message for dvc
+        :return:
+        """
+        execute_shell_command(f"git commit -m '{message}'")

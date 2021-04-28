@@ -73,3 +73,18 @@ class FdsService(object):
             self.printer.success("Git add successfully executed")
         except:
             self.printer.error("Git status failed to execute")
+
+    def commit(self, message: str):
+        """
+        fds commit
+        """
+        try:
+            self.dvc_service.commit(message)
+            self.printer.warn("Successfully commited to DVC")
+        except:
+            self.printer.error("DVC commit failed to execute")
+        try:
+            self.git_service.commit(message)
+            self.printer.success("Successfully committed to Git")
+        except:
+            self.printer.error("Git commit failed to execute")

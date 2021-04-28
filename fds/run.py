@@ -26,5 +26,9 @@ class Run(object):
             # Run add command stuff
             self.service.add(arguments["add_command"])
             return 0
+        elif arguments["command"] == Commands.COMMIT.value:
+            # Run commit command stuff
+            self.service.commit(arguments["message"])
+            return 0
         else:
             raise Exception("Invalid operation")

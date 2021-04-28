@@ -6,7 +6,7 @@ import PyInquirer
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
-from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string
+from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_shell_command
 
 
 class DVCService(BaseService):
@@ -135,7 +135,13 @@ class DVCService(BaseService):
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
-            output = subprocess.run(f"dvc add {add_to_dvc} --no-commit", shell=True, capture_output=True)
-            if convert_bytes_to_string(output.stderr) != '':
-                self.logger.error(convert_bytes_to_string(output.stderr))
+            execute_shell_command(f"dvc add {add_to_dvc} --no-commit")
         return "DVC add successfully executed"
+
+    def commit(self, message: str) -> Any:
+        """
+        Responsible for committing into DVC
+        :param message: message for dvc
+        :return:
+        """
+        execute_shell_command(f"dvc commit -q")
