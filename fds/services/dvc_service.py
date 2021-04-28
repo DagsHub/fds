@@ -145,4 +145,5 @@ class DVCService(BaseService):
         :param message: message for dvc
         :return:
         """
+        # In case something is added by user and not commited, we will take care of it
         execute_shell_command(f"dvc commit -q")
