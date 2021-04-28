@@ -136,7 +136,7 @@ class DVCService(BaseService):
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
-            execute_shell_command(f"dvc add {add_to_dvc} --no-commit")
+            execute_shell_command(f"dvc add {add_to_dvc}")
         return "DVC add successfully executed"
 
     def commit(self, message: str) -> Any:
