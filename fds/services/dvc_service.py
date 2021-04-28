@@ -3,9 +3,11 @@ import subprocess
 from typing import Any, List, Optional
 import PyInquirer
 
+from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
+from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_shell_command
 
 
@@ -17,6 +19,7 @@ class DVCService(BaseService):
     def __init__(self):
         self.repo_path = os.path.curdir
         self.logger = Logger.get_logger("fds.DVCService")
+        self.printer = PrettyPrint()
 
     def init(self):
         """
@@ -106,11 +109,8 @@ class DVCService(BaseService):
                 [dirs.remove(d) for d in list(dirs)]
                 return
 
-    def add(self, add_argument: str) -> Any:
-        """
-        Responsible for adding into dvc
-        :return:
-        """
+    def __add_all(self):
+        self.printer.warn('========== Make your selection, Press "h" for help ==========')
         chosen_files_or_folders = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
@@ -137,6 +137,18 @@ class DVCService(BaseService):
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
             execute_shell_command(f"dvc add {add_to_dvc}")
+
+    def add(self, add_argument: str) -> Any:
+        """
+        Responsible for adding into dvc
+        :return:
+        """
+        if add_argument == AddCommands.ALL:
+            self.__add_all()
+        else:
+            execute_shell_command(f"dvc add {add_argument}")
+            # file to add to git and gitignore
+            execute_shell_command(f"git add {add_argument}.dvc .gitignore")
         return "DVC add successfully executed"
 
     def commit(self, message: str) -> Any:

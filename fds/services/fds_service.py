@@ -1,3 +1,4 @@
+from fds.domain.commands import AddCommands
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
@@ -57,7 +58,6 @@ class FdsService(object):
         # Then remaining goes to git by default
         # Dvc add
         try:
-            self.printer.warn('========== Choose which files to add to DVC, Press "h" for help ==========')
             add_msg = self.dvc_service.add(add_command)
             self.printer.warn(add_msg)
         except:
