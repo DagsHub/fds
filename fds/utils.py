@@ -24,3 +24,6 @@ def get_size_of_path(path: str) -> int:
 
 def convert_bytes_to_readable(bytes: int) -> str:
     return humanize.naturalsize(bytes)
+
+def convert_bytes_to_string(bytes_data: bytes) -> str:
+    return bytes_data.decode("utf-8")
