@@ -69,3 +69,31 @@ class TestFds(unittest.TestCase):
         self.assertRaises(Exception, mock_dvc_service.add)
         assert mock_git_service.add.called
         assert mock_dvc_service.add.called
+
+    @patch('fds.services.dvc_service.DVCService')
+    @patch('fds.services.git_service.GitService')
+    def test_commit_success(self, mock_git_service, mock_dvc_service):
+        fds_service = FdsService(mock_git_service, mock_dvc_service)
+        fds_service.commit("some commit message")
+        assert mock_git_service.commit.called
+        assert mock_dvc_service.commit.called
+
+    @patch('fds.services.dvc_service.DVCService')
+    @patch('fds.services.git_service.GitService')
+    def test_commit_git_failure(self, mock_git_service, mock_dvc_service):
+        mock_git_service.commit.side_effect = Exception
+        fds_service = FdsService(mock_git_service, mock_dvc_service)
+        fds_service.commit("some commit message")
+        self.assertRaises(Exception, mock_git_service.commit)
+        assert mock_git_service.commit.called
+        assert mock_dvc_service.commit.called
+
+    @patch('fds.services.dvc_service.DVCService')
+    @patch('fds.services.git_service.GitService')
+    def test_commit_dvc_failure(self, mock_git_service, mock_dvc_service):
+        mock_dvc_service.commit.side_effect = Exception
+        fds_service = FdsService(mock_git_service, mock_dvc_service)
+        fds_service.commit("some commit message")
+        self.assertRaises(Exception, mock_dvc_service.commit)
+        assert mock_git_service.commit.called
+        assert mock_dvc_service.commit.called
