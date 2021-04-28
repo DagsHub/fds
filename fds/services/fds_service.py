@@ -39,17 +39,13 @@ class FdsService(object):
         # Git status
         try:
             self.printer.success("========== Git repo status ==========")
-            status = self.git_service.status()
-            self.printer.success(self.printer.convert_bytes_to_str(status.stdout))
-            self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
+            self.git_service.status()
         except:
             self.printer.error("Git status failed to execute")
         # Dvc status
         try:
             self.printer.warn("========== DVC repo status ==========")
-            status = self.dvc_service.status()
-            self.printer.warn(self.printer.convert_bytes_to_str(status.stdout))
-            self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
+            self.dvc_service.status()
         except:
             self.printer.error("DVC status failed to execute")
 

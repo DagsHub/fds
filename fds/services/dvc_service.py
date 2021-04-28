@@ -34,7 +34,7 @@ class DVCService(BaseService):
         Responsible for running dvc status
         :return:
         """
-        return subprocess.run(["dvc", "status"], capture_output=True)
+        return subprocess.run(["dvc", "status"])
 
     def __should_skip_list_add(self, dir: str) -> bool:
         """

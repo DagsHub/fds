@@ -31,7 +31,7 @@ class GitService(BaseService):
         :return:
         """
         import subprocess
-        return subprocess.run(["git", "status"], capture_output=True)
+        return subprocess.run(["git", "status"])
 
     def add(self, add_argument: str) -> Any:
         """
