@@ -39,3 +39,8 @@ def execute_shell_command(command: str) -> None:
     logger = Logger.get_logger("fds")
     if convert_bytes_to_string(output.stderr) != '':
         logger.error(convert_bytes_to_string(output.stderr))
+
+
+def append_data_to_file(filename: str, data: str) -> None:
+    with open(filename, "a") as f:
+        f.write(data)
