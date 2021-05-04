@@ -144,7 +144,7 @@ class DVCService(BaseService):
         Responsible for adding into dvc
         :return:
         """
-        if add_argument == AddCommands.ALL:
+        if add_argument == AddCommands.ALL.value:
             self.__add_all()
         else:
             execute_shell_command(f"dvc add {add_argument}")
