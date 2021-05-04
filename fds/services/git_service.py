@@ -1,10 +1,10 @@
 import os
-from typing import List, Dict, Any
+from typing import Any
 
 import pygit2
 
 from fds.services.base_service import BaseService
-from fds.utils import execute_shell_command
+from fds.utils import execute_command, convert_bytes_to_string
 
 
 class GitService(BaseService):
@@ -30,8 +30,7 @@ class GitService(BaseService):
         Responsible for running git status
         :return:
         """
-        import subprocess
-        return subprocess.run(["git", "status"])
+        return execute_command(["git", "status"])
 
     def add(self, add_argument: str) -> Any:
         """
@@ -39,8 +38,10 @@ class GitService(BaseService):
         :param add_argument: extra agruments of git add
         :return: 
         """
-        import subprocess
-        return subprocess.run(f"git add {add_argument}", shell=True, capture_output=True)
+        git_output = execute_command(["git", "check-ignore", add_argument], capture_output=True)
+        if convert_bytes_to_string(git_output.stdout) != '':
+            return
+        execute_command(["git", "add", add_argument])
 
     def commit(self, message: str) -> Any:
         """
@@ -48,4 +49,4 @@ class GitService(BaseService):
         :param message: message for dvc
         :return:
         """
-        execute_shell_command(f"git commit -m '{message}'")
+        execute_command(["git", "commit", "-am", message])

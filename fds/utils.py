@@ -2,6 +2,7 @@ import argparse
 import subprocess
 from pathlib import Path
 import os
+from typing import List, Union, Any
 
 import humanize
 
@@ -34,11 +35,14 @@ def convert_bytes_to_string(bytes_data: bytes) -> str:
     return bytes_data.decode("utf-8")
 
 
-def execute_shell_command(command: str) -> None:
-    output = subprocess.run(command, shell=True, capture_output=True)
+def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool=True) -> Any:
+    output = subprocess.run(command, shell=shell, capture_output=capture_output)
+    if output.stderr is None or output.stdout is None:
+        return
     logger = Logger.get_logger("fds")
     if convert_bytes_to_string(output.stderr) != '':
         logger.error(convert_bytes_to_string(output.stderr))
+    return output
 
 
 def append_data_to_file(filename: str, data: str) -> None:

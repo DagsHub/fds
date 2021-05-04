@@ -62,7 +62,6 @@ class FdsService(object):
             self.printer.warn(add_msg)
         except:
             self.printer.error("DVC add failed to execute")
-
         # Add remaining to git
         try:
             self.git_service.add(add_command)

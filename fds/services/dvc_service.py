@@ -1,5 +1,4 @@
 import os
-import subprocess
 from typing import Any, List, Optional
 import PyInquirer
 
@@ -8,7 +7,7 @@ from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
-from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_shell_command, \
+from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_data_to_file
 
 
@@ -28,7 +27,7 @@ class DVCService(BaseService):
         :return:
         """
         try:
-            subprocess.run(["dvc", "init"], capture_output=True)
+            execute_command(["dvc", "init"])
             return True
         except:
             return False
@@ -38,7 +37,7 @@ class DVCService(BaseService):
         Responsible for running dvc status
         :return:
         """
-        return subprocess.run(["dvc", "status"])
+        return execute_command(["dvc", "status"])
 
     def __should_skip_list_add(self, dir: str) -> bool:
         """
@@ -48,10 +47,10 @@ class DVCService(BaseService):
         """
         if dir == ".":
             return True
-        git_output = subprocess.run(f"git check-ignore {dir}", shell=True, capture_output=True)
+        git_output = execute_command(["git", "check-ignore", dir], capture_output=True)
         if convert_bytes_to_string(git_output.stdout) != '':
             return True
-        dvc_output = subprocess.run(f"dvc check-ignore {dir}", shell=True, capture_output=True)
+        dvc_output = execute_command(["dvc", "check-ignore", dir], capture_output=True)
         if convert_bytes_to_string(dvc_output.stdout) != '':
             return True
         return False
@@ -137,7 +136,7 @@ class DVCService(BaseService):
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
-            execute_shell_command(f"dvc add {add_to_dvc}")
+            execute_command(f"dvc add {add_to_dvc}")
 
     def add(self, add_argument: str) -> Any:
         """
@@ -147,9 +146,9 @@ class DVCService(BaseService):
         if add_argument == AddCommands.ALL.value:
             self.__add_all()
         else:
-            execute_shell_command(f"dvc add {add_argument}")
+            execute_command(["dvc", "add", add_argument])
             # file to add to git and gitignore
-            execute_shell_command(f"git add {add_argument}.dvc .gitignore")
+            execute_command(["git", "add", f"{add_argument}.dvc", ".gitignore"])
         return "DVC add successfully executed"
 
     def commit(self, message: str) -> Any:
@@ -159,4 +158,4 @@ class DVCService(BaseService):
         :return:
         """
         # In case something is added by user and not commited, we will take care of it
-        execute_shell_command(f"dvc commit -q")
+        execute_command(f"dvc commit -q")
