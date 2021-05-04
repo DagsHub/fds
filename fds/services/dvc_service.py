@@ -136,7 +136,7 @@ class DVCService(BaseService):
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
-            execute_command(f"dvc add {add_to_dvc}")
+            execute_command(["dvc", "add", add_to_dvc])
 
     def add(self, add_argument: str) -> Any:
         """
