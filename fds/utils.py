@@ -45,6 +45,8 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
     return output
 
 
-def append_data_to_file(filename: str, data: str) -> None:
+def append_line_to_file(filename: str, data: str) -> None:
     with open(filename, "a") as f:
         f.write(data)
+        if not data.endswith('\n'):
+            f.write('\n')

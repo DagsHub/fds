@@ -8,7 +8,7 @@ from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_data_to_file
+    append_line_to_file
 
 
 class DVCService(BaseService):
@@ -104,7 +104,7 @@ class DVCService(BaseService):
                 return
             elif answers["selection_choice"] == "Ignore":
                 # We should ignore the ./ in beginning when adding to gitignore
-                append_data_to_file(".gitignore", file_or_dir_to_check[2:])
+                append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
