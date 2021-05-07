@@ -37,7 +37,7 @@ class DVCService(BaseService):
         Responsible for running dvc status
         :return:
         """
-        return execute_command(["dvc", "status"])
+        return execute_command(["dvc", "status"], capture_output=False)
 
     def __should_skip_list_add(self, dir: str) -> bool:
         """
@@ -104,17 +104,22 @@ class DVCService(BaseService):
                 return
             elif answers["selection_choice"] == "Ignore":
                 # We should ignore the ./ in beginning when adding to gitignore
+                # Add files to gitignore
                 append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
 
-    def __add_all(self):
+    def __add(self, add_argument: str):
         self.printer.warn('========== Make your selection, Press "h" for help ==========')
         chosen_files_or_folders = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        for (root, dirs, files) in os.walk(self.repo_path, topdown=True, followlinks=False):
+        if add_argument == AddCommands.ALL.value:
+            path_to_walk = self.repo_path
+        else:
+            path_to_walk = f"{self.repo_path}/{add_argument}"
+        for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
             # Now skip the un-necessary folders
             [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]
             # Skip the already added files/folders
@@ -143,12 +148,7 @@ class DVCService(BaseService):
         Responsible for adding into dvc
         :return:
         """
-        if add_argument == AddCommands.ALL.value:
-            self.__add_all()
-        else:
-            execute_command(["dvc", "add", add_argument])
-            # file to add to git and gitignore
-            execute_command(["git", "add", f"{add_argument}.dvc", ".gitignore"])
+        self.__add(add_argument)
         return "DVC add successfully executed"
 
     def commit(self, message: str) -> Any:

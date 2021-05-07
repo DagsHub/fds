@@ -50,3 +50,11 @@ def append_line_to_file(filename: str, data: str) -> None:
         f.write(data)
         if not data.endswith('\n'):
             f.write('\n')
+
+
+def does_file_exist(filename: str) -> bool:
+    try:
+        import os.path
+        return os.path.exists(filename)
+    except Exception as e:
+        return False

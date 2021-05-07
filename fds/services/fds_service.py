@@ -67,7 +67,7 @@ class FdsService(object):
             self.git_service.add(add_command)
             self.printer.success("Git add successfully executed")
         except:
-            self.printer.error("Git status failed to execute")
+            self.printer.error("Git add failed to execute")
 
     def commit(self, message: str):
         """
