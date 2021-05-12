@@ -68,28 +68,32 @@ class DVCService(BaseService):
             dir_size = get_size_of_path(file_or_dir_to_check)
             if dir_size < MAX_THRESHOLD_SIZE:
                 return
+            choices = [{
+                "key": "d",
+                "name": "Add to DVC",
+                "value": "Add to DVC"
+            },{
+                "key": "g",
+                "name": "Add to Git",
+                "value": "Add to Git"
+            },{
+                "key": "i",
+                "name": "Ignore - Add to .gitignore",
+                "value": "Ignore"
+            }]
+            if os.path.isdir(file_or_dir_to_check):
+                choices.append({
+                    "key": "s",
+                    "name": "Step Into",
+                    "value": "Step Into"
+                })
+
             questions = [
                 {
                     "type": "expand",
                     "message": f"What would you like to do with {type} {file_or_dir_to_check} of {convert_bytes_to_readable(dir_size)}?",
                     "name": "selection_choice",
-                    "choices": [{
-                        "key": "d",
-                        "name": "Add to DVC",
-                        "value": "Add to DVC"
-                    },{
-                        "key": "g",
-                        "name": "Add to Git",
-                        "value": "Add to Git"
-                    },{
-                        "key": "s",
-                        "name": "Step Into",
-                        "value": "Step Into"
-                    },{
-                        "key": "i",
-                        "name": "Ignore - Add to .gitignore",
-                        "value": "Ignore"
-                    }],
+                    "choices": choices,
                     "default": "Add to DVC"
                 }
             ]
