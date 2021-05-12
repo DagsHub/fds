@@ -48,13 +48,8 @@ class GitService(BaseService):
         if does_file_exist(dvc_file):
             execute_command(["git", "add", f"{add_argument}.dvc"])
         ignore_file = ".gitignore"
-        if does_file_exist(".gitignore"):
+        if does_file_exist(ignore_file):
             execute_command(["git", "add", ignore_file])
 
     def commit(self, message: str) -> Any:
-        """
-        Responsible for committing into DVC
-        :param message: message for dvc
-        :return:
-        """
         execute_command(["git", "commit", "-am", message])
