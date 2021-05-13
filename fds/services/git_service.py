@@ -52,4 +52,4 @@ class GitService(BaseService):
             execute_command(["git", "add", ignore_file])
 
     def commit(self, message: str) -> Any:
-        execute_command(["git", "commit", "-am", message])
+        execute_command(["git", "commit", "-am", message], capture_output=False)
