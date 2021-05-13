@@ -24,14 +24,14 @@ class Run(object):
             questions = [
                 {
                     'type': 'confirm',
-                    'message': 'Should we install dvc[https://dvc.org/] for you right now?',
+                    'message': 'Should we install dvc[https://dvc.org/] (`pip install dvc <3`) for you right now?',
                     'name': 'install',
                     'default': False,
                 },
             ]
             answers = PyInquirer.prompt(questions)
             if answers["install"]:
-                execute_command(["pip install dvc"], shell=True, capture_output=False)
+                execute_command(["pip install 'dvc<3'"], shell=True, capture_output=False)
             else:
                 # Provide instructions
                 self.printer.warn("You can install dvc manually from https://dvc.org/doc/install")
