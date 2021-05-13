@@ -25,21 +25,20 @@ class Run(object):
                 {
                     'type': 'confirm',
                     'message': 'Should we install dvc[https://dvc.org/] for you right now?',
-                    'name': 'exit',
+                    'name': 'install',
                     'default': False,
                 },
             ]
             answers = PyInquirer.prompt(questions)
-            if answers["exit"]:
+            if answers["install"]:
                 execute_command(["pip install dvc"], shell=True, capture_output=False)
             else:
                 # Provide instructions
-                self.printer.warn("dvc executable is not found, please install dvc from https://dvc.org/doc/install")
+                self.printer.warn("You can install dvc manually from https://dvc.org/doc/install")
             return 0
         if which("git") is None:
             self.printer.error("git executable is not found, please install git from https://git-scm.com/downloads")
             return 0
-        pass
 
     def execute(self):
         # Run pre execute hook
