@@ -1,3 +1,4 @@
+from fds.domain.commands import AddCommands
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
@@ -39,17 +40,13 @@ class FdsService(object):
         # Git status
         try:
             self.printer.success("========== Git repo status ==========")
-            status = self.git_service.status()
-            self.printer.success(self.printer.convert_bytes_to_str(status.stdout))
-            self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
+            self.git_service.status()
         except:
             self.printer.error("Git status failed to execute")
         # Dvc status
         try:
             self.printer.warn("========== DVC repo status ==========")
-            status = self.dvc_service.status()
-            self.printer.warn(self.printer.convert_bytes_to_str(status.stdout))
-            self.printer.error(self.printer.convert_bytes_to_str(status.stderr))
+            self.dvc_service.status()
         except:
             self.printer.error("DVC status failed to execute")
 
@@ -61,15 +58,28 @@ class FdsService(object):
         # Then remaining goes to git by default
         # Dvc add
         try:
-            self.printer.warn('========== Choose which files to add to DVC, Press "h" for help ==========')
             add_msg = self.dvc_service.add(add_command)
             self.printer.warn(add_msg)
         except:
             self.printer.error("DVC add failed to execute")
-
         # Add remaining to git
         try:
             self.git_service.add(add_command)
             self.printer.success("Git add successfully executed")
         except:
-            self.printer.error("Git status failed to execute")
+            self.printer.error("Git add failed to execute")
+
+    def commit(self, message: str):
+        """
+        fds commit
+        """
+        try:
+            self.dvc_service.commit(message)
+            self.printer.warn("Successfully commited to DVC")
+        except:
+            self.printer.error("DVC commit failed to execute")
+        try:
+            self.git_service.commit(message)
+            self.printer.success("Successfully committed to Git")
+        except:
+            self.printer.error("Git commit failed to execute")

@@ -25,3 +25,11 @@ class BaseService(object):
         :return: Nothing
         """
         pass
+
+    def commit(self, message: str) -> Any:
+        """
+        The commit command
+        @param message: Commit message
+        :return: Nothing
+        """
+        pass

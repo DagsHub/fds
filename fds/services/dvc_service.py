@@ -1,12 +1,14 @@
 import os
-import subprocess
 from typing import Any, List, Optional
 import PyInquirer
 
+from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.base_service import BaseService
-from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string
+from fds.services.pretty_print import PrettyPrint
+from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
+    append_line_to_file
 
 
 class DVCService(BaseService):
@@ -17,6 +19,7 @@ class DVCService(BaseService):
     def __init__(self):
         self.repo_path = os.path.curdir
         self.logger = Logger.get_logger("fds.DVCService")
+        self.printer = PrettyPrint()
 
     def init(self):
         """
@@ -24,7 +27,7 @@ class DVCService(BaseService):
         :return:
         """
         try:
-            subprocess.run(["dvc", "init"], capture_output=True)
+            execute_command(["dvc", "init"])
             return True
         except:
             return False
@@ -34,7 +37,7 @@ class DVCService(BaseService):
         Responsible for running dvc status
         :return:
         """
-        return subprocess.run(["dvc", "status"], capture_output=True)
+        return execute_command(["dvc", "status"], capture_output=False)
 
     def __should_skip_list_add(self, dir: str) -> bool:
         """
@@ -44,10 +47,10 @@ class DVCService(BaseService):
         """
         if dir == ".":
             return True
-        git_output = subprocess.run(f"git check-ignore {dir}", shell=True, capture_output=True)
+        git_output = execute_command(["git", "check-ignore", dir], capture_output=True)
         if convert_bytes_to_string(git_output.stdout) != '':
             return True
-        dvc_output = subprocess.run(f"dvc check-ignore {dir}", shell=True, capture_output=True)
+        dvc_output = execute_command(["dvc", "check-ignore", dir], capture_output=True)
         if convert_bytes_to_string(dvc_output.stdout) != '':
             return True
         return False
@@ -65,55 +68,62 @@ class DVCService(BaseService):
             dir_size = get_size_of_path(file_or_dir_to_check)
             if dir_size < MAX_THRESHOLD_SIZE:
                 return
+            choices = [{
+                "key": "d",
+                "name": "Add to DVC",
+                "value": "Add to DVC"
+            },{
+                "key": "g",
+                "name": "Add to Git",
+                "value": "Add to Git"
+            },{
+                "key": "i",
+                "name": "Ignore - Add to .gitignore",
+                "value": "Ignore"
+            }]
+            if os.path.isdir(file_or_dir_to_check):
+                choices.append({
+                    "key": "s",
+                    "name": "Step Into",
+                    "value": "Step Into"
+                })
+
             questions = [
                 {
                     "type": "expand",
-                    "message": f"{type} {file_or_dir_to_check} is {convert_bytes_to_readable(dir_size)}",
+                    "message": f"What would you like to do with {type} {file_or_dir_to_check} of {convert_bytes_to_readable(dir_size)}?",
                     "name": "selection_choice",
-                    "choices": [{
-                        "key": "y",
-                        "name": "Add to DVC?",
-                        "value": "add"
-                    },{
-                        "key": "n",
-                        "name": "Skip - Add to Git?",
-                        "value": "skip"
-                    },{
-                        "key": "s",
-                        "name": "Step Into",
-                        "value": "step"
-                    },{
-                        "key": "i",
-                        "name": "Ignore - Add to .gitignore",
-                        "value": "ignore"
-                    }],
-                    "default": "add"
+                    "choices": choices,
+                    "default": "Add to DVC"
                 }
             ]
             answers = PyInquirer.prompt(questions)
-            if answers["selection_choice"] == "add":
+            if answers["selection_choice"] == "Add to DVC":
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return file_or_dir_to_check
-            elif answers["selection_choice"] == "skip":
+            elif answers["selection_choice"] == "Add to Git":
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
-            elif answers["selection_choice"] == "ignore":
-                subprocess.run(f"echo {file_or_dir_to_check} >> .gitignore", shell=True, capture_output=True)
+            elif answers["selection_choice"] == "Ignore":
+                # We should ignore the ./ in beginning when adding to gitignore
+                # Add files to gitignore
+                append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
 
-    def add(self, add_argument: str) -> Any:
-        """
-        Responsible for adding into dvc
-        :return:
-        """
+    def __add(self, add_argument: str):
+        self.printer.warn('========== Make your selection, Press "h" for help ==========')
         chosen_files_or_folders = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        for (root, dirs, files) in os.walk(self.repo_path, topdown=True, followlinks=False):
+        if add_argument == AddCommands.ALL.value:
+            path_to_walk = self.repo_path
+        else:
+            path_to_walk = f"{self.repo_path}/{add_argument}"
+        for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
             # Now skip the un-necessary folders
             [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]
             # Skip the already added files/folders
@@ -135,7 +145,21 @@ class DVCService(BaseService):
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
         for add_to_dvc in chosen_files_or_folders:
-            output = subprocess.run(f"dvc add {add_to_dvc} --no-commit", shell=True, capture_output=True)
-            if convert_bytes_to_string(output.stderr) != '':
-                self.logger.error(convert_bytes_to_string(output.stderr))
+            execute_command(["dvc", "add", add_to_dvc])
+
+    def add(self, add_argument: str) -> Any:
+        """
+        Responsible for adding into dvc
+        :return:
+        """
+        self.__add(add_argument)
         return "DVC add successfully executed"
+
+    def commit(self, message: str) -> Any:
+        """
+        Responsible for committing into DVC
+        :param message: message for dvc
+        :return:
+        """
+        # In case something is added by user and not commited, we will take care of it
+        execute_command(f"dvc commit -q")
