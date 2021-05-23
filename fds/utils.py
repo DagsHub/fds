@@ -2,6 +2,7 @@ import argparse
 import subprocess
 from pathlib import Path
 import os
+import sys
 from typing import List, Union, Any
 
 import humanize
@@ -42,6 +43,8 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
     logger = Logger.get_logger("fds")
     if convert_bytes_to_string(output.stderr) != '':
         logger.error(convert_bytes_to_string(output.stderr))
+    if output.returncode != 0:
+        sys.exit(output.returncode)
     return output
 
 
