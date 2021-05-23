@@ -41,10 +41,11 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
     if output.stderr is None or output.stdout is None:
         return
     logger = Logger.get_logger("fds")
-    if convert_bytes_to_string(output.stderr) != '':
-        logger.error(convert_bytes_to_string(output.stderr))
+    error_message = convert_bytes_to_string(output.stderr)
+    if error_message != '':
+        logger.error(error_message)
     if output.returncode != 0:
-        sys.exit(output.returncode)
+        raise Exception(error_message)
     return output
 
 

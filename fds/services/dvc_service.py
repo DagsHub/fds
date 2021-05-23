@@ -29,7 +29,8 @@ class DVCService(BaseService):
         try:
             execute_command(["dvc", "init"])
             return True
-        except:
+        except Exception as e:
+            self.printer.error(str(e))
             return False
 
     def status(self) -> Any:
