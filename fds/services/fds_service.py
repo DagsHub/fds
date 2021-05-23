@@ -69,7 +69,7 @@ class FdsService(object):
         except:
             self.printer.error("Git add failed to execute")
 
-    def commit(self, message: str, yes: bool):
+    def commit(self, message: str, yes: bool = True):
         """
         fds commit
         """

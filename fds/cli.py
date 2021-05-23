@@ -35,7 +35,7 @@ parser_push = command_subparser.add_parser(
     'push',
     help='push commits to remote git and dvc repository'
 )
-parser_commit.add_argument('-r', '--remote', help="fds remote name", default="origin")
+parser_push.add_argument('-r', '--remote', help="fds remote name", default="origin")
 
 # save
 parser_save = command_subparser.add_parser(
@@ -43,15 +43,17 @@ parser_save = command_subparser.add_parser(
     help='saves all project files to a new version and pushes them to your remote'
 )
 parser_save.add_argument('message', help="save message")
-parser_save.add_argument('--remote', help="fds remote name", default="origin")
+parser_save.add_argument('-r', '--remote', help="fds remote name", default="origin")
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
                         type=str2bool, nargs='?', const=True, default=False)
 
+
 def parse_args(args):
     arguments = vars(arg_parser.parse_args(args=args or ["--help"]))
     return arguments
+
 
 def main(args=None):
     if args is None:

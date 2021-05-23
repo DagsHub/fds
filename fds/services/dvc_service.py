@@ -167,7 +167,8 @@ class DVCService(BaseService):
             commit_cmd.append("-f")
         execute_command(commit_cmd, capture_output=False)
 
-    def push(self, remote: str) -> Any:
+    @staticmethod
+    def push(remote: str) -> Any:
         """
         Push DVC tracked files to remote
         :return:
