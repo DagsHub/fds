@@ -35,7 +35,7 @@ class GitService(BaseService):
     def add(self, add_argument: str) -> Any:
         """
         Responsible for running git add
-        :param add_argument: extra agruments of git add
+        :param add_argument: extra arguments of git add
         :return: 
         """
         git_output = execute_command(["git", "check-ignore", add_argument], capture_output=True)

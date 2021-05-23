@@ -75,7 +75,7 @@ class FdsService(object):
         """
         try:
             self.dvc_service.commit(message)
-            self.printer.warn("Successfully commited to DVC")
+            self.printer.warn("Successfully committed to DVC")
         except:
             self.printer.error("DVC commit failed to execute")
         try:
