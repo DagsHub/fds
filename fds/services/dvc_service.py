@@ -163,3 +163,10 @@ class DVCService(BaseService):
         """
         # In case something is added by user and not committed, we will take care of it
         execute_command(["dvc", "commit", "-q"], capture_output=False)
+
+    def push(self, remote: str) -> Any:
+        """
+        Push DVC tracked files to remote
+        :return:
+        """
+        execute_command(["dvc", "push", "-r", remote], capture_output=False)

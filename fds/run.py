@@ -62,5 +62,13 @@ class Run(object):
             # Run commit command stuff
             self.service.commit(arguments["message"])
             return 0
+        elif arguments["command"] == Commands.PUSH.value:
+            # Run push command stuff
+            self.service.push(arguments["remote"])
+            return 0
+        elif arguments["command"] == Commands.SAVE.value:
+            # Run save command stuff
+            self.service.save(arguments["message"])
+            return 0
         else:
             raise Exception("Invalid operation")

@@ -83,3 +83,26 @@ class FdsService(object):
             self.printer.success("Successfully committed to Git")
         except:
             self.printer.error("Git commit failed to execute")
+
+    def push(self, remote: str = "origin"):
+        """
+        fds push
+        """
+        try:
+            self.dvc_service.push(remote)
+            self.printer.warn("Successfully pushed to DVC remote")
+        except:
+            self.printer.error("DVC push failed to execute")
+        try:
+            self.git_service.push(remote)
+            self.printer.success("Successfully pushed to Git remote")
+        except:
+            self.printer.error("Git push failed to execute")
+
+    def save(self, message: str, remote: str = "origin"):
+        """
+        fds save
+        """
+        self.add(".")
+        self.commit(message)
+        self.push(remote)

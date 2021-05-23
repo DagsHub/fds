@@ -52,4 +52,18 @@ class GitService(BaseService):
             execute_command(["git", "add", ignore_file])
 
     def commit(self, message: str) -> Any:
+        """
+        Commit to Git
+        :param message: Commit message
+        :return:
+        """
         execute_command(["git", "commit", "-am", message], capture_output=False)
+
+    def push(self, remote: str) -> Any:
+        """
+        Push commits to Git remote
+        :return:
+        """
+        repo = pygit2.Repository(self.repo_path)
+        curr_branch = repo.head.shorthand
+        execute_command(["git", "push", remote, curr_branch], capture_output=False)
