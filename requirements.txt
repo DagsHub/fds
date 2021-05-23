@@ -1,4 +1,4 @@
 pygit2==1.5.0
 colorama==0.4.4
 PyInquirer==1.0.3
-humanize==3.4.1
+humanize==3.5.0
