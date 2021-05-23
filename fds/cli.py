@@ -35,7 +35,7 @@ parser_push = command_subparser.add_parser(
     'push',
     help='push commits to remote git and dvc repository'
 )
-parser_commit.add_argument('--remote', help="fds remote name", default="origin")
+parser_commit.add_argument('-r', '--remote', help="fds remote name", default="origin")
 
 # save
 parser_save = command_subparser.add_parser(
