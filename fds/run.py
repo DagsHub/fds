@@ -19,7 +19,9 @@ class Run(object):
 
     def pre_execute_hook(self):
         # Check if dvc is installed
+        ret_code = 0
         if which("dvc") is None:
+            ret_code = 1
             self.printer.error("dvc executable is not installed or found")
             questions = [
                 {
@@ -32,18 +34,23 @@ class Run(object):
             answers = PyInquirer.prompt(questions)
             if answers["install"]:
                 execute_command(["pip install 'dvc<3'"], shell=True, capture_output=False)
+                ret_code = 0
             else:
                 # Provide instructions
                 self.printer.warn("You can install dvc manually from https://dvc.org/doc/install")
-            return 0
+
         if which("git") is None:
             self.printer.error("git executable is not found, please install git from https://git-scm.com/downloads")
-            return 0
+            ret_code |= 2
+
+        return ret_code
 
     def execute(self):
         # Run pre execute hook
-        if self.pre_execute_hook() == 0:
-            return 0
+        hook_ret_code = self.pre_execute_hook()
+        if hook_ret_code != 0:
+            return hook_ret_code
+
         arguments = self.arguments
         self.logger.debug(f"arguments passed: {arguments}")
         if arguments["command"] == Commands.INIT.value:
@@ -60,7 +67,7 @@ class Run(object):
             return 0
         elif arguments["command"] == Commands.COMMIT.value:
             # Run commit command stuff
-            self.service.commit(arguments["message"])
+            self.service.commit(arguments["message"], arguments['yes'])
             return 0
         elif arguments["command"] == Commands.PUSH.value:
             # Run push command stuff

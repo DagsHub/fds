@@ -155,14 +155,17 @@ class DVCService(BaseService):
         self.__add(add_argument)
         return "DVC add successfully executed"
 
-    def commit(self, message: str) -> Any:
+    def commit(self, auto_confirm: bool) -> Any:
         """
         Responsible for committing into DVC
-        :param message: message for dvc
+        :param auto_confirm: commit all changed files without confirmation
         :return:
         """
         # In case something is added by user and not committed, we will take care of it
-        execute_command(["dvc", "commit", "-q"], capture_output=False)
+        commit_cmd = ["dvc", "commit", "-q"]
+        if auto_confirm:
+            commit_cmd.append("-f")
+        execute_command(commit_cmd, capture_output=False)
 
     def push(self, remote: str) -> Any:
         """
