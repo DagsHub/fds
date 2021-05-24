@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/DAGsHub/fds.svg?style=svg)](https://app.circleci.com/pipelines/github/DAGsHub/fds)
 
-`fds` is a tool for Data Scientists made by DAGsHub to version control data and code at once.
+`fds` is a tool for Data Scientists made by [DAGsHub](https://dagshub.com/) to version control data and code at once.
 
-At the high level `fds` is a wrapper for Git and DVC.  
+At the high level `fds` is a wrapper for Git and [DVC](https://dvc.org).  
 So Data Scientists can use `fds` instead of `git` and `dvc` separately, making day-to-day work much more fluent.
 
 ## Commands Supported
