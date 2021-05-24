@@ -4,6 +4,7 @@ from typing import Any
 import pygit2
 
 from fds.services.base_service import BaseService
+from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command, convert_bytes_to_string, does_file_exist
 
 
@@ -13,6 +14,7 @@ class GitService(BaseService):
     """
     def __init__(self):
         self.repo_path = os.path.curdir
+        self.printer = PrettyPrint()
 
     def init(self) -> bool:
         """
@@ -22,7 +24,8 @@ class GitService(BaseService):
         try:
             pygit2.init_repository(self.repo_path)
             return True
-        except:
+        except Exception as e:
+            self.printer.error(str(e))
             return False
 
     def status(self) -> Any:
