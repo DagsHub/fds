@@ -84,25 +84,30 @@ class FdsService(object):
         except:
             self.printer.error("Git commit failed to execute")
 
-    def push(self, remote: str = "origin"):
+    def push(self, git_remote: str, dvc_remote: str, ref: str = None):
         """
         fds push
         """
         try:
-            self.dvc_service.push(remote)
+            self.dvc_service.push(remote=dvc_remote)
             self.printer.warn("Successfully pushed to DVC remote")
         except:
             self.printer.error("DVC push failed to execute")
         try:
-            self.git_service.push(remote)
+            self.git_service.push(remote=git_remote, ref=ref)
             self.printer.success("Successfully pushed to Git remote")
         except:
             self.printer.error("Git push failed to execute")
 
-    def save(self, message: str, remote: str = "origin"):
+    def save(self, message: str, git_remote: str, dvc_remote: str):
         """
         fds save
         """
-        self.add(".")
-        self.commit(message)
-        self.push(remote)
+        try:
+            self.add(".")
+            self.commit(message)
+            self.push(git_remote, dvc_remote)
+            self.printer.success("====================================")
+            self.printer.success("Successfully saved current workspace")
+        except:
+            self.printer.error("FDS save failed to execute")

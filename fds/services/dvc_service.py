@@ -173,4 +173,8 @@ class DVCService(BaseService):
         Push DVC tracked files to remote
         :return:
         """
-        execute_command(["dvc", "push", "-r", remote], capture_output=False)
+        push_cmd = ["dvc", "push"]
+        if remote:
+            push_cmd.append("-r")
+            push_cmd.append(remote)
+        execute_command(push_cmd, capture_output=False)

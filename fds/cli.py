@@ -35,15 +35,21 @@ parser_push = command_subparser.add_parser(
     'push',
     help='push commits to remote git and dvc repository'
 )
-parser_push.add_argument('-r', '--remote', help="fds remote name", default="origin")
-
+parser_push.add_argument('-gr', '--git-remote', help="git remote name, default 'origin'", default="origin")
+parser_push.add_argument('-dr', '--dvc-remote', help="dvc remote name, default 'origin'", default="origin")
+parser_push.add_argument(
+    'branch',
+    help="A git branch that you want to push to (accepts refspec), defaults to current branch",
+    nargs='?'
+)
 # save
 parser_save = command_subparser.add_parser(
     'save',
     help='saves all project files to a new version and pushes them to your remote'
 )
+parser_save.add_argument('-gr', '--git-remote', help="git remote name, default 'origin'", default="origin")
+parser_save.add_argument('-dr', '--dvc-remote', help="dvc remote name, default 'origin'", default="origin")
 parser_save.add_argument('message', help="save message")
-parser_save.add_argument('-r', '--remote', help="fds remote name", default="origin")
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
