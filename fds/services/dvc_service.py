@@ -115,6 +115,8 @@ class DVCService(BaseService):
                 return
 
     def __add(self, add_argument: str):
+        # TODO: the message below should only be shown if there are changes to ask the user
+        #  about, otherwise it doesn't make sense
         self.printer.warn('========== Make your selection, Press "h" for help ==========')
         chosen_files_or_folders = []
         # May be add all the folders given in the .gitignore
