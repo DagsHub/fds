@@ -26,7 +26,8 @@ class Run(object):
             questions = [
                 {
                     'type': 'confirm',
-                    'message': 'Should we install dvc[https://dvc.org/] (`pip install dvc <3`) for you right now?',
+                    'message': 'Should we install dvc [https://dvc.org/] for you right now?\n' +
+                               '  Will install using `pip install dvc<3`',
                     'name': 'install',
                     'default': False,
                 },

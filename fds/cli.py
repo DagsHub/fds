@@ -6,7 +6,6 @@ from fds.logger import Logger
 
 # Argument parser stuff
 from fds.run import Run
-from fds.utils import str2bool
 
 arg_parser = argparse.ArgumentParser(description="One command for all your git and dvc needs",
                                      prog="fds")
@@ -53,7 +52,7 @@ parser_save.add_argument('message', help="save message")
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
-                        type=str2bool, nargs='?', const=True, default=False)
+                        action="store_true", default=False)
 
 
 def parse_args(args):
