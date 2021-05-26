@@ -12,15 +12,15 @@ with open('requirements.txt') as f:
 version = "0.0.7"
 
 setuptools.setup(
-    name="FDS",
+    name="fastds",
     version=version,
-    author="Mohith G",
+    author="DAGsHub",
     license='MIT License',
-    author_email="mohithgm@gmail.com",
+    author_email="contact@dagshub.com",
     description="Command line wrapper for git and dvc",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url="https://github.com/mohithg/furious-flemingo",
+    url="https://github.com/DAGsHub/fds",
     packages=setuptools.find_packages(exclude=("tests",)),
     entry_points={
         'console_scripts': [
