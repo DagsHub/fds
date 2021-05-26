@@ -1,6 +1,7 @@
 # Fast Data Science aka `fds`
 
-[![CircleCI](https://circleci.com/gh/DAGsHub/fds.svg?style=svg)](https://app.circleci.com/pipelines/github/DAGsHub/fds)
+[![Tests](https://github.com/dagshub/fds/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/DAGsHub/fds/actions/workflows/test.yml)
+[![PyPI](https://img.shields.io/pypi/v/fastds.svg)](https://pypi.python.org/pypi/fastds/)
 
 `fds` is a tool for Data Scientists made by [DAGsHub](https://dagshub.com/) to version control data and code at once.
 
@@ -18,7 +19,7 @@ So Data Scientists can use `fds` instead of `git` and `dvc` separately, making d
 
 ## Installation
 
-- Install `fds` using PIP `pip install git+ssh://github.com/DAGsHub/fds.git`
+- Install `fds` using PIP `pip install fastds`
 - Once installed successfully, you can start using `fds`
 - eg: `fds init` should trigger the init command
 
