@@ -25,7 +25,8 @@ def convert_bytes_to_string(bytes_data: bytes) -> str:
     return bytes_data.decode("utf-8")
 
 
-def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool=True) -> Any:
+def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool=True,
+                    ignorable_return_codes: List[int] = [0]) -> Any:
     output = subprocess.run(command, shell=shell, capture_output=capture_output)
     if output.stderr is None or output.stdout is None:
         return
@@ -33,7 +34,7 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
     error_message = convert_bytes_to_string(output.stderr)
     if error_message != '':
         logger.error(error_message)
-    if output.returncode != 0:
+    if output.returncode not in ignorable_return_codes:
         raise Exception(error_message)
     return output
 
