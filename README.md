@@ -52,3 +52,7 @@ data.dvc
 ----
 
 Made with 🐶 by [DAGsHub](https://dagshub.com/).
+
+<div align="center">
+  <a href="https://dagshub.com"><img src="https://raw.githubusercontent.com/DAGsHub/client/master/dagshub_github.png" width=600 alt=""/></a><br><br>
+</div>
