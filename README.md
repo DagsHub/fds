@@ -28,27 +28,6 @@ So Data Scientists can use `fds` instead of `git` and `dvc` separately, making d
 - Once installed successfully, you can start using `fds`
 - eg: `fds init` should trigger the init command
 
-## Docker support
-
-If you want to avoid pip installing `fds` and just use it directly, you can use docker:
-```
-docker run -v "$PWD:/repo" dagshub/fds <supported_command>
-```
-
-Example
-
-```
-➜ docker run -v "$PWD:/repo" dagshub/fds status
-Untracked git files are:
-.dvc/cache/
-.dvc/tmp/
-.gitignore
-data.dvc
-data/
-Untracked dvc files are:
-data.dvc
-```
-
 ----
 
 Made with 🐶 by [DAGsHub](https://dagshub.com/).
