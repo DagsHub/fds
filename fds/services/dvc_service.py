@@ -8,7 +8,7 @@ from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_line_to_file
+    append_line_to_file, check_git_ignore, check_dvc_ignore
 
 
 class DVCService(BaseService):
@@ -48,10 +48,10 @@ class DVCService(BaseService):
         """
         if dir == ".":
             return True
-        git_output = execute_command(["git", "check-ignore", dir], capture_output=True)
+        git_output = check_git_ignore(dir)
         if convert_bytes_to_string(git_output.stdout) != '':
             return True
-        dvc_output = execute_command(["dvc", "check-ignore", dir], capture_output=True)
+        dvc_output = check_dvc_ignore(dir)
         if convert_bytes_to_string(dvc_output.stdout) != '':
             return True
         return False
