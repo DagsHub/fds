@@ -5,7 +5,7 @@ import pygit2
 
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
-from fds.utils import execute_command, convert_bytes_to_string, does_file_exist
+from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore
 
 
 class GitService(BaseService):
@@ -41,9 +41,7 @@ class GitService(BaseService):
         :param add_argument: extra arguments of git add
         :return: 
         """
-        # You can ignore return code 1 too here, because it shows that the file is not ignored
-        # return code 0 is when file is ignored
-        git_output = execute_command(["git", "check-ignore", add_argument], capture_output=True, ignorable_return_codes=[0, 1])
+        git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
             return
         # This will take care of adding everything in the argument to add including the .dvc files inside it

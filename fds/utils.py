@@ -52,3 +52,17 @@ def does_file_exist(filename: str) -> bool:
         return os.path.exists(filename)
     except Exception as e:
         return False
+
+
+def check_git_ignore(filename: str) -> Any:
+    # You can ignore return code 1 too here, because it shows that the file is not ignored
+    # return code 0 is when file is ignored
+    git_output = execute_command(["git", "check-ignore", filename], capture_output=True, ignorable_return_codes=[0, 1])
+    return git_output
+
+
+def check_dvc_ignore(filename: str) -> Any:
+    # You can ignore return code 1 too here, because it shows that the file is not ignored
+    # return code 0 is when file is ignored
+    git_output = execute_command(["dvc", "check-ignore", filename], capture_output=True, ignorable_return_codes=[0, 1])
+    return git_output
