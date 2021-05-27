@@ -41,7 +41,9 @@ class GitService(BaseService):
         :param add_argument: extra arguments of git add
         :return: 
         """
-        git_output = execute_command(["git", "check-ignore", add_argument], capture_output=True)
+        # You can ignore return code 1 too here, because it shows that the file is not ignored
+        # return code 0 is when file is ignored
+        git_output = execute_command(["git", "check-ignore", add_argument], capture_output=True, ignorable_return_codes=[0, 1])
         if convert_bytes_to_string(git_output.stdout) != '':
             return
         # This will take care of adding everything in the argument to add including the .dvc files inside it
