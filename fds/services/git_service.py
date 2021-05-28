@@ -73,7 +73,9 @@ class GitService(BaseService):
             if ref:
                 push_cmd.append(ref)
             else:
-                repo = pygit2.Repository(self.repo_path)
-                curr_branch = repo.head.shorthand
+                check_curr_branch = execute_command(["git", "rev-parse", "--abbrev-ref", "HEAD"])
+                curr_branch = convert_bytes_to_string(check_curr_branch.stdout).rstrip('\n')
+                if curr_branch == '':
+                    raise Exception("No git branch found to push to")
                 push_cmd.append(curr_branch)
         execute_command(push_cmd, capture_output=False)

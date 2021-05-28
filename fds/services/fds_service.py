@@ -103,18 +103,18 @@ class FdsService(object):
         fds push
         """
         try:
-            self.dvc_service.push(remote=dvc_remote)
-            self.printer.warn("Successfully pushed to DVC remote")
-        except Exception as e:
-            self.printer.error(str(e))
-            self.printer.error("DVC push failed to execute")
-            sys.exit(1)
-        try:
             self.git_service.push(remote=git_remote, ref=ref)
             self.printer.success("Successfully pushed to Git remote")
         except Exception as e:
             self.printer.error(str(e))
             self.printer.error("Git push failed to execute")
+            sys.exit(1)
+        try:
+            self.dvc_service.push(remote=dvc_remote)
+            self.printer.warn("Successfully pushed to DVC remote")
+        except Exception as e:
+            self.printer.error(str(e))
+            self.printer.error("DVC push failed to execute")
             sys.exit(1)
 
     def save(self, message: str, git_remote: str, dvc_remote: str):
@@ -129,5 +129,5 @@ class FdsService(object):
             self.printer.success("Successfully saved current workspace")
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("FDS save failed to execute")
+            self.printer.error("fds save failed")
             sys.exit(1)
