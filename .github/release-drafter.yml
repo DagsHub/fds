@@ -19,6 +19,8 @@ categories:
   # Default label used by Dependabot
   - title: '📦 Dependency updates'
     label: 'dependencies'
+  - title: '🎨 UX improvements'
+    label: 'ux'
   - title: '🚦 Tests'
     labels: 
       - 'test'
