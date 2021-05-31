@@ -153,14 +153,14 @@ class DVCService(BaseService):
             execute_command(["dvc", "add", add_to_dvc])
             progress_tracker.next()
         progress_tracker.finish()
+        return "DVC add successfully executed"
 
     def add(self, add_argument: str) -> Any:
         """
         Responsible for adding into dvc
         :return:
         """
-        self.__add(add_argument)
-        return "DVC add successfully executed"
+        return self.__add(add_argument)
 
     def commit(self, auto_confirm: bool) -> Any:
         """
