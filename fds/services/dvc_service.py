@@ -21,6 +21,7 @@ class DVCService(BaseService):
         self.repo_path = os.path.curdir
         self.logger = Logger.get_logger("fds.DVCService")
         self.printer = PrettyPrint()
+        self.selection_message_count = 0
 
     def init(self):
         """
@@ -69,6 +70,10 @@ class DVCService(BaseService):
             dir_size = get_size_of_path(file_or_dir_to_check)
             if dir_size < MAX_THRESHOLD_SIZE:
                 return
+            # Show the message only when files are shown and only once per add
+            if (self.selection_message_count == 0):
+                self.selection_message_count = 1
+                self.printer.warn('========== Make your selection, Press "h" for help ==========')
             choices = [{
                 "key": "d",
                 "name": "Add to DVC",
@@ -116,7 +121,6 @@ class DVCService(BaseService):
                 return
 
     def __add(self, add_argument: str):
-        self.printer.warn('========== Make your selection, Press "h" for help ==========')
         chosen_files_or_folders = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
