@@ -9,7 +9,7 @@ from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_line_to_file, check_git_ignore, check_dvc_ignore
+    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist
 
 
 class DVCService(BaseService):
@@ -27,12 +27,11 @@ class DVCService(BaseService):
         Responsible for running dvc init
         :return:
         """
-        try:
-            execute_command(["dvc", "init"])
-            return True
-        except Exception as e:
-            self.printer.error(str(e))
-            return False
+        # Check if dvc is already initialized
+        if does_file_exist(f"{self.repo_path}/.dvc"):
+            return "DVC already initialized"
+        execute_command(["dvc", "init"])
+        return "DVC initialized successfully"
 
     def status(self) -> Any:
         """
