@@ -23,16 +23,18 @@ class FdsService(object):
         fds init
         """
         # Git init
-        if self.git_service.init():
-            self.printer.success("Git repo initialized successfully")
-        else:
+        try:
+            self.printer.success(self.git_service.init())
+        except Exception as e:
+            self.printer.error(str(e))
             self.printer.error("Git repo failed to initialize")
             sys.exit(1)
         # Dvc init
-        if self.dvc_service.init():
+        try:
+            self.printer.warn(self.dvc_service.init())
+        except Exception as e:
+            self.printer.error(str(e))
             self.printer.success("DVC repo initialized successfully")
-        else:
-            self.printer.error("DVC repo failed to initialize")
             sys.exit(1)
 
     def status(self):

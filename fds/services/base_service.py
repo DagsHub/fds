@@ -5,10 +5,10 @@ class BaseService(object):
     """
     Base Service responsible for all the commands of fds
     """
-    def init(self) -> bool:
+    def init(self) -> Any:
         """
         The init command
-        :return: True if init command executes successfully, else False
+        :return: Success message
         """
         pass
 
