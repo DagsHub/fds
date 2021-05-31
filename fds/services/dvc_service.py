@@ -1,6 +1,7 @@
 import os
 from typing import Any, List, Optional
 import PyInquirer
+from progress.bar import Bar
 
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
@@ -145,8 +146,13 @@ class DVCService(BaseService):
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
+
+        self.printer.warn("Adding to dvc...")
+        progress_tracker = Bar('Processing', max=len(chosen_files_or_folders))
         for add_to_dvc in chosen_files_or_folders:
             execute_command(["dvc", "add", add_to_dvc])
+            progress_tracker.next()
+        progress_tracker.finish()
 
     def add(self, add_argument: str) -> Any:
         """
