@@ -6,6 +6,7 @@ from fds.logger import Logger
 
 # Argument parser stuff
 from fds.run import Run
+from fds.services.pretty_print import PrettyPrint
 
 arg_parser = argparse.ArgumentParser(description="One command for all your git and dvc needs",
                                      prog="fds")
@@ -44,9 +45,14 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
     parsed_args = parse_args(args=args)
+    printer = PrettyPrint()
     if bool(parsed_args["verbose"]):
         Logger.set_logging_level(logging.DEBUG)
-    result = Run(arguments=parsed_args).execute()
+    try:
+        result = Run(arguments=parsed_args).execute()
+    except Exception as e:
+        printer.error(str(e))
+        result = 0
     sys.exit(result)
 
 

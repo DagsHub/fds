@@ -27,15 +27,13 @@ class FdsService(object):
             self.printer.success(self.git_service.init())
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("Git repo failed to initialize")
-            sys.exit(1)
+            raise Exception("Git repo failed to initialize")
         # Dvc init
         try:
             self.printer.warn(self.dvc_service.init())
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.success("DVC repo initialized successfully")
-            sys.exit(1)
+            raise Exception("DVC repo initialized successfully")
 
     def status(self):
         """
@@ -47,16 +45,14 @@ class FdsService(object):
             self.git_service.status()
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("Git status failed to execute")
-            sys.exit(1)
+            raise Exception("Git status failed to execute")
         # Dvc status
         try:
             self.printer.warn("========== DVC repo status ==========")
             self.dvc_service.status()
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("DVC status failed to execute")
-            sys.exit(1)
+            raise Exception("DVC status failed to execute")
 
     def add(self, add_command: str):
         """
@@ -70,16 +66,14 @@ class FdsService(object):
             self.printer.warn(add_msg)
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("DVC add failed to execute")
-            sys.exit(1)
+            raise Exception("DVC add failed to execute")
         # Add remaining to git
         try:
             self.git_service.add(add_command)
             self.printer.success("Git add successfully executed")
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("Git add failed to execute")
-            sys.exit(1)
+            raise Exception("Git add failed to execute")
 
     def commit(self, message: str, yes: bool):
         """
@@ -90,12 +84,10 @@ class FdsService(object):
             self.printer.warn("Successfully committed to DVC")
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("DVC commit failed to execute")
-            sys.exit(1)
+            raise Exception("DVC commit failed to execute")
         try:
             self.git_service.commit(message)
             self.printer.success("Successfully committed to Git")
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("Git commit failed to execute")
-            sys.exit(1)
+            raise Exception("Git commit failed to execute")
