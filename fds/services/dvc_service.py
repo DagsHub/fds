@@ -31,7 +31,7 @@ class DVCService(BaseService):
         # Check if dvc is already initialized
         if does_file_exist(f"{self.repo_path}/.dvc"):
             return "DVC already initialized"
-        execute_command(["dvc", "init"])
+        execute_command(["dvc", "init", "--subdir"])
         return "DVC initialized successfully"
 
     def status(self) -> Any:

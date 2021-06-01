@@ -5,7 +5,7 @@ class BaseService(object):
     """
     Base Service responsible for all the commands of fds
     """
-    def init(self) -> Any:
+    def init(self) -> str:
         """
         The init command
         :return: Success message

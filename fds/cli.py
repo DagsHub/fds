@@ -29,9 +29,9 @@ parser_commit = command_subparser.add_parser('commit', help='commits added chang
 parser_commit.add_argument('-y', "--yes",
                            help="Don't ask for confirmation for committing file changes",
                            action="store_true", default=False)
-parser_commit=parser_commit.add_mutually_exclusive_group()
-parser_commit.add_argument('message', nargs='*', help="commit message", default='')
-parser_commit.add_argument('-m', nargs=1, help="commit message", default='')
+parser_commit_msg_grp = parser_commit.add_mutually_exclusive_group()
+parser_commit_msg_grp.add_argument('message', nargs='*', help="commit message", default='')
+parser_commit_msg_grp.add_argument('-m', nargs=1, help="commit message", default='')
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
