@@ -28,7 +28,7 @@ class TestFds(unittest.TestCase):
         mock_git_service.status.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
         self.assertRaises(Exception, mock_git_service.status)
-        self.assertRaises(SystemExit, fds_service.status)
+        self.assertRaises(Exception, fds_service.status)
         assert mock_git_service.status.called
         assert mock_dvc_service.status.notcalled
 
@@ -37,7 +37,7 @@ class TestFds(unittest.TestCase):
     def test_status_dvc_failure(self, mock_git_service, mock_dvc_service):
         mock_dvc_service.status.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
-        self.assertRaises(SystemExit, fds_service.status)
+        self.assertRaises(Exception, fds_service.status)
         self.assertRaises(Exception, mock_dvc_service.status)
         assert mock_git_service.status.called
         assert mock_dvc_service.status.called
@@ -56,7 +56,7 @@ class TestFds(unittest.TestCase):
         mock_git_service.add.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
         self.assertRaises(Exception, mock_git_service.add)
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(Exception) as cm:
             fds_service.add(".")
         assert mock_git_service.add.called
         assert mock_dvc_service.add.called
@@ -66,7 +66,7 @@ class TestFds(unittest.TestCase):
     def test_add_dvc_failure(self, mock_git_service, mock_dvc_service):
         mock_dvc_service.add.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(Exception) as cm:
             fds_service.add(".")
         self.assertRaises(Exception, mock_dvc_service.add)
         assert mock_dvc_service.add.called
@@ -85,7 +85,7 @@ class TestFds(unittest.TestCase):
     def test_commit_git_failure(self, mock_git_service, mock_dvc_service):
         mock_git_service.commit.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(Exception) as cm:
             fds_service.commit("some commit message", True)
         self.assertRaises(Exception, mock_git_service.commit)
         assert mock_git_service.commit.called
@@ -96,7 +96,7 @@ class TestFds(unittest.TestCase):
     def test_commit_dvc_failure(self, mock_git_service, mock_dvc_service):
         mock_dvc_service.commit.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(Exception) as cm:
             fds_service.commit("some commit message", False)
         self.assertRaises(Exception, mock_dvc_service.commit)
         assert mock_dvc_service.commit.called

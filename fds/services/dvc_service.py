@@ -1,6 +1,7 @@
 import os
 from typing import Any, List, Optional
 import PyInquirer
+from progress.bar import Bar
 
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
@@ -8,7 +9,7 @@ from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_line_to_file, check_git_ignore, check_dvc_ignore
+    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist
 
 
 class DVCService(BaseService):
@@ -20,18 +21,18 @@ class DVCService(BaseService):
         self.repo_path = os.path.curdir
         self.logger = Logger.get_logger("fds.DVCService")
         self.printer = PrettyPrint()
+        self.selection_message_count = 0
 
     def init(self):
         """
         Responsible for running dvc init
         :return:
         """
-        try:
-            execute_command(["dvc", "init"])
-            return True
-        except Exception as e:
-            self.printer.error(str(e))
-            return False
+        # Check if dvc is already initialized
+        if does_file_exist(f"{self.repo_path}/.dvc"):
+            return "DVC already initialized"
+        execute_command(["dvc", "init", "--subdir"])
+        return "DVC initialized successfully"
 
     def status(self) -> Any:
         """
@@ -69,6 +70,10 @@ class DVCService(BaseService):
             dir_size = get_size_of_path(file_or_dir_to_check)
             if dir_size < MAX_THRESHOLD_SIZE:
                 return
+            # Show the message only when files are shown and only once per add
+            if (self.selection_message_count == 0):
+                self.selection_message_count = 1
+                self.printer.warn('========== Make your selection, Press "h" for help ==========')
             choices = [{
                 "key": "d",
                 "name": "Add to DVC",
@@ -116,7 +121,6 @@ class DVCService(BaseService):
                 return
 
     def __add(self, add_argument: str):
-        self.printer.warn('========== Make your selection, Press "h" for help ==========')
         chosen_files_or_folders = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
@@ -145,16 +149,21 @@ class DVCService(BaseService):
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
         if len(chosen_files_or_folders) == 0:
             return "Nothing to add in DVC"
+
+        self.printer.warn("Adding to dvc...")
+        progress_tracker = Bar('Processing', max=len(chosen_files_or_folders))
         for add_to_dvc in chosen_files_or_folders:
             execute_command(["dvc", "add", add_to_dvc])
+            progress_tracker.next()
+        progress_tracker.finish()
+        return "DVC add successfully executed"
 
     def add(self, add_argument: str) -> Any:
         """
         Responsible for adding into dvc
         :return:
         """
-        self.__add(add_argument)
-        return "DVC add successfully executed"
+        return self.__add(add_argument)
 
     def commit(self, auto_confirm: bool) -> Any:
         """
