@@ -52,7 +52,7 @@ def main(args=None):
         result = Run(arguments=parsed_args).execute()
     except Exception as e:
         printer.error(str(e))
-        result = 0
+        result = 1
     sys.exit(result)
 
 
