@@ -15,8 +15,7 @@ class Run(object):
     def __init__(self, arguments: dict):
         self.logger = Logger.get_logger("fds.Run")
         self.arguments = arguments
-        repo_path = os.path.curdir
-        self.service = FdsService(GitService(repo_path), DVCService(repo_path))
+        self.service = FdsService(GitService(), DVCService())
         self.printer = PrettyPrint()
 
     def pre_execute_hook(self):

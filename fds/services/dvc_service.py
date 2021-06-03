@@ -17,8 +17,8 @@ class DVCService(BaseService):
     DVC Service responsible for all the dvc commands of fds
     """
 
-    def __init__(self, repo_path: str):
-        self.repo_path = repo_path
+    def __init__(self):
+        self.repo_path = os.path.curdir
         self.logger = Logger.get_logger("fds.DVCService")
         self.printer = PrettyPrint()
         self.selection_message_count = 0
@@ -128,6 +128,10 @@ class DVCService(BaseService):
             path_to_walk = self.repo_path
         else:
             path_to_walk = f"{self.repo_path}/{add_argument}"
+        # if argument is to add a file
+        if get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
+            # Keep the file in chosen list
+            chosen_files_or_folders = [path_to_walk]
         for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
             # Now skip the un-necessary folders
             [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]

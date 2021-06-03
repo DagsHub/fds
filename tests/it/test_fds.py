@@ -13,5 +13,7 @@ class TestFds(IntegrationTestCase):
         self.fds_service.status()
 
     def test_add(self):
+        self.fds_service.init()
         super().create_fake_git_data()
-        self.fds_service.add(".")
+        super().create_fake_dvc_data()
+        self.fds_service.add("large_file")

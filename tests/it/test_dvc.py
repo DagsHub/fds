@@ -1,4 +1,4 @@
-from fds.utils import does_file_exist, execute_command
+from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
 
 class TestDvc(IntegrationTestCase):
@@ -23,4 +23,20 @@ class TestDvc(IntegrationTestCase):
         self.dvc_service.status()
 
     def test_add(self):
-        
+        self.git_service.init()
+        self.dvc_service.init()
+        super().create_fake_dvc_data()
+        output = execute_command(["git", "status"], capture_output=True)
+        assert f"large_file" in convert_bytes_to_string(output.stdout)
+        msg = self.dvc_service.add("large_file")
+        assert does_file_exist(f"{self.repo_path}/large_file.dvc")
+        assert msg == "DVC add successfully executed"
+
+    def test_add_nothing(self):
+        self.git_service.init()
+        self.dvc_service.init()
+        super().create_fake_dvc_data()
+        output = execute_command(["git", "status"], capture_output=True)
+        msg = self.dvc_service.add(f"dvc_data/file-0")
+        assert msg == "Nothing to add in DVC"
+

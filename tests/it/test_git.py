@@ -1,5 +1,5 @@
 from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
-from tests.it.helpers import IntegrationTestCase
+from tests.it.helpers import IntegrationTestCase, captured_output
 
 
 class TestGit(IntegrationTestCase):
@@ -15,7 +15,10 @@ class TestGit(IntegrationTestCase):
         assert msg == "git already initialized"
 
     def test_status(self):
-        self.git_service.status()
+        with captured_output() as (out, err):
+            self.git_service.status()
+        assert out.getvalue().strip() == ""
+        assert err.getvalue().strip() == ""
 
     def test_add(self):
         self.git_service.init()

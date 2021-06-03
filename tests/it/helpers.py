@@ -1,7 +1,10 @@
 import os
 import shutil
+import sys
 import unittest
 import tempfile
+from io import StringIO
+from contextlib import contextmanager
 from pathlib import Path
 
 from fds.services.dvc_service import DVCService
@@ -14,8 +17,8 @@ class IntegrationTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.repo_path = tempfile.mkdtemp()
-        self.git_service = GitService(self.repo_path)
-        self.dvc_service = DVCService(self.repo_path)
+        self.git_service = GitService()
+        self.dvc_service = DVCService()
         self.fds_service = FdsService(self.git_service, self.dvc_service)
         os.chdir(self.repo_path)
 
@@ -34,3 +37,11 @@ class IntegrationTestCase(unittest.TestCase):
         with open(file_name, 'wb') as fout:
             fout.write(os.urandom(size))
 
+    def create_fake_dvc_data(self):
+        dvc_path = f"{self.repo_path}/dvc_data"
+        Path(dvc_path).mkdir(parents=True, exist_ok=True)
+        # creating a big folder
+        for i in range(0,101):
+            self.create_dummy_file(f"{dvc_path}/file-{i}", 1024)
+        # creating one large file
+        self.create_dummy_file(f"large_file", 11 * 1024 * 1024)

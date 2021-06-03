@@ -12,8 +12,8 @@ class GitService(BaseService):
     """
     Git Service responsible for all the git commands of fds
     """
-    def __init__(self, repo_path: str):
-        self.repo_path = repo_path
+    def __init__(self):
+        self.repo_path = os.path.curdir
         self.printer = PrettyPrint()
 
     def init(self) -> str:
