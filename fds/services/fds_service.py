@@ -33,7 +33,7 @@ class FdsService(object):
             self.printer.warn(self.dvc_service.init())
         except Exception as e:
             self.printer.error(str(e))
-            raise Exception("DVC repo initialized successfully")
+            raise Exception("DVC repo failed to initialize")
 
     def status(self):
         """
