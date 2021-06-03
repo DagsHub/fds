@@ -1,4 +1,3 @@
-import os
 from shutil import which
 import PyInquirer
 
