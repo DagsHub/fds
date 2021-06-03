@@ -17,8 +17,8 @@ class DVCService(BaseService):
     DVC Service responsible for all the dvc commands of fds
     """
 
-    def __init__(self):
-        self.repo_path = os.path.curdir
+    def __init__(self, repo_path: str):
+        self.repo_path = repo_path
         self.logger = Logger.get_logger("fds.DVCService")
         self.printer = PrettyPrint()
         self.selection_message_count = 0

@@ -1,3 +1,4 @@
+import os
 from shutil import which
 import PyInquirer
 
@@ -14,7 +15,8 @@ class Run(object):
     def __init__(self, arguments: dict):
         self.logger = Logger.get_logger("fds.Run")
         self.arguments = arguments
-        self.service = FdsService(GitService(), DVCService())
+        repo_path = os.path.curdir
+        self.service = FdsService(GitService(repo_path), DVCService(repo_path))
         self.printer = PrettyPrint()
 
     def pre_execute_hook(self):
