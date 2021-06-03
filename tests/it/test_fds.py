@@ -11,3 +11,7 @@ class TestFds(IntegrationTestCase):
 
     def test_status(self):
         self.fds_service.status()
+
+    def test_add(self):
+        super().create_fake_git_data()
+        self.fds_service.add(".")

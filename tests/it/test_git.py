@@ -1,4 +1,4 @@
-from fds.utils import does_file_exist, execute_command
+from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
 
 
@@ -16,3 +16,38 @@ class TestGit(IntegrationTestCase):
 
     def test_status(self):
         self.git_service.status()
+
+    def test_add(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        self.git_service.add(".")
+        output = execute_command(["git", "status"], capture_output=True)
+        assert convert_bytes_to_string(output.stderr) == ""
+        assert "new file:   file-0" in convert_bytes_to_string(output.stdout)
+        assert "new file:   file-1" in convert_bytes_to_string(output.stdout)
+        assert "new file:   file-2" in convert_bytes_to_string(output.stdout)
+        assert "new file:   file-3" in convert_bytes_to_string(output.stdout)
+        assert "new file:   file-4" in convert_bytes_to_string(output.stdout)
+
+    def test_add_one(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        self.git_service.add("file-0")
+        output = execute_command(["git", "status"], capture_output=True)
+        assert convert_bytes_to_string(output.stderr) == ""
+        assert "new file:   file-0" in convert_bytes_to_string(output.stdout)
+        assert "Untracked files:" in convert_bytes_to_string(output.stdout)
+        assert "file-1" in convert_bytes_to_string(output.stdout)
+        assert "file-2" in convert_bytes_to_string(output.stdout)
+        assert "file-3" in convert_bytes_to_string(output.stdout)
+        assert "file-4" in convert_bytes_to_string(output.stdout)
+
+    def test_add_gitignore(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        super().create_dummy_file(".gitignore", 100)
+        self.git_service.add("file-0")
+        output = execute_command(["git", "status"], capture_output=True)
+        assert "new file:   file-0" in convert_bytes_to_string(output.stdout)
+        assert "new file:   .gitignore" in convert_bytes_to_string(output.stdout)
+
