@@ -1,4 +1,4 @@
-from fds.utils import does_file_exist, execute_command
+from fds.utils import does_file_exist
 from tests.it.helpers import IntegrationTestCase
 
 
