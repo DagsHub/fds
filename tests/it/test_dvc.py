@@ -36,7 +36,6 @@ class TestDvc(IntegrationTestCase):
         self.git_service.init()
         self.dvc_service.init()
         super().create_fake_dvc_data()
-        output = execute_command(["git", "status"], capture_output=True)
         msg = self.dvc_service.add(f"dvc_data/file-0")
         assert msg == "Nothing to add in DVC"
 
