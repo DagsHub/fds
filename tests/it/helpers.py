@@ -24,10 +24,11 @@ class IntegrationTestCase(unittest.TestCase):
         shutil.rmtree(self.repo_path)
 
     def create_fake_git_data(self):
-        Path(f"{self.repo_path}/git_data").mkdir(parents=True, exist_ok=True)
+        git_path = f"{self.repo_path}/git_data"
+        Path(git_path).mkdir(parents=True, exist_ok=True)
         # Creating 5 random files
         for i in range(0,5):
-            self.create_dummy_file(f"file-{i}", 10)
+            self.create_dummy_file(f"{git_path}/file-{i}", 10)
 
     def create_dummy_file(self, file_name: str, size: int):
         with open(file_name, 'wb') as fout:

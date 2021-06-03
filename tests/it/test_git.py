@@ -23,19 +23,19 @@ class TestGit(IntegrationTestCase):
         self.git_service.add(".")
         output = execute_command(["git", "status"], capture_output=True)
         assert convert_bytes_to_string(output.stderr) == ""
-        assert "new file:   file-0" in convert_bytes_to_string(output.stdout)
-        assert "new file:   file-1" in convert_bytes_to_string(output.stdout)
-        assert "new file:   file-2" in convert_bytes_to_string(output.stdout)
-        assert "new file:   file-3" in convert_bytes_to_string(output.stdout)
-        assert "new file:   file-4" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-2" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
 
     def test_add_one(self):
         self.git_service.init()
         super().create_fake_git_data()
-        self.git_service.add("file-0")
+        self.git_service.add("git_data/file-0")
         output = execute_command(["git", "status"], capture_output=True)
         assert convert_bytes_to_string(output.stderr) == ""
-        assert "new file:   file-0" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
         assert "Untracked files:" in convert_bytes_to_string(output.stdout)
         assert "file-1" in convert_bytes_to_string(output.stdout)
         assert "file-2" in convert_bytes_to_string(output.stdout)
@@ -46,8 +46,8 @@ class TestGit(IntegrationTestCase):
         self.git_service.init()
         super().create_fake_git_data()
         super().create_dummy_file(".gitignore", 100)
-        self.git_service.add("file-0")
+        self.git_service.add("git_data/file-0")
         output = execute_command(["git", "status"], capture_output=True)
-        assert "new file:   file-0" in convert_bytes_to_string(output.stdout)
-        assert "new file:   .gitignore" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   .gitignore" in convert_bytes_to_string(output.stdout)
 

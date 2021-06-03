@@ -21,3 +21,6 @@ class TestDvc(IntegrationTestCase):
 
     def test_status(self):
         self.dvc_service.status()
+
+    def test_add(self):
+        
