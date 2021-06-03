@@ -13,3 +13,6 @@ class TestGit(IntegrationTestCase):
         assert does_file_exist(f"{self.repo_path}/.git") is True
         msg = self.git_service.init()
         assert msg == "git already initialized"
+
+    def test_status(self):
+        self.git_service.status()

@@ -19,3 +19,5 @@ class TestDvc(IntegrationTestCase):
         # Without git, dvc initialization fails without --no-scm
         self.assertRaises(Exception, self.dvc_service.init)
 
+    def test_status(self):
+        self.dvc_service.status()
