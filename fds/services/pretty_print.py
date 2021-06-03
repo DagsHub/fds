@@ -4,7 +4,7 @@ from colorama import Fore
 class PrettyPrint(object):
 
     def __init__(self):
-        init()
+        init(autoreset=True)
 
     def warn(self, text: str):
         print(Fore.YELLOW + text)

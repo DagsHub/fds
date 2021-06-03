@@ -27,7 +27,11 @@ def convert_bytes_to_string(bytes_data: bytes) -> str:
 
 def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool=True,
                     ignorable_return_codes: List[int] = [0]) -> Any:
-    output = subprocess.run(command, shell=shell, capture_output=capture_output)
+    if capture_output:
+        # capture_output is not available in python 3.6, so using PIPE manually
+        output = subprocess.run(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    else:
+        output = subprocess.run(command, shell=shell)
     if output.stderr is None or output.stdout is None:
         return
     logger = Logger.get_logger("fds")
