@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 from typing import Any, List, Optional
 import PyInquirer
 from progress.bar import Bar
@@ -10,6 +11,14 @@ from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist
+
+
+# Choices for DVC
+class DvcChoices(Enum):
+    ADD_TO_DVC = "Add to DVC"
+    ADD_TO_GIT = "Add to Git"
+    IGNORE = "Ignore"
+    STEP_INTO = "Step Into"
 
 
 class DVCService(BaseService):
@@ -65,6 +74,40 @@ class DVCService(BaseService):
             if self.__should_skip_list_add(dir):
                 dirs.remove(d)
 
+    @staticmethod
+    def _get_choice(file_or_dir_to_check: str, dir_size: int, type: str) -> dict:
+        choices = [{
+            "key": "d",
+            "name": "Add to DVC",
+            "value": DvcChoices.ADD_TO_DVC
+        },{
+            "key": "g",
+            "name": "Add to Git",
+            "value": DvcChoices.ADD_TO_GIT
+        },{
+            "key": "i",
+            "name": "Ignore - Add to .gitignore",
+            "value": DvcChoices.IGNORE
+        }]
+        if os.path.isdir(file_or_dir_to_check):
+            choices.append({
+                "key": "s",
+                "name": "Step Into",
+                "value": DvcChoices.STEP_INTO
+            })
+
+        questions = [
+            {
+                "type": "expand",
+                "message": f"What would you like to do with {type} {file_or_dir_to_check} of {convert_bytes_to_readable(dir_size)}?",
+                "name": "selection_choice",
+                "choices": choices,
+                "default": DvcChoices.ADD_TO_DVC
+            }
+        ]
+        answers = PyInquirer.prompt(questions)
+        return answers
+
     def __get_to_add_to_dvc(self, file_or_dir_to_check: str, dirs: List[str], type: str) -> Optional[str]:
         if not self.__should_skip_list_add(file_or_dir_to_check):
             dir_size = get_size_of_path(file_or_dir_to_check)
@@ -74,45 +117,16 @@ class DVCService(BaseService):
             if (self.selection_message_count == 0):
                 self.selection_message_count = 1
                 self.printer.warn('========== Make your selection, Press "h" for help ==========')
-            choices = [{
-                "key": "d",
-                "name": "Add to DVC",
-                "value": "Add to DVC"
-            },{
-                "key": "g",
-                "name": "Add to Git",
-                "value": "Add to Git"
-            },{
-                "key": "i",
-                "name": "Ignore - Add to .gitignore",
-                "value": "Ignore"
-            }]
-            if os.path.isdir(file_or_dir_to_check):
-                choices.append({
-                    "key": "s",
-                    "name": "Step Into",
-                    "value": "Step Into"
-                })
-
-            questions = [
-                {
-                    "type": "expand",
-                    "message": f"What would you like to do with {type} {file_or_dir_to_check} of {convert_bytes_to_readable(dir_size)}?",
-                    "name": "selection_choice",
-                    "choices": choices,
-                    "default": "Add to DVC"
-                }
-            ]
-            answers = PyInquirer.prompt(questions)
+            answers = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check, dir_size=dir_size, type=type)
             if answers["selection_choice"] == "Add to DVC":
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return file_or_dir_to_check
-            elif answers["selection_choice"] == "Add to Git":
+            elif answers["selection_choice"] == DvcChoices.ADD_TO_GIT:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
-            elif answers["selection_choice"] == "Ignore":
+            elif answers["selection_choice"] == DvcChoices.IGNORE:
                 # We should ignore the ./ in beginning when adding to gitignore
                 # Add files to gitignore
                 append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
