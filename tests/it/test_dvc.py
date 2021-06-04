@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+from fds.services.dvc_service import DvcChoices
 from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
 
@@ -39,3 +42,15 @@ class TestDvc(IntegrationTestCase):
         msg = self.dvc_service.add(f"dvc_data/file-0")
         assert msg == "Nothing to add in DVC"
 
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE})
+    def test_add_check_ignore(self, get_choice):
+        self.git_service.init()
+        self.dvc_service.init()
+        super().create_fake_dvc_data()
+        output = execute_command(["git", "status"], capture_output=True)
+        assert f"large_file" in convert_bytes_to_string(output.stdout)
+        assert does_file_exist(f".gitignore") is False
+        msg = self.dvc_service.add(".")
+        assert does_file_exist(f"{self.repo_path}/large_file.dvc")
+        assert does_file_exist(f".gitignore") is True
+        assert msg == "DVC add successfully executed"

@@ -118,21 +118,22 @@ class DVCService(BaseService):
                 self.selection_message_count = 1
                 self.printer.warn('========== Make your selection, Press "h" for help ==========')
             answers = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check, dir_size=dir_size, type=type)
-            if answers["selection_choice"] == "Add to DVC":
+            if answers["selection_choice"].value == DvcChoices.ADD_TO_DVC.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return file_or_dir_to_check
-            elif answers["selection_choice"] == DvcChoices.ADD_TO_GIT:
+            elif answers["selection_choice"].value == DvcChoices.ADD_TO_GIT.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
-            elif answers["selection_choice"] == DvcChoices.IGNORE:
+            elif answers["selection_choice"].value == DvcChoices.IGNORE.value:
                 # We should ignore the ./ in beginning when adding to gitignore
                 # Add files to gitignore
                 append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return
+        return
 
     def __add(self, add_argument: str):
         chosen_files_or_folders = []
@@ -143,7 +144,7 @@ class DVCService(BaseService):
         else:
             path_to_walk = f"{self.repo_path}/{add_argument}"
         # if argument is to add a file
-        if get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
+        if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
             # Keep the file in chosen list
             chosen_files_or_folders = [path_to_walk]
         for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
