@@ -76,12 +76,22 @@ class TestDvc(IntegrationTestCase):
         assert f"large_file.dvc" in convert_bytes_to_string(output.stdout)
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
-    def test_commit(self, get_choice):
+    def test_commit_auto_confirm(self, get_choice):
         self.fds_service.init()
         super().create_fake_dvc_data()
-        self.fds_service.add(".")
-        self.fds_service.commit("Commit 1", False)
-        output = execute_command(["git", "log", "--oneline"], capture_output=True)
-        assert "Commit 1" in convert_bytes_to_string(output.stdout)
+        self.dvc_service.add(".")
+        self.dvc_service.commit(False)
+        super().create_fake_dvc_data()
+        self.dvc_service.add(".")
+        self.dvc_service.commit(True)
+        output = execute_command(["dvc", "dag"], capture_output=True)
+        assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
+
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    def test_commit_no_auto_confirm(self, get_choice):
+        self.fds_service.init()
+        super().create_fake_dvc_data()
+        self.dvc_service.add(".")
+        self.dvc_service.commit(False)
         output = execute_command(["dvc", "dag"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)

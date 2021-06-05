@@ -51,3 +51,11 @@ class TestGit(IntegrationTestCase):
         assert f"new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
         assert f"new file:   .gitignore" in convert_bytes_to_string(output.stdout)
 
+    def test_commit(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        self.git_service.add(".")
+        self.git_service.commit("Commit 1")
+        output = execute_command(["git", "log", "--oneline"], capture_output=True)
+        assert "Commit 1" in convert_bytes_to_string(output.stdout)
+
