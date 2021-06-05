@@ -44,8 +44,7 @@ class TestDvc(IntegrationTestCase):
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE.value})
     def test_add_check_ignore(self, get_choice):
-        self.git_service.init()
-        self.dvc_service.init()
+        self.fds_service.init()
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert f"large_file" in convert_bytes_to_string(output.stdout)
@@ -55,3 +54,23 @@ class TestDvc(IntegrationTestCase):
         assert msg == "Nothing to add in DVC"
         output = execute_command(["git", "status"], capture_output=True)
         assert f"large_file" not in convert_bytes_to_string(output.stdout)
+
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_GIT.value})
+    def test_add_check_add_git(self, get_choice):
+        self.fds_service.init()
+        super().create_fake_dvc_data()
+        output = execute_command(["git", "status"], capture_output=True)
+        assert f"large_file" in convert_bytes_to_string(output.stdout)
+        msg = self.dvc_service.add(".")
+        assert msg == "Nothing to add in DVC"
+
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    def test_add_check_add_dvc(self, get_choice):
+        self.fds_service.init()
+        super().create_fake_dvc_data()
+        output = execute_command(["git", "status"], capture_output=True)
+        assert f"large_file" in convert_bytes_to_string(output.stdout)
+        msg = self.dvc_service.add(".")
+        assert msg == "DVC add successfully executed"
+        output = execute_command(["git", "status"], capture_output=True)
+        assert f"large_file.dvc" in convert_bytes_to_string(output.stdout)
