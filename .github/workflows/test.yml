@@ -30,7 +30,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
         pip install 'dvc<3'
-        export MAX_THRESHOLD_SIZE=10240
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -43,4 +42,5 @@ jobs:
         git config --global user.name "Your Name"
     - name: Test with pytest
       run: |
+        export MAX_THRESHOLD_SIZE=10240
         pytest
