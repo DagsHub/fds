@@ -109,9 +109,16 @@ class DVCService(BaseService):
         return answers
 
     def __get_to_add_to_dvc(self, file_or_dir_to_check: str, dirs: List[str], type: str) -> Tuple[Optional[str], Optional[str]]:
+        """
+        Returns the tuple (file/folder to be added to dvc, folder to be ignored)
+        :param file_or_dir_to_check: File or folder to check if its to be added or ignored
+        :param dirs: folders in the current walk
+        :param type: Type indicating whether its file or Dir
+        :return: (file/folder to be added to dvc, folder to be ignored)
+        """
         if not self.__should_skip_list_add(file_or_dir_to_check):
             path_size = get_size_of_path(file_or_dir_to_check)
-            # Dont need to traverse deep in case of dir
+            # Dont need to traverse deep in case of dir, if the dir is below the threshold size
             if path_size < MAX_THRESHOLD_SIZE:
                 if os.path.isdir(file_or_dir_to_check):
                     return None, file_or_dir_to_check
