@@ -44,11 +44,12 @@ class TestFds(IntegrationTestCase):
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
         output = execute_command(["dvc", "dag"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
-        commit_hash = os.listdir(".dvc/cache")
         super().create_fake_dvc_data()
-        self.fds_service.commit("Commit 1", True)
-        new_commit_hash = os.listdir(".dvc/cache")
-        assert len(commit_hash) != len(new_commit_hash)
+        self.fds_service.commit("Commit 2", True)
+        output = execute_command(["git", "log", "--oneline"], capture_output=True)
+        assert "Commit 2" in convert_bytes_to_string(output.stdout)
+        output = execute_command(["git", "diff", "--raw", "HEAD~1"], capture_output=True)
+        assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
 
     def test_commit_git(self):
         self.fds_service.init()
