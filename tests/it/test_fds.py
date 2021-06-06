@@ -24,7 +24,14 @@ class TestFds(IntegrationTestCase):
         super().create_fake_dvc_data()
         self.fds_service.add(".")
         output = execute_command(["git", "status"], capture_output=True)
+        # Check DVC add
         assert f"new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
+        # Check Git add
+        assert f"new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-2" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
+        assert f"new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit(self, get_choice):

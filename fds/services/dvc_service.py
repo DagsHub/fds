@@ -1,6 +1,6 @@
 import os
 from enum import Enum
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 import PyInquirer
 from progress.bar import Bar
 
@@ -108,14 +108,14 @@ class DVCService(BaseService):
         answers = PyInquirer.prompt(questions)
         return answers
 
-    def __get_to_add_to_dvc(self, file_or_dir_to_check: str, dirs: List[str], type: str, skipped_dirs: List[str]) -> Optional[str]:
+    def __get_to_add_to_dvc(self, file_or_dir_to_check: str, dirs: List[str], type: str) -> Tuple[Optional[str], Optional[str]]:
         if not self.__should_skip_list_add(file_or_dir_to_check):
             path_size = get_size_of_path(file_or_dir_to_check)
             # Dont need to traverse deep in case of dir
             if path_size < MAX_THRESHOLD_SIZE:
                 if os.path.isdir(file_or_dir_to_check):
-                    skipped_dirs.append(file_or_dir_to_check)
-                return
+                    return None, file_or_dir_to_check
+                return None, None
             # Show the message only when files are shown and only once per add
             if (self.selection_message_count == 0):
                 self.selection_message_count = 1
@@ -124,19 +124,19 @@ class DVCService(BaseService):
             if answers["selection_choice"] == DvcChoices.ADD_TO_DVC.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
-                return file_or_dir_to_check
+                return file_or_dir_to_check, None
             elif answers["selection_choice"] == DvcChoices.ADD_TO_GIT.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
-                return
+                return None, None
             elif answers["selection_choice"] == DvcChoices.IGNORE.value:
                 # We should ignore the ./ in beginning when adding to gitignore
                 # Add files to gitignore
                 append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
-                return
-        return
+                return None, None
+        return None, None
 
     def __add(self, add_argument: str):
         chosen_files_or_folders = []
@@ -158,7 +158,9 @@ class DVCService(BaseService):
             # Skip the already added files/folders
             self.__skip_already_added(root, dirs)
             # First check root
-            folder_to_add = self.__get_to_add_to_dvc(root, dirs, "Dir", skipped_dirs)
+            (folder_to_add, skipped_dir) = self.__get_to_add_to_dvc(root, dirs, "Dir")
+            if skipped_dir is not None:
+                skipped_dirs.append(skipped_dir)
             if folder_to_add is not None:
                 chosen_files_or_folders.append(folder_to_add)
             else:
@@ -170,7 +172,9 @@ class DVCService(BaseService):
                     continue
                 # Then check files
                 for file in files:
-                    file_to_add = self.__get_to_add_to_dvc(f"{root}/{file}", [], "File", skipped_dirs)
+                    (file_to_add, skipped_dir) = self.__get_to_add_to_dvc(f"{root}/{file}", [], "File")
+                    if skipped_dir is not None:
+                        skipped_dirs.append(skipped_dir)
                     if file_to_add is not None:
                         chosen_files_or_folders.append(file_to_add)
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
