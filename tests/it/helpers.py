@@ -1,10 +1,7 @@
 import os
 import shutil
-import sys
 import unittest
 import tempfile
-from io import StringIO
-from contextlib import contextmanager
 from pathlib import Path
 
 from fds.services.dvc_service import DVCService
@@ -42,6 +39,6 @@ class IntegrationTestCase(unittest.TestCase):
         Path(dvc_path).mkdir(parents=True, exist_ok=True)
         # creating a big folder
         for i in range(0,101):
-            self.create_dummy_file(f"{dvc_path}/file-{i}", 1024)
+            self.create_dummy_file(f"{dvc_path}/file-{i}", 10)
         # creating one large file
-        self.create_dummy_file(f"large_file", 11 * 1024 * 1024)
+        self.create_dummy_file(f"large_file", 11 * 1024)
