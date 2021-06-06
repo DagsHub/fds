@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 from fds.services.dvc_service import DvcChoices
@@ -86,6 +87,11 @@ class TestDvc(IntegrationTestCase):
         self.dvc_service.commit(True)
         output = execute_command(["dvc", "dag"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
+        commit_hash = os.listdir(".dvc/cache")
+        super().create_fake_dvc_data()
+        self.fds_service.commit("Commit 1", True)
+        new_commit_hash = os.listdir(".dvc/cache")
+        assert len(commit_hash) != len(new_commit_hash)
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit_no_auto_confirm(self, get_choice):
