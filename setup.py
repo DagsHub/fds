@@ -9,7 +9,7 @@ except Exception:
 with open('requirements.txt') as f:
     requirements = f.readlines()
 
-version = "0.1.3"
+version = "0.1.4"
 
 setuptools.setup(
     name="fastds",
