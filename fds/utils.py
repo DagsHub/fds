@@ -25,15 +25,20 @@ def convert_bytes_to_string(bytes_data: bytes) -> str:
     return bytes_data.decode("utf-8")
 
 
-def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool=True) -> Any:
-    output = subprocess.run(command, shell=shell, capture_output=capture_output)
+def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool=True,
+                    ignorable_return_codes: List[int] = [0]) -> Any:
+    if capture_output:
+        # capture_output is not available in python 3.6, so using PIPE manually
+        output = subprocess.run(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    else:
+        output = subprocess.run(command, shell=shell)
     if output.stderr is None or output.stdout is None:
         return
     logger = Logger.get_logger("fds")
     error_message = convert_bytes_to_string(output.stderr)
     if error_message != '':
         logger.error(error_message)
-    if output.returncode != 0:
+    if output.returncode not in ignorable_return_codes:
         raise Exception(error_message)
     return output
 
@@ -51,3 +56,17 @@ def does_file_exist(filename: str) -> bool:
         return os.path.exists(filename)
     except Exception as e:
         return False
+
+
+def check_git_ignore(filename: str) -> Any:
+    # You can ignore return code 1 too here, because it shows that the file is not ignored
+    # return code 0 is when file is ignored
+    git_output = execute_command(["git", "check-ignore", filename], capture_output=True, ignorable_return_codes=[0, 1])
+    return git_output
+
+
+def check_dvc_ignore(filename: str) -> Any:
+    # You can ignore return code 1 too here, because it shows that the file is not ignored
+    # return code 0 is when file is ignored
+    git_output = execute_command(["dvc", "check-ignore", filename], capture_output=True, ignorable_return_codes=[0, 1])
+    return git_output

@@ -67,8 +67,14 @@ class Run(object):
             self.service.add(arguments["add_command"])
             return 0
         elif arguments["command"] == Commands.COMMIT.value:
+            if len(arguments.get("message", [])) == 1:
+                message = arguments["message"][0]
+            elif len(arguments.get("m", [])) == 1:
+                message = arguments["m"][0]
+            else:
+                raise Exception("Enter a valid commit message")
             # Run commit command stuff
-            self.service.commit(arguments["message"], arguments['yes'])
+            self.service.commit(message, arguments['yes'])
             return 0
         elif arguments["command"] == Commands.PUSH.value:
             # Run push command stuff

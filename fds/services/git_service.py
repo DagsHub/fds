@@ -5,7 +5,7 @@ import pygit2
 
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
-from fds.utils import execute_command, convert_bytes_to_string, does_file_exist
+from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore
 
 
 class GitService(BaseService):
@@ -16,17 +16,16 @@ class GitService(BaseService):
         self.repo_path = os.path.curdir
         self.printer = PrettyPrint()
 
-    def init(self) -> bool:
+    def init(self) -> str:
         """
         Responsible for running git init
         :return:
         """
-        try:
-            pygit2.init_repository(self.repo_path)
-            return True
-        except Exception as e:
-            self.printer.error(str(e))
-            return False
+        # Check if git is already initialized
+        if does_file_exist(f"{self.repo_path}/.git"):
+            return "git already initialized"
+        pygit2.init_repository(self.repo_path)
+        return "git initialized successfully"
 
     def status(self) -> Any:
         """
@@ -41,7 +40,7 @@ class GitService(BaseService):
         :param add_argument: extra arguments of git add
         :return: 
         """
-        git_output = execute_command(["git", "check-ignore", add_argument], capture_output=True)
+        git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
             return
         # This will take care of adding everything in the argument to add including the .dvc files inside it

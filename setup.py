@@ -9,22 +9,23 @@ except Exception:
 with open('requirements.txt') as f:
     requirements = f.readlines()
 
-version = "0.0.7"
+version = "0.1.4"
 
 setuptools.setup(
-    name="FDS",
+    name="fastds",
     version=version,
-    author="Mohith G",
+    author="DAGsHub",
     license='MIT License',
-    author_email="mohithgm@gmail.com",
+    author_email="contact@dagshub.com",
     description="Command line wrapper for git and dvc",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url="https://github.com/mohithg/furious-flemingo",
+    url="https://github.com/DAGsHub/fds",
     packages=setuptools.find_packages(exclude=("tests",)),
     entry_points={
         'console_scripts': [
-            'fds=fds.cli:main'
+            'fds=fds.cli:main',
+            'sdf=fds.cli:main'
         ]
     },
     install_requires=requirements,
