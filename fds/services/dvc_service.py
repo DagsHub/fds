@@ -10,7 +10,7 @@ from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist
+    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, is_url, get_dvc_repo_name_from_url
 
 
 # Choices for DVC
@@ -229,9 +229,13 @@ class DVCService(BaseService):
             push_cmd.append(remote)
         execute_command(push_cmd, capture_output=False)
 
-    def pull(self, remote: str) -> Any:
+    def pull(self, remote_url_or_name: str) -> Any:
         """
         Responsible for pulling the latest changes from DVC remote based on dvc.yaml and .dvc files
+        :param remote_url_or_name: Remote dvc url or name to pull the dvc repository
         :return:
         """
-        execute_command(["dvc", "pull", "-r", remote], capture_output=False)
+        if is_url(remote_url_or_name):
+            execute_command(["dvc", "get", remote_url_or_name, get_dvc_repo_name_from_url(remote_url_or_name)], capture_output=False)
+        else:
+            execute_command(["dvc", "pull", "-r", remote_url_or_name], capture_output=False)

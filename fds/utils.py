@@ -77,3 +77,18 @@ def get_git_repo_name_from_url(url: str) -> str:
     """
     git_repo_name = url.split("/")[-1]
     return git_repo_name.split(".git")[0]
+
+
+def get_dvc_repo_name_from_url(url: str) -> str:
+    """
+    Get the dvc repository name from the url
+    :param url: The git repository url (either https or ssh)
+    :return: The repository name
+    """
+    dvc_repo_name = url.split("/")[-1]
+    return dvc_repo_name.split(".dvc")[0]
+
+
+def is_url(url: str) -> bool:
+    import validators
+    return validators.url(url)
