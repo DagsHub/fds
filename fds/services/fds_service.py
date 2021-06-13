@@ -81,7 +81,7 @@ class FdsService(object):
         """
         # First performs git clone using the url
         # Then pulls the dvc repository based on the
-        # dvc.yaml file in the git repository
+        # dvc.yaml and .dvc files in the git repository
         try:
             self.git_service.clone(url)
             self.printer.success("Git clone successfully executed")

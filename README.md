@@ -16,13 +16,13 @@ At a high level, `fds` is a command line wrapper around Git and [DVC](https://dv
 =======
 ## Commands Supported
 
-| Syntax | Description                                      | Status      |
-|--------|--------------------------------------------------|-------------|
-| init   | Initializes git and dvc                          | Done        |
-| status | Get status of git and dvc                        | Done        |
-| add    | Add files to be tracked by git and dvc           | Done        |
-| commit | Commit tracked files to git commit and dvc cache | Done        |
-| clone  | Clones from git repository and pulls from dvc    | Done        |
+| Syntax | Description                                              | Status      |
+|--------|----------------------------------------------------------|-------------|
+| init   | Initializes git and dvc                                  | Done        |
+| status | Get status of git and dvc                                | Done        |
+| add    | Add files to be tracked by git and dvc                   | Done        |
+| commit | Commit tracked files to git commit and dvc cache         | Done        |
+| clone  | Clones from git repository and pulls from dvc remote     | Done        |
 
 ## Installation
 

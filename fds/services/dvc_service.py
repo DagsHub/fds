@@ -231,7 +231,7 @@ class DVCService(BaseService):
 
     def pull(self) -> Any:
         """
-        Responsible for pulling the latest changes from DVC remote based on dvc.yaml
+        Responsible for pulling the latest changes from DVC remote based on dvc.yaml and .dvc files
         :return:
         """
         execute_command(["dvc", "pull"], capture_output=False)
