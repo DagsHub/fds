@@ -100,15 +100,13 @@ class FdsService(object):
             self.printer.success("Successfully pushed to Git remote")
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("Git push failed to execute")
-            sys.exit(1)
+            raise Exception("Git push failed to execute")
         try:
             self.dvc_service.push(remote=dvc_remote)
             self.printer.warn("Successfully pushed to DVC remote")
         except Exception as e:
             self.printer.error(str(e))
-            self.printer.error("DVC push failed to execute")
-            sys.exit(1)
+            raise Exception("DVC push failed to execute")
 
     def save(self, message: str, git_remote: str, dvc_remote: str):
         """
