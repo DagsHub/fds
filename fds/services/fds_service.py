@@ -74,7 +74,31 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("Git add failed to execute")
 
+    def clone(self, url: str):
+        """
+        fds clone
+        input: url - The url to clone the git repository
+        """
+        # First performs git clone using the url
+        # Then pulls the dvc repository based on the
+        # dvc.yaml file in the git repository
+        try:
+            self.git_service.clone(url)
+            self.printer.success("Git clone successfully executed")
+        except Exception as e:
+            self.printer.error(str(e))
+            raise Exception("Git clone failed to execute")
+        # Now pull the dvc repository
+        try:
+            self.dvc_service.pull()
+        except Exception as e:
+            self.printer.error(str(e))
+            raise Exception("DVC pull failed to execute")
+
     def commit(self, message: str, yes: bool = True):
+        """
+        fds commit
+        """
         try:
             self.dvc_service.commit(yes)
             self.printer.warn("Successfully committed to DVC")

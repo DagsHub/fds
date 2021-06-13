@@ -66,6 +66,10 @@ class Run(object):
             # Run add command stuff
             self.service.add(arguments["add_command"])
             return 0
+        elif arguments["command"] == Commands.CLONE.value:
+            # Run clone command stuff
+            self.service.clone(arguments["url"])
+            return 0
         elif arguments["command"] == Commands.COMMIT.value:
             if len(arguments.get("message", [])) == 1:
                 message = arguments["message"][0]

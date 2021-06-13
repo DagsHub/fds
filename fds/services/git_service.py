@@ -55,3 +55,6 @@ class GitService(BaseService):
                     raise Exception("No git branch found to push to")
                 push_cmd.append(curr_branch)
         execute_command(push_cmd, capture_output=False)
+
+    def clone(self, url: str) -> Any:
+        execute_command(["git", "clone", url], capture_output=False)

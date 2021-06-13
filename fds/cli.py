@@ -33,6 +33,7 @@ parser_commit_msg_grp = parser_commit.add_mutually_exclusive_group()
 parser_commit_msg_grp.add_argument('message', nargs='*', help="commit message", default='')
 parser_commit_msg_grp.add_argument('-m', nargs=1, help="commit message", default='')
 
+<<<<<<< HEAD
 # push
 parser_push = command_subparser.add_parser(
     'push',
@@ -53,6 +54,10 @@ parser_save = command_subparser.add_parser(
 parser_save.add_argument('-gr', '--git-remote', help="git remote name, default 'origin'", default="origin")
 parser_save.add_argument('-dr', '--dvc-remote', help="dvc remote name, default 'origin'", default="origin")
 parser_save.add_argument('message', help="save message")
+
+# clone
+parser_clone = command_subparser.add_parser('clone', help='clone git repository and pull dvc repository based on dvc.yaml')
+parser_clone.add_argument('url', help="url of the git repository")
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
