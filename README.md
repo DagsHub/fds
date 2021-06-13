@@ -13,6 +13,16 @@
 At a high level, `fds` is a command line wrapper around Git and [DVC](https://dvc.org), meant to minimize the chances of human error, automate repetitive tasks, and provide a smoother landing for new users.
 
 [See the launch blog](https://dagshub.com/blog/fds-fast-data-science-with-git-and-dvc) for more information about the motivation behind this project.
+=======
+## Commands Supported
+
+| Syntax | Description                                      | Status      |
+|--------|--------------------------------------------------|-------------|
+| init   | Initializes git and dvc                          | Done        |
+| status | Get status of git and dvc                        | Done        |
+| add    | Add files to be tracked by git and dvc           | Done        |
+| commit | Commit tracked files to git commit and dvc cache | Done        |
+| clone  | Clones from git repository and pulls from dvc    | Done        |
 
 ## Installation
 
