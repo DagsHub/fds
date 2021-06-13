@@ -229,9 +229,9 @@ class DVCService(BaseService):
             push_cmd.append(remote)
         execute_command(push_cmd, capture_output=False)
 
-    def pull(self) -> Any:
+    def pull(self, remote: str) -> Any:
         """
         Responsible for pulling the latest changes from DVC remote based on dvc.yaml and .dvc files
         :return:
         """
-        execute_command(["dvc", "pull"], capture_output=False)
+        execute_command(["dvc", "pull", "-r", remote], capture_output=False)

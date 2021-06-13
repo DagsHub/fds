@@ -58,3 +58,6 @@ class GitService(BaseService):
 
     def clone(self, url: str) -> Any:
         execute_command(["git", "clone", url], capture_output=False)
+        # Todo: Also support getting the directory to clone from the user
+        git_repo_name = url.split("/")[-1]
+        return git_repo_name.split(".git")[0]

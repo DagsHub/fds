@@ -34,17 +34,18 @@ class BaseService(object):
         """
         pass
 
-    def clone(self, url: str) -> Any:
+    def clone(self, url: str) -> str:
         """
         The clone command
         @param url: The remote url to clone
-        :return: Nothing
+        :return: The directory name to which the repo is cloned
         """
         pass
 
-    def pull(self) -> Any:
+    def pull(self, remote: str) -> Any:
         """
         Pulls the repository (latest changes) from remote
+        @param remote: The remote name to pull
         :return: Nothing
         """
         pass

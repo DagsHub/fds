@@ -1,3 +1,5 @@
+import os
+
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
@@ -83,14 +85,18 @@ class FdsService(object):
         # Then pulls the dvc repository based on the
         # dvc.yaml and .dvc files in the git repository
         try:
-            self.git_service.clone(url)
+            repo_path = self.git_service.clone(url)
             self.printer.success("Git clone successfully executed")
         except Exception as e:
             self.printer.error(str(e))
             raise Exception("Git clone failed to execute")
+        # Go into the git directory
+        os.chdir(repo_path)
         # Now pull the dvc repository
+        # Todo: Also support getting dvc remote name from user
         try:
-            self.dvc_service.pull()
+            remote = "origin"
+            self.dvc_service.pull(remote)
         except Exception as e:
             self.printer.error(str(e))
             raise Exception("DVC pull failed to execute")
