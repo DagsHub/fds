@@ -98,3 +98,9 @@ class TestDvc(IntegrationTestCase):
         self.dvc_service.commit(False)
         output = execute_command(["dvc", "dag"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
+
+    def test_clone(self):
+        self.fds_service.clone("https://dagshub.com/Dean/hello-world.git")
+        self.repo_path = f"{self.repo_path}/hello-world"
+        # Checking dvc pull
+        assert does_file_exist(f"{self.repo_path}/data")
