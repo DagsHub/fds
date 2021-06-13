@@ -24,7 +24,8 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=("tests",)),
     entry_points={
         'console_scripts': [
-            'fds=fds.cli:main'
+            'fds=fds.cli:main',
+            'fsd=fds.cli:main'
         ]
     },
     install_requires=requirements,
