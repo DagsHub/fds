@@ -1,9 +1,10 @@
 import os
-from typing import Any
+from typing import Any, Optional
 
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
-from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore
+from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore, \
+    get_git_repo_name_from_url
 
 
 class GitService(BaseService):
@@ -56,8 +57,7 @@ class GitService(BaseService):
                 push_cmd.append(curr_branch)
         execute_command(push_cmd, capture_output=False)
 
-    def clone(self, url: str) -> Any:
-        execute_command(["git", "clone", url], capture_output=False)
-        # Todo: Also support getting the directory to clone from the user
-        git_repo_name = url.split("/")[-1]
-        return git_repo_name.split(".git")[0]
+    def clone(self, url: str, folder_name: Optional[str]) -> Any:
+        if folder_name is None or folder_name == "":
+            folder_name = get_git_repo_name_from_url(url)
+        execute_command(["git", "clone", url, folder_name], capture_output=False)

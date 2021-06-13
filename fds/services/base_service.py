@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 
 class BaseService(object):
@@ -34,10 +34,11 @@ class BaseService(object):
         """
         pass
 
-    def clone(self, url: str) -> str:
+    def clone(self, url: str, folder_name: Optional[str]) -> str:
         """
         The clone command
         @param url: The remote url to clone
+        @param Optional[folder_name]: Optional folder_name to clone into, if not provided then name from url is used
         :return: The directory name to which the repo is cloned
         """
         pass

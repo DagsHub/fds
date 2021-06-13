@@ -58,6 +58,7 @@ parser_save.add_argument('message', help="save message")
 # clone
 parser_clone = command_subparser.add_parser('clone', help='clone git repository and pull dvc repository based on dvc.yaml')
 parser_clone.add_argument('url', help="url of the git repository")
+parser_clone.add_argument('folder_name', help="The folder to clone into", default="")
 
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",

@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
@@ -76,7 +77,8 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("Git add failed to execute")
 
-    def clone(self, url: str):
+
+    def clone(self, url: str, folder_name: Optional[str]):
         """
         fds clone
         input: url - The url to clone the git repository
@@ -85,7 +87,7 @@ class FdsService(object):
         # Then pulls the dvc repository based on the
         # dvc.yaml and .dvc files in the git repository
         try:
-            repo_path = self.git_service.clone(url)
+            repo_path = self.git_service.clone(url, folder_name)
             self.printer.success("Git clone successfully executed")
         except Exception as e:
             self.printer.error(str(e))
