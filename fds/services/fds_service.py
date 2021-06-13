@@ -98,7 +98,7 @@ class FdsService(object):
         os.chdir(repo_path)
         # Now pull the dvc repository
         try:
-            self.dvc_service.pull(dvc_url_or_origin)
+            self.dvc_service.pull(url, dvc_url_or_origin)
         except Exception as e:
             self.printer.error(str(e))
             raise Exception("DVC pull failed to execute")

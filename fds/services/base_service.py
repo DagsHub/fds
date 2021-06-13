@@ -43,10 +43,11 @@ class BaseService(object):
         """
         pass
 
-    def pull(self, remote: str) -> Any:
+    def pull(self, git_url: str, remote: Optional[str]) -> Any:
         """
         Pulls the repository (latest changes) from remote
-        @param remote: The remote name to pull
+        @param git_url: git url provided
+        @param remote: Optional remote name/url to pull
         :return: Nothing
         """
         pass

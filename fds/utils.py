@@ -92,3 +92,11 @@ def get_dvc_repo_name_from_url(url: str) -> str:
 def is_url(url: str) -> bool:
     import validators
     return validators.url(url)
+
+def construct_dvc_url_from_git_url_dagshub(git_url: str) -> str:
+    """
+    Construct the dvc url from the git url, given the git url is from DagsHub
+    :param git_url: The git url provided
+    :return: The dvc url
+    """
+    return git_url.replace(".git", ".dvc")

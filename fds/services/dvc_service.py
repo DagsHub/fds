@@ -10,7 +10,8 @@ from fds.logger import Logger
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, is_url, get_dvc_repo_name_from_url
+    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, is_url, get_dvc_repo_name_from_url, \
+    construct_dvc_url_from_git_url_dagshub
 
 
 # Choices for DVC
@@ -229,12 +230,72 @@ class DVCService(BaseService):
             push_cmd.append(remote)
         execute_command(push_cmd, capture_output=False)
 
-    def pull(self, remote_url_or_name: str) -> Any:
+    @staticmethod
+    def __get_remotes_list() -> dict:
+        config_list_cmd = execute_command(["dvc", "remote", "list"], capture_output=True)
+        raw_config_list = convert_bytes_to_string(config_list_cmd).split("\n")
+        config_list_dict = {}
+        for config_list in raw_config_list:
+            remote_name_with_url = config_list.split(" ")
+            config_list_dict[remote_name_with_url[0]] = str(remote_name_with_url[1])
+        return config_list_dict
+
+    @staticmethod
+    def __show_choice_of_remotes(remotes: dict) -> str:
+        questions = [
+            {
+                'type': 'list',
+                'name': 'remote',
+                'message': 'Choose the remote to use for pulling dvc repo?',
+                'choices': remotes.keys()
+            }
+        ]
+        answers = PyInquirer.prompt(questions)
+        return answers["remote"]
+
+
+    def __find_url_of_remote_from_dvc_config(self, remote_name: str) -> str:
+        config_list_cmd = execute_command(["dvc", "remote", "list"], capture_output=True)
+        raw_config_list = convert_bytes_to_string(config_list_cmd).split("\n")
+        config_list_dict = {}
+        for config_list in raw_config_list:
+            remote_name_with_url = config_list.split(" ")
+            config_list_dict[remote_name_with_url[0]] = str(remote_name_with_url[1])
+        return config_list_dict[remote_name]
+
+
+    def pull(self, git_url: str, remote_url_or_name: Optional[str]) -> Any:
         """
         Responsible for pulling the latest changes from DVC remote based on dvc.yaml and .dvc files
-        :param remote_url_or_name: Remote dvc url or name to pull the dvc repository
+        :param git_url: The git url provided
+        :param remote_url_or_name: Optional Remote dvc url or name to pull the dvc repository
         :return:
         """
+        if remote_url_or_name is None:
+            #If nothing is specified
+            #First check if its dagshub repo
+            if "dagshub" in git_url.lower():
+                # then construct a dagshub url from the git url
+                dvc_url = construct_dvc_url_from_git_url_dagshub(git_url)
+                # find it from the remote
+                remote_list = DVCService.__get_remotes_list()
+                for remote, url in remote_list.items():
+                    if url == dvc_url:
+                        remote_url_or_name = url
+                remote_url_or_name="dagshub"
+                # if url is not in remote, then add it to remote and use that remote
+                execute_command(["dvc", "remote", "add", remote_url_or_name, dvc_url])
+            else:
+                # If its not dagshub url, then check if there exists a default remote
+                default_remote_cmd = execute_command(["dvc", "remote", "default"], capture_output=True)
+                default_remote = convert_bytes_to_string(default_remote_cmd.stdout).strip()
+                if default_remote == "" or "No default remote set":
+                    # No default remote defined
+                    # So show all the remotes to user and let user choose
+                    remote_url_or_name=DVCService.__show_choice_of_remotes(DVCService.__get_remotes_list())
+                else:
+                    remote_url_or_name=default_remote
+
         if is_url(remote_url_or_name):
             execute_command(["dvc", "get", remote_url_or_name, get_dvc_repo_name_from_url(remote_url_or_name)], capture_output=False)
         else:
