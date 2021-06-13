@@ -61,3 +61,4 @@ class GitService(BaseService):
         if folder_name is None or folder_name == "":
             folder_name = get_git_repo_name_from_url(url)
         execute_command(["git", "clone", url, folder_name], capture_output=False)
+        return folder_name
