@@ -68,7 +68,7 @@ class Run(object):
             return 0
         elif arguments["command"] == Commands.CLONE.value:
             # Run clone command stuff
-            self.service.clone(arguments["url"], arguments.get("folder_name"))
+            self.service.clone(arguments["url"], arguments.get("folder_name")[0])
             return 0
         elif arguments["command"] == Commands.COMMIT.value:
             if len(arguments.get("message", [])) == 1:
