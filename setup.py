@@ -25,7 +25,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'fds=fds.cli:main',
-            'fsd=fds.cli:main'
+            'sdf=fds.cli:main'
         ]
     },
     install_requires=requirements,
