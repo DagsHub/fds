@@ -57,3 +57,11 @@ class TestFds(IntegrationTestCase):
         self.fds_service.commit("Commit 1", False)
         output = execute_command(["git", "log", "--oneline"], capture_output=True)
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
+
+    def test_clone(self):
+        self.fds_service.clone("https://dagshub.com/Dean/hello-world.git")
+        self.repo_path = f"{self.repo_path}/hello-world"
+        # Check git clone
+        assert does_file_exist(self.repo_path)
+        # Checking dvc pull
+        assert does_file_exist(f"{self.repo_path}/data")
