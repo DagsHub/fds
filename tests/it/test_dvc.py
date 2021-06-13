@@ -101,6 +101,6 @@ class TestDvc(IntegrationTestCase):
 
     def test_clone(self):
         self.fds_service.clone(self.get_remote_url_for_test())
-        self.repo_path = f"{self.repo_path}/hello-world"
+        assert does_file_exist(f"{self.repo_path}/hello-world")
         # Checking dvc pull
-        assert does_file_exist(f"{self.repo_path}/data")
+        assert does_file_exist(f"{self.repo_path}hello-world/data")

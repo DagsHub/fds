@@ -60,7 +60,7 @@ class TestGit(IntegrationTestCase):
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
 
     def test_clone(self):
-        self.fds_service.clone(self.get_remote_url_for_test())
+        self.git_service.clone(self.get_remote_url_for_test())
         self.repo_path = f"{self.repo_path}/hello-world"
         # Check git clone
         assert does_file_exist(self.repo_path)
