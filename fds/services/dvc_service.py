@@ -233,36 +233,28 @@ class DVCService(BaseService):
     @staticmethod
     def __get_remotes_list() -> dict:
         config_list_cmd = execute_command(["dvc", "remote", "list"], capture_output=True)
-        raw_config_list = convert_bytes_to_string(config_list_cmd).split("\n")
+        raw_config_list = convert_bytes_to_string(config_list_cmd.stdout).split("\n")
         config_list_dict = {}
         for config_list in raw_config_list:
-            remote_name_with_url = config_list.split(" ")
-            config_list_dict[remote_name_with_url[0]] = str(remote_name_with_url[1])
+            remote_name_with_url = config_list.split("\t")
+            if (len(remote_name_with_url) == 2):
+                config_list_dict[remote_name_with_url[0]] = str(remote_name_with_url[1])
         return config_list_dict
 
     @staticmethod
     def __show_choice_of_remotes(remotes: dict) -> str:
+        choices = list(remotes.keys())
+        choices.append("Cancel Pull")
         questions = [
             {
                 'type': 'list',
                 'name': 'remote',
                 'message': 'Choose the remote to use for pulling dvc repo?',
-                'choices': remotes.keys()
+                'choices': choices
             }
         ]
         answers = PyInquirer.prompt(questions)
         return answers["remote"]
-
-
-    def __find_url_of_remote_from_dvc_config(self, remote_name: str) -> str:
-        config_list_cmd = execute_command(["dvc", "remote", "list"], capture_output=True)
-        raw_config_list = convert_bytes_to_string(config_list_cmd).split("\n")
-        config_list_dict = {}
-        for config_list in raw_config_list:
-            remote_name_with_url = config_list.split(" ")
-            config_list_dict[remote_name_with_url[0]] = str(remote_name_with_url[1])
-        return config_list_dict[remote_name]
-
 
     def pull(self, git_url: str, remote_url_or_name: Optional[str]) -> Any:
         """
@@ -292,7 +284,11 @@ class DVCService(BaseService):
                 if default_remote == "" or "No default remote set":
                     # No default remote defined
                     # So show all the remotes to user and let user choose
-                    remote_url_or_name=DVCService.__show_choice_of_remotes(DVCService.__get_remotes_list())
+                    remote_list = DVCService.__get_remotes_list()
+                    remote_url_or_name=DVCService.__show_choice_of_remotes(remote_list)
+                    # If the user chooses to cancel pull
+                    if remote_url_or_name not in remote_list:
+                        return 0
                 else:
                     remote_url_or_name=default_remote
 
