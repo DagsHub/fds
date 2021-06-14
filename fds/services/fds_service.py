@@ -115,6 +115,8 @@ class FdsService(object):
         try:
             self.add(".")
             self.commit(message)
+            # TODO: add autodetect of remotes, ask users if they want to set a remote,
+            #  and then push to default remotes, instead of manually entering remote names.
             self.push(git_remote, dvc_remote)
             self.printer.success("====================================")
             self.printer.success("Successfully saved current workspace")

@@ -17,10 +17,6 @@ class GitService(BaseService):
         self.printer = PrettyPrint()
 
     def init(self) -> str:
-        """
-        Responsible for running git init
-        :return:
-        """
         # Check if git is already initialized
         if does_file_exist(f"{self.repo_path}/.git"):
             return "git already initialized"
@@ -28,18 +24,9 @@ class GitService(BaseService):
         return "git initialized successfully"
 
     def status(self) -> Any:
-        """
-        Responsible for running git status
-        :return:
-        """
         return execute_command(["git", "status"], capture_output=False)
 
     def add(self, add_argument: str) -> Any:
-        """
-        Responsible for running git add
-        :param add_argument: extra arguments of git add
-        :return: 
-        """
         git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
             return
@@ -54,18 +41,9 @@ class GitService(BaseService):
             execute_command(["git", "add", ignore_file])
 
     def commit(self, message: str) -> Any:
-        """
-        Commit to Git
-        :param message: Commit message
-        :return:
-        """
         execute_command(["git", "commit", "-am", message], capture_output=False)
 
     def push(self, remote: str, ref: str) -> Any:
-        """
-        Push commits to Git remote
-        :return:
-        """
         push_cmd = ["git", "push"]
         if remote:
             push_cmd.append(remote)
