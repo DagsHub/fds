@@ -75,9 +75,6 @@ class FdsService(object):
             raise Exception("Git add failed to execute")
 
     def commit(self, message: str, yes: bool = True):
-        """
-        fds commit
-        """
         try:
             self.dvc_service.commit(yes)
             self.printer.warn("Successfully committed to DVC")
@@ -109,17 +106,10 @@ class FdsService(object):
             raise Exception("DVC push failed to execute")
 
     def save(self, message: str, git_remote: str, dvc_remote: str):
-        """
-        fds save
-        """
-        try:
-            self.add(".")
-            self.commit(message)
-            # TODO: add autodetect of remotes, ask users if they want to set a remote,
-            #  and then push to default remotes, instead of manually entering remote names.
-            self.push(git_remote, dvc_remote)
-            self.printer.success("====================================")
-            self.printer.success("Successfully saved current workspace")
-        except Exception as e:
-            self.printer.error(str(e))
-            raise Exception("Git commit failed to execute")
+        self.add(".")
+        self.commit(message)
+        # TODO: add autodetect of remotes, ask users if they want to set a remote,
+        #  and then push to default remotes, instead of manually entering remote names.
+        self.push(git_remote, dvc_remote)
+        self.printer.success("====================================")
+        self.printer.success("Successfully saved current workspace")
