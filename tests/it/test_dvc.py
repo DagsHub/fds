@@ -118,15 +118,16 @@ class TestDvc(IntegrationTestCase):
 
     @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
     def test_clone_show_remotes_list(self, get_choice):
-        url = "git@github.com:iterative/example-get-started.git"
+        url = "https://github.com/iterative/example-get-started.git"
         folder_name = self.git_service.clone(url, None)
         os.chdir(folder_name)
         self.dvc_service.pull(url, None)
-        assert does_file_exist(f"{self.repo_path}/example-get-started/data/model.pkl")
+        assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
 
+    @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
     def test_clone_given_remote(self, get_choice):
-        url = "git@github.com:iterative/example-get-started.git"
+        url = "https://github.com/iterative/example-get-started.git"
         folder_name = self.git_service.clone(url, None)
         os.chdir(folder_name)
         self.dvc_service.pull(url, "storage")
-        assert does_file_exist(f"{self.repo_path}/example-get-started/data/model.pkl")
+        assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")

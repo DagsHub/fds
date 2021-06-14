@@ -90,7 +90,6 @@ class FdsService(object):
         # dvc.yaml and .dvc files in the git repository
         try:
             repo_path = self.git_service.clone(url, folder_name)
-            self.printer.success("Git clone successfully executed")
         except Exception as e:
             self.printer.error(str(e))
             raise Exception("Git clone failed to execute")
