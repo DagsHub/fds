@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from fds.services.dvc_service import DvcChoices
-from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
+from fds.utils import does_file_exist, execute_command, convert_bytes_to_string, construct_dvc_url_from_git_url_dagshub
 from tests.it.helpers import IntegrationTestCase
 
 
@@ -104,3 +104,29 @@ class TestDvc(IntegrationTestCase):
         assert does_file_exist(f"{self.repo_path}/hello-world")
         # Checking dvc pull
         assert does_file_exist(f"{self.repo_path}/hello-world/data")
+    def test_clone_with_remote_name(self):
+        folder_name = self.git_service.clone(self.get_remote_url_for_test(), None)
+        os.chdir(folder_name)
+        self.dvc_service.pull(self.get_remote_url_for_test(), "origin")
+        assert does_file_exist(f"{self.repo_path}/hello-world/data")
+
+    def test_clone_dagshub_url(self):
+        folder_name = self.git_service.clone(self.get_remote_url_for_test(), None)
+        os.chdir(folder_name)
+        self.dvc_service.pull(self.get_remote_url_for_test(), None)
+        assert does_file_exist(f"{self.repo_path}/hello-world/data")
+
+    @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
+    def test_clone_show_remotes_list(self, get_choice):
+        url = "git@github.com:iterative/example-get-started.git"
+        folder_name = self.git_service.clone(url, None)
+        os.chdir(folder_name)
+        self.dvc_service.pull(url, None)
+        assert does_file_exist(f"{self.repo_path}/example-get-started/data/model.pkl")
+
+    def test_clone_given_remote(self, get_choice):
+        url = "git@github.com:iterative/example-get-started.git"
+        folder_name = self.git_service.clone(url, None)
+        os.chdir(folder_name)
+        self.dvc_service.pull(url, "storage")
+        assert does_file_exist(f"{self.repo_path}/example-get-started/data/model.pkl")

@@ -242,7 +242,7 @@ class DVCService(BaseService):
         return config_list_dict
 
     @staticmethod
-    def __show_choice_of_remotes(remotes: dict) -> str:
+    def _show_choice_of_remotes(remotes: dict) -> str:
         choices = list(remotes.keys())
         choices.append("Cancel Pull")
         questions = [
@@ -266,17 +266,18 @@ class DVCService(BaseService):
         if remote_url_or_name is None:
             #If nothing is specified
             #First check if its dagshub repo
-            if "dagshub" in git_url.lower():
+            if "dagshub.com" in git_url.lower():
                 # then construct a dagshub url from the git url
                 dvc_url = construct_dvc_url_from_git_url_dagshub(git_url)
                 # find it from the remote
                 remote_list = DVCService.__get_remotes_list()
                 for remote, url in remote_list.items():
                     if url == dvc_url:
-                        remote_url_or_name = url
-                remote_url_or_name="dagshub"
-                # if url is not in remote, then add it to remote and use that remote
-                execute_command(["dvc", "remote", "add", remote_url_or_name, dvc_url])
+                        remote_url_or_name = remote
+                if remote_url_or_name is None:
+                    # if url is not in remote, then add it to remote and use that remote
+                    remote_url_or_name="dagshub"
+                    execute_command(["dvc", "remote", "add", remote_url_or_name, dvc_url])
             else:
                 # If its not dagshub url, then check if there exists a default remote
                 default_remote_cmd = execute_command(["dvc", "remote", "default"], capture_output=True)
@@ -285,7 +286,7 @@ class DVCService(BaseService):
                     # No default remote defined
                     # So show all the remotes to user and let user choose
                     remote_list = DVCService.__get_remotes_list()
-                    remote_url_or_name=DVCService.__show_choice_of_remotes(remote_list)
+                    remote_url_or_name=DVCService._show_choice_of_remotes(remote_list)
                     # If the user chooses to cancel pull
                     if remote_url_or_name not in remote_list:
                         return 0
