@@ -33,7 +33,6 @@ parser_commit_msg_grp = parser_commit.add_mutually_exclusive_group()
 parser_commit_msg_grp.add_argument('message', nargs='*', help="commit message", default='')
 parser_commit_msg_grp.add_argument('-m', nargs=1, help="commit message", default='')
 
-<<<<<<< HEAD
 # push
 parser_push = command_subparser.add_parser(
     'push',
