@@ -138,3 +138,6 @@ config/config*.yaml
 
 # Mac stuff
 .DS_Store
+
+# Other
+example/
