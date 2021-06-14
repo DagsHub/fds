@@ -26,18 +26,20 @@ At a high level, `fds` is a command line wrapper around Git and [DVC](https://dv
 
 ```
 $ fds -h
-usage: fds [-h] [-v] {init,status,add,commit} ...
+usage: fds [-h] [-v] {init,status,add,commit,push,save} ...
 
 One command for all your git and dvc needs
 
 positional arguments:
-  {init,status,add,commit}
+  {init,status,add,commit,push,save}
                         command (refer commands section in documentation)
     init                initialize a git and dvc repository
     status              get status of your git and dvc repository
     add                 add files/folders to git and dvc repository
     commit              commits added changes to git and dvc repository
-
+    push                push commits to remote git and dvc repository
+    save                saves all project files to a new version and pushes
+                        them to your remote
 ```
 
 ## Examples
