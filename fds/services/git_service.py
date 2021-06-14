@@ -43,7 +43,8 @@ class GitService(BaseService):
     def commit(self, message: str) -> Any:
         execute_command(["git", "commit", "-am", message], capture_output=False)
 
-    def push(self, remote: str, ref: str) -> Any:
+    @staticmethod
+    def push(remote: str, ref: str) -> Any:
         push_cmd = ["git", "push"]
         if remote:
             push_cmd.append(remote)
