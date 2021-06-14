@@ -50,41 +50,42 @@ class DVCService(BaseService):
         """
         return execute_command(["dvc", "status"], capture_output=False)
 
-    def __should_skip_list_add(self, dir: str) -> bool:
+    @staticmethod
+    def __should_skip_list_add(directory: str) -> bool:
         """
         Check if the given dir should be skipped or not
-        :param dir: the name of the dir
+        :param directory: the name of the dir
         :return: True if we should skip, else return False
         """
-        if dir == ".":
+        if directory == ".":
             return True
-        git_output = check_git_ignore(dir)
+        git_output = check_git_ignore(directory)
         if convert_bytes_to_string(git_output.stdout) != '':
             return True
-        dvc_output = check_dvc_ignore(dir)
+        dvc_output = check_dvc_ignore(directory)
         if convert_bytes_to_string(dvc_output.stdout) != '':
             return True
         return False
 
     def __skip_already_added(self, root, dirs) -> None:
-        # Check if current file is git ignored (this is very similar to adding to dvc also, because as soon as we
-        # add to dvc it gets ignored)
+        # Check if current file is git ignored (this is very similar to adding to dvc also,
+        # because as soon as we add to dvc it gets ignored)
         for d in dirs:
-            dir = f"{root}/{d}"
-            if self.__should_skip_list_add(dir):
+            directory = f"{root}/{d}"
+            if self.__should_skip_list_add(directory):
                 dirs.remove(d)
 
     @staticmethod
-    def _get_choice(file_or_dir_to_check: str, path_size: int, type: str) -> dict:
+    def _get_choice(file_or_dir_to_check: str, path_size: int, file_dir_type: str) -> dict:
         choices = [{
             "key": "d",
             "name": "Add to DVC",
             "value": DvcChoices.ADD_TO_DVC.value
-        },{
+        }, {
             "key": "g",
             "name": "Add to Git",
             "value": DvcChoices.ADD_TO_GIT.value
-        },{
+        }, {
             "key": "i",
             "name": "Ignore - Add to .gitignore",
             "value": DvcChoices.IGNORE.value
@@ -99,7 +100,8 @@ class DVCService(BaseService):
         questions = [
             {
                 "type": "expand",
-                "message": f"What would you like to do with {type} {file_or_dir_to_check} of {convert_bytes_to_readable(path_size)}?",
+                "message": f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
+                           f"{convert_bytes_to_readable(path_size)}?",
                 "name": "selection_choice",
                 "choices": choices,
                 "default": DvcChoices.ADD_TO_DVC.value
@@ -108,12 +110,15 @@ class DVCService(BaseService):
         answers = PyInquirer.prompt(questions)
         return answers
 
-    def __get_to_add_to_dvc(self, file_or_dir_to_check: str, dirs: List[str], type: str) -> Tuple[Optional[str], Optional[str]]:
+    def __get_to_add_to_dvc(self,
+                            file_or_dir_to_check: str,
+                            dirs: List[str],
+                            file_dir_type: str) -> Tuple[Optional[str], Optional[str]]:
         """
         Returns the tuple (file/folder to be added to dvc, folder to be ignored)
         :param file_or_dir_to_check: File or folder to check if its to be added or ignored
         :param dirs: folders in the current walk
-        :param type: Type indicating whether its file or Dir
+        :param file_dir_type: Type indicating whether its file or Dir
         :return: (file/folder to be added to dvc, folder to be ignored)
         """
         if not self.__should_skip_list_add(file_or_dir_to_check):
@@ -124,10 +129,12 @@ class DVCService(BaseService):
                     return None, file_or_dir_to_check
                 return None, None
             # Show the message only when files are shown and only once per add
-            if (self.selection_message_count == 0):
+            if self.selection_message_count == 0:
                 self.selection_message_count = 1
                 self.printer.warn('========== Make your selection, Press "h" for help ==========')
-            answers = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check, path_size=path_size, type=type)
+            answers = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check,
+                                             path_size=path_size,
+                                             file_dir_type=file_dir_type)
             if answers["selection_choice"] == DvcChoices.ADD_TO_DVC.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
@@ -139,7 +146,8 @@ class DVCService(BaseService):
             elif answers["selection_choice"] == DvcChoices.IGNORE.value:
                 # We should ignore the ./ in beginning when adding to gitignore
                 # Add files to gitignore
-                append_line_to_file(".gitignore", file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
+                append_line_to_file(".gitignore",
+                                    file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return None, None
@@ -171,9 +179,12 @@ class DVCService(BaseService):
             if folder_to_add is not None:
                 chosen_files_or_folders.append(folder_to_add)
             else:
-                # Only if they dont select the directory then ask for files, otherwise ignore asking about files of the directory
-                # We are also showing if the user chooses to skip becuase the user might not know there is a large file
-                # in the directory and choose skip because he dont want the entire directory to be added.
+                # Only if they dont select the directory then ask for files,
+                # otherwise ignore asking about files of the directory
+                # We are also showing if the user chooses to skip because the user
+                # might not know there is a large file in the directory and choose skip
+                # because he doesn't want the entire directory to be added.
+
                 # If the root is skipped because it is below threshold size then we don't need to check files
                 if root in skipped_dirs:
                     continue
@@ -197,20 +208,23 @@ class DVCService(BaseService):
         return "DVC add successfully executed"
 
     def add(self, add_argument: str) -> Any:
-        """
-        Responsible for adding into dvc
-        :return:
-        """
         return self.__add(add_argument)
 
     def commit(self, auto_confirm: bool) -> Any:
         """
         Responsible for committing into DVC
         :param auto_confirm: commit all changed files without confirmation
-        :return:
         """
         # In case something is added by user and not committed, we will take care of it
         commit_cmd = ["dvc", "commit", "-q"]
         if auto_confirm:
             commit_cmd.append("-f")
         execute_command(commit_cmd, capture_output=False)
+
+    @staticmethod
+    def push(remote: str) -> Any:
+        push_cmd = ["dvc", "push"]
+        if remote:
+            push_cmd.append("-r")
+            push_cmd.append(remote)
+        execute_command(push_cmd, capture_output=False)

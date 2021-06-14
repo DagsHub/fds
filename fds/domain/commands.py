@@ -7,6 +7,8 @@ class Commands(Enum):
     STATUS = "status"
     ADD = "add"
     COMMIT = "commit"
+    PUSH = "push"
+    SAVE = "save"
 
 class AddCommands(Enum):
     ALL = "."

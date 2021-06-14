@@ -17,10 +17,6 @@ class GitService(BaseService):
         self.printer = PrettyPrint()
 
     def init(self) -> str:
-        """
-        Responsible for running git init
-        :return:
-        """
         # Check if git is already initialized
         if does_file_exist(f"{self.repo_path}/.git"):
             return "git already initialized"
@@ -28,18 +24,9 @@ class GitService(BaseService):
         return "git initialized successfully"
 
     def status(self) -> Any:
-        """
-        Responsible for running git status
-        :return:
-        """
         return execute_command(["git", "status"], capture_output=False)
 
     def add(self, add_argument: str) -> Any:
-        """
-        Responsible for running git add
-        :param add_argument: extra arguments of git add
-        :return: 
-        """
         git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
             return
@@ -55,3 +42,18 @@ class GitService(BaseService):
 
     def commit(self, message: str) -> Any:
         execute_command(["git", "commit", "-am", message], capture_output=False)
+
+    @staticmethod
+    def push(remote: str, ref: str) -> Any:
+        push_cmd = ["git", "push"]
+        if remote:
+            push_cmd.append(remote)
+            if ref:
+                push_cmd.append(ref)
+            else:
+                check_curr_branch = execute_command(["git", "rev-parse", "--abbrev-ref", "HEAD"])
+                curr_branch = convert_bytes_to_string(check_curr_branch.stdout).rstrip('\n')
+                if curr_branch == '':
+                    raise Exception("No git branch found to push to")
+                push_cmd.append(curr_branch)
+        execute_command(push_cmd, capture_output=False)
