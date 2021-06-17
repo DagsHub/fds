@@ -1,8 +1,6 @@
 import os
 from typing import Any
 
-import pygit2
-
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore
@@ -20,7 +18,7 @@ class GitService(BaseService):
         # Check if git is already initialized
         if does_file_exist(f"{self.repo_path}/.git"):
             return "git already initialized"
-        pygit2.init_repository(self.repo_path)
+        execute_command(['git', 'init', self.repo_path])
         return "git initialized successfully"
 
     def status(self) -> Any:
