@@ -110,8 +110,7 @@ class TestFds(unittest.TestCase):
         with self.assertRaises(Exception) as cm:
             fds_service.clone("https://github.com/dagshub/fds.git", None, None)
         self.assertRaises(Exception, mock_dvc_service.pull)
-        assert mock_git_service.clone.called
-        assert mock_dvc_service.pull.called
+        mock_git_service.clone.assert_called_with("https://github.com/dagshub/fds.git", None)
 
     @patch('fds.services.dvc_service.DVCService')
     @patch('fds.services.git_service.GitService')
@@ -121,5 +120,4 @@ class TestFds(unittest.TestCase):
         with self.assertRaises(Exception) as cm:
             fds_service.clone("https://github.com/dagshub/fds.git", None, None)
         self.assertRaises(Exception, mock_git_service.clone)
-        assert mock_git_service.clone.called
         assert mock_dvc_service.pull.notcalled

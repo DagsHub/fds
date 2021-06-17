@@ -14,16 +14,6 @@ At a high level, `fds` is a command line wrapper around Git and [DVC](https://dv
 
 [See the launch blog](https://dagshub.com/blog/fds-fast-data-science-with-git-and-dvc) for more information about the motivation behind this project.
 =======
-## Commands Supported
-
-| Syntax | Description                                              | Status      |
-|--------|----------------------------------------------------------|-------------|
-| init   | Initializes git and dvc                                  | Done        |
-| status | Get status of git and dvc                                | Done        |
-| add    | Add files to be tracked by git and dvc                   | Done        |
-| commit | Commit tracked files to git commit and dvc cache         | Done        |
-| clone  | Clones from git repository and pulls from dvc remote     | Done        |
-
 ## Installation
 
 - Install `fds` using PIP `pip install fastds`
@@ -47,6 +37,7 @@ positional arguments:
     status              get status of your git and dvc repository
     add                 add files/folders to git and dvc repository
     commit              commits added changes to git and dvc repository
+    clone               Clones from git repository and pulls from dvc remote
     push                push commits to remote git and dvc repository
     save                saves all project files to a new version and pushes
                         them to your remote

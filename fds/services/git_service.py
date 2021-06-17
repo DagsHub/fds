@@ -1,13 +1,12 @@
 import os
 from typing import Any, Optional
 
-from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore, \
     get_git_repo_name_from_url
 
 
-class GitService(BaseService):
+class GitService(object):
     """
     Git Service responsible for all the git commands of fds
     """

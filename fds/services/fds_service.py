@@ -78,12 +78,12 @@ class FdsService(object):
             raise Exception("Git add failed to execute")
 
 
-    def clone(self, url: str, folder_name: Optional[str], dvc_url_or_remote: Optional[str]):
+    def clone(self, url: str, folder_name: Optional[str], dvc_remote: Optional[str]):
         """
         fds clone
         input: url - The url to clone the git repository
         input: folder_name - Optional folder name to clone git repo into
-        input: dvc_url_or_remote - Optional url to pull dvc repository, or dvc remote name to use to pull
+        input: dvc_remote - Optional dvc remote name to use to pull
         """
         # First performs git clone using the url
         # Then pulls the dvc repository based on the
@@ -97,7 +97,7 @@ class FdsService(object):
         os.chdir(repo_path)
         # Now pull the dvc repository
         try:
-            self.dvc_service.pull(url, dvc_url_or_remote)
+            self.dvc_service.pull(url, dvc_remote)
         except Exception as e:
             self.printer.error(str(e))
             raise Exception("DVC pull failed to execute")
