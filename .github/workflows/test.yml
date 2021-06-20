@@ -34,18 +34,13 @@ jobs:
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Save exit code into variable
-        retVal=$?
-        if [ $retVal -ne 0 ]; then
-            exit $retVal
-        fi
-        # The GitHub editor is 127 chars wide
-        flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
-        # Save exit code into variable
-        retVal=$?
-        if [ $retVal -ne 0 ]; then
-            exit $retVal
-        fi
+        # The GitHub editor is 127 chars wide and save output to variable
+        OUTPUT=$(flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics)
+        echo "$OUTPUT"
+        # Take last line of output
+        count=$(echo "$OUTPUT" | tail -1)
+        # Fail test explicitly if count >= 10
+        if [[ $count -ge 10 ]]; then exit $count; fi
     - name: Setup env for tests
       run: |
         git config --global user.email "you@example.com"
