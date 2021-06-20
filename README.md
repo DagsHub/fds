@@ -1,4 +1,4 @@
-# ![Fast Data Science](https://user-images.githubusercontent.com/18662887/122681354-821f8680-d1fc-11eb-9c72-575d66ff0c3b.png) aka `fds`
+# [![Fast Data Science](https://user-images.githubusercontent.com/18662887/122681354-821f8680-d1fc-11eb-9c72-575d66ff0c3b.png) aka `fds`](http://fastds.io)
 
 [![Discord](https://img.shields.io/discord/698874030052212737)](https://discord.com/invite/9gU36Y6)
 [![Tests](https://github.com/dagshub/fds/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/DAGsHub/fds/actions/workflows/test.yml)
