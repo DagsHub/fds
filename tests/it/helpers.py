@@ -27,7 +27,7 @@ class IntegrationTestCase(unittest.TestCase):
         git_path = f"{self.repo_path}/git_data"
         Path(git_path).mkdir(parents=True, exist_ok=True)
         # Creating 5 random files
-        for i in range(0,5):
+        for i in range(0, 5):
             self.create_dummy_file(f"{git_path}/file-{i}", 10)
 
     def create_dummy_file(self, file_name: str, size: int):
@@ -38,7 +38,7 @@ class IntegrationTestCase(unittest.TestCase):
         dvc_path = f"{self.repo_path}/dvc_data"
         Path(dvc_path).mkdir(parents=True, exist_ok=True)
         # creating a big folder
-        for i in range(0,101):
+        for i in range(0, 101):
             self.create_dummy_file(f"{dvc_path}/file-{i}", 10)
         # creating one large file
-        self.create_dummy_file(f"large_file", 11 * 1024)
+        self.create_dummy_file("large_file", 11 * 1024)
