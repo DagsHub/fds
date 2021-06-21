@@ -77,7 +77,6 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("Git add failed to execute")
 
-
     def clone(self, url: str, folder_name: Optional[str], dvc_remote: Optional[str]):
         """
         fds clone

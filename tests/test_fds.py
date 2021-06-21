@@ -107,7 +107,7 @@ class TestFds(unittest.TestCase):
     def test_clone_dvc_failure(self, mock_git_service, mock_dvc_service):
         mock_dvc_service.pull.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
-        with self.assertRaises(Exception) as cm:
+        with self.assertRaises(Exception):
             fds_service.clone("https://github.com/dagshub/fds.git", None, None)
         self.assertRaises(Exception, mock_dvc_service.pull)
         mock_git_service.clone.assert_called_with("https://github.com/dagshub/fds.git", None)
@@ -117,7 +117,7 @@ class TestFds(unittest.TestCase):
     def test_clone_git_failure(self, mock_git_service, mock_dvc_service):
         mock_git_service.clone.side_effect = Exception
         fds_service = FdsService(mock_git_service, mock_dvc_service)
-        with self.assertRaises(Exception) as cm:
+        with self.assertRaises(Exception):
             fds_service.clone("https://github.com/dagshub/fds.git", None, None)
         self.assertRaises(Exception, mock_git_service.clone)
         assert mock_dvc_service.pull.notcalled

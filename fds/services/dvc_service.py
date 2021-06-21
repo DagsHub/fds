@@ -264,8 +264,8 @@ class DVCService(object):
         """
         self.printer.warn("Staring DVC Clone...")
         if remote_name is None:
-            #If nothing is specified
-            #First check if its dagshub repo
+            # If nothing is specified
+            # First check if its dagshub repo
             if "dagshub.com" in git_url.lower():
                 # then construct a dagshub url from the git url
                 dvc_url = construct_dvc_url_from_git_url_dagshub(git_url)
@@ -277,7 +277,7 @@ class DVCService(object):
                         break
                 if remote_name is None:
                     # if url is not in remote, then add it to remote and use that remote
-                    remote_name="dagshub"
+                    remote_name = "dagshub"
                     execute_command(["dvc", "remote", "add", "--local", remote_name, dvc_url])
             else:
                 # If its not dagshub url, then check if there exists a default remote
@@ -287,11 +287,11 @@ class DVCService(object):
                     # No default remote defined
                     # So show all the remotes to user and let user choose
                     remote_list = DVCService.__get_remotes_list()
-                    remote_name=DVCService._show_choice_of_remotes(remote_list)
+                    remote_name = DVCService._show_choice_of_remotes(remote_list)
                     # If the user chooses to cancel pull
                     if remote_name not in remote_list:
                         return 0
                 else:
-                    remote_name=default_remote
+                    remote_name = default_remote
 
         execute_command(["dvc", "pull", "-r", remote_name], capture_output=False)
