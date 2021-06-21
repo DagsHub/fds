@@ -1,6 +1,7 @@
 from colorama import init
 from colorama import Fore
 
+
 class PrettyPrint(object):
 
     def __init__(self):

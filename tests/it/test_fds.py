@@ -1,4 +1,3 @@
-import os
 from unittest.mock import patch
 
 from fds.services.dvc_service import DvcChoices
@@ -25,13 +24,13 @@ class TestFds(IntegrationTestCase):
         self.fds_service.add(".")
         output = execute_command(["git", "status"], capture_output=True)
         # Check DVC add
-        assert f"new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
+        assert "new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
         # Check Git add
-        assert f"new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
-        assert f"new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
-        assert f"new file:   git_data/file-2" in convert_bytes_to_string(output.stdout)
-        assert f"new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
-        assert f"new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-2" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit(self, get_choice):
@@ -58,4 +57,3 @@ class TestFds(IntegrationTestCase):
         self.fds_service.commit("Commit 1", False)
         output = execute_command(["git", "log", "--oneline"], capture_output=True)
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
-

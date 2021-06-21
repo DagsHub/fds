@@ -10,5 +10,6 @@ class Commands(Enum):
     PUSH = "push"
     SAVE = "save"
 
+
 class AddCommands(Enum):
     ALL = "."
