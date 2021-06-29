@@ -62,9 +62,6 @@ class DVCService(BaseService):
         git_output = check_git_ignore(directory)
         if convert_bytes_to_string(git_output.stdout) != '':
             return True
-        dvc_output = check_dvc_ignore(directory)
-        if convert_bytes_to_string(dvc_output.stdout) != '':
-            return True
         return False
 
     def __skip_already_added(self, root, dirs) -> None:
@@ -128,6 +125,10 @@ class DVCService(BaseService):
                 if os.path.isdir(file_or_dir_to_check):
                     return None, file_or_dir_to_check
                 return None, None
+            # If the file or dir is greater than threshold and is dvc ignored
+            dvc_output = check_dvc_ignore(file_or_dir_to_check)
+            if convert_bytes_to_string(dvc_output.stdout) != '':
+                return None, file_or_dir_to_check
             # Show the message only when files are shown and only once per add
             if self.selection_message_count == 0:
                 self.selection_message_count = 1
