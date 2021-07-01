@@ -209,7 +209,6 @@ class DVCService(BaseService):
         return "DVC add successfully executed"
 
     def add(self, add_argument: str) -> Any:
-        self.printer.warn("Adding...")
         return self.__add(add_argument)
 
     def commit(self, auto_confirm: bool) -> Any:
