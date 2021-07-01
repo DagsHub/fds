@@ -1,5 +1,5 @@
 import os
-from typing import Any
+from typing import Any, List
 
 from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
@@ -24,12 +24,13 @@ class GitService(BaseService):
     def status(self) -> Any:
         return execute_command(["git", "status"], capture_output=False)
 
-    def add(self, add_argument: str) -> Any:
+    def add(self, add_argument: List[str]) -> Any:
         git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
             return
         # This will take care of adding everything in the argument to add including the .dvc files inside it
-        execute_command(["git", "add", add_argument])
+        execute_command(["git", "add"] + add_argument)
+
         # Explicitly adding the .dvc file in the root because that wont be added by git
         dvc_file = f"{add_argument}.dvc"
         if does_file_exist(dvc_file):
