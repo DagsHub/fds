@@ -60,6 +60,7 @@ class FdsService(object):
         # First let the user add files into dvc
         # Then remaining goes to git by default
         # Dvc add
+        self.printer.warn("Adding...")
         try:
             add_msg = self.dvc_service.add(add_command)
             self.printer.warn(add_msg)
