@@ -68,3 +68,22 @@ def check_dvc_ignore(filename: str) -> Any:
     # return code 0 is when file is ignored
     git_output = execute_command(["dvc", "check-ignore", filename], capture_output=True, ignorable_return_codes=[0, 1])
     return git_output
+
+
+def get_git_repo_name_from_url(url: str) -> str:
+    """
+    Get the git repository name from the url
+    :param url: The git repository url (either https or ssh)
+    :return: The repository name
+    """
+    git_repo_name = url.split("/")[-1]
+    return git_repo_name.split(".git")[0]
+
+
+def construct_dvc_url_from_git_url_dagshub(git_url: str) -> str:
+    """
+    Construct the dvc url from the git url, given the git url is from DagsHub
+    :param git_url: The git url provided
+    :return: The dvc url
+    """
+    return git_url.replace(".git", ".dvc")

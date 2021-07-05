@@ -9,6 +9,7 @@ class Commands(Enum):
     COMMIT = "commit"
     PUSH = "push"
     SAVE = "save"
+    CLONE = "clone"
 
 
 class AddCommands(Enum):

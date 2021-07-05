@@ -7,10 +7,10 @@ from progress.bar import Bar
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
-from fds.services.base_service import BaseService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
-    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist
+    append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
+    construct_dvc_url_from_git_url_dagshub
 
 
 # Choices for DVC
@@ -21,7 +21,7 @@ class DvcChoices(Enum):
     STEP_INTO = "Step Into"
 
 
-class DVCService(BaseService):
+class DVCService(object):
     """
     DVC Service responsible for all the dvc commands of fds
     """
@@ -229,3 +229,70 @@ class DVCService(BaseService):
             push_cmd.append("-r")
             push_cmd.append(remote)
         execute_command(push_cmd, capture_output=False)
+
+    @staticmethod
+    def __get_remotes_list() -> dict:
+        config_list_cmd = execute_command(["dvc", "remote", "list"], capture_output=True)
+        raw_config_list = convert_bytes_to_string(config_list_cmd.stdout).split("\n")
+        config_list_dict = {}
+        for config_list in raw_config_list:
+            remote_name_with_url = config_list.split("\t")
+            if (len(remote_name_with_url) == 2):
+                config_list_dict[remote_name_with_url[0]] = str(remote_name_with_url[1])
+        return config_list_dict
+
+    @staticmethod
+    def _show_choice_of_remotes(remotes: dict) -> str:
+        choices = list(remotes.keys())
+        choices.append("Cancel Pull")
+        questions = [
+            {
+                'type': 'list',
+                'name': 'remote',
+                'message': 'Choose the remote to use for pulling dvc repo?',
+                'choices': choices
+            }
+        ]
+        answers = PyInquirer.prompt(questions)
+        return answers["remote"]
+
+    def pull(self, git_url: str, remote_name: Optional[str]) -> Any:
+        """
+        Responsible for pulling the latest changes from DVC remote based on dvc.yaml and .dvc files
+        :param git_url: The git url provided
+        :param remote_name: Optional Remote dvc name to pull the dvc repository
+        :return:
+        """
+        self.printer.warn("Staring DVC Clone...")
+        if remote_name is None:
+            # If nothing is specified
+            # First check if its dagshub repo
+            if "dagshub.com" in git_url.lower():
+                # then construct a dagshub url from the git url
+                dvc_url = construct_dvc_url_from_git_url_dagshub(git_url)
+                # find it from the remote
+                remote_list = DVCService.__get_remotes_list()
+                for remote, url in remote_list.items():
+                    if url == dvc_url:
+                        remote_name = remote
+                        break
+                if remote_name is None:
+                    # if url is not in remote, then add it to remote and use that remote
+                    remote_name = "dagshub"
+                    execute_command(["dvc", "remote", "add", "--local", remote_name, dvc_url])
+            else:
+                # If its not dagshub url, then check if there exists a default remote
+                default_remote_cmd = execute_command(["dvc", "remote", "default"], capture_output=True)
+                default_remote = convert_bytes_to_string(default_remote_cmd.stdout).strip()
+                if default_remote == "" or "No default remote set":
+                    # No default remote defined
+                    # So show all the remotes to user and let user choose
+                    remote_list = DVCService.__get_remotes_list()
+                    remote_name = DVCService._show_choice_of_remotes(remote_list)
+                    # If the user chooses to cancel pull
+                    if remote_name not in remote_list:
+                        return 0
+                else:
+                    remote_name = default_remote
+
+        execute_command(["dvc", "pull", "-r", remote_name], capture_output=False)

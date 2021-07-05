@@ -1,3 +1,6 @@
+import os
+from typing import Optional
+
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
@@ -75,7 +78,34 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("Git add failed to execute")
 
+    def clone(self, url: str, folder_name: Optional[str], dvc_remote: Optional[str]):
+        """
+        fds clone
+        input: url - The url to clone the git repository
+        input: folder_name - Optional folder name to clone git repo into
+        input: dvc_remote - Optional dvc remote name to use to pull
+        """
+        # First performs git clone using the url
+        # Then pulls the dvc repository based on the
+        # dvc.yaml and .dvc files in the git repository
+        try:
+            repo_path = self.git_service.clone(url, folder_name)
+        except Exception as e:
+            self.printer.error(str(e))
+            raise Exception("Git clone failed to execute")
+        # Go into the git directory
+        os.chdir(repo_path)
+        # Now pull the dvc repository
+        try:
+            self.dvc_service.pull(url, dvc_remote)
+        except Exception as e:
+            self.printer.error(str(e))
+            raise Exception("DVC pull failed to execute")
+
     def commit(self, message: str, yes: bool = True):
+        """
+        fds commit
+        """
         try:
             self.dvc_service.commit(yes)
             self.printer.warn("Successfully committed to DVC")
@@ -110,7 +140,7 @@ class FdsService(object):
         self.add(".")
         self.commit(message)
         # TODO: add autodetect of remotes, ask users if they want to set a remote,
-        #  and then push to default remotes, instead of manually entering remote names.
+        #  and then push to default remotes, instead of manually entering remote names. Use the method in dvc_service
         self.push(git_remote, dvc_remote)
         self.printer.success("====================================")
         self.printer.success("Successfully saved current workspace")
