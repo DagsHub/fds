@@ -2,4 +2,5 @@ colorama==0.4.4
 PyInquirer==1.0.3
 humanize==3.9.0
 progress==1.5
+validators==0.18.2
 requests==2.25.1

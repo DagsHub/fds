@@ -58,3 +58,13 @@ class TestGit(IntegrationTestCase):
         self.git_service.commit("Commit 1")
         output = execute_command(["git", "log", "--oneline"], capture_output=True)
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
+
+    def test_clone(self):
+        self.git_service.clone(self.get_remote_url_for_test(), None)
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/hello-world")
+
+    def test_clone_with_dir(self):
+        self.git_service.clone(self.get_remote_url_for_test(), "test")
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/test")
