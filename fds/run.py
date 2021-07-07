@@ -61,7 +61,7 @@ class Run(object):
             ]
             answers = PyInquirer.prompt(questions)
             if answers["install"]:
-                print("Upgrading package. Please re-enter the command once upgrade has been completed.")
+                print("\nUpgrading package. Please re-enter the command once upgrade has been completed.\n")
                 execute_command(["pip install fastds --upgrade"], shell=True, capture_output=False)
                 sys.exit()
             else:
