@@ -53,8 +53,7 @@ class Run(object):
             questions = [
                 {
                     'type': 'confirm',
-                    'message': "You are using fds version " + __version__ + 
-                                ", however version " + latest_version + " is available. Should we upgrade using `pip install fastds --upgrade`",
+                    'message': f"You are using fds version {__version__}, however version {latest_version} is available. Should we upgrade using `pip install fastds --upgrade`",
                     'name': 'install',
                     'default': 'True',
             },
