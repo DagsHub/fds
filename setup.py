@@ -9,11 +9,13 @@ except Exception:
 with open('requirements.txt') as f:
     requirements = f.readlines()
 
-version = "0.1.8"
+version = {}
+with open("fds/__init__.py") as fp:
+    exec(fp.read(), version)
 
 setuptools.setup(
     name="fastds",
-    version=version,
+    version=version['__version__'],
     author="DAGsHub",
     license='MIT License',
     author_email="contact@dagshub.com",
