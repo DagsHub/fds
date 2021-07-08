@@ -1,5 +1,7 @@
 from shutil import which
 import PyInquirer
+import requests
+import sys
 
 from fds.domain.commands import Commands
 from fds.logger import Logger
@@ -8,7 +10,7 @@ from fds.services.fds_service import FdsService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command
-
+from .__init__ import __version__
 
 class Run(object):
     def __init__(self, arguments: dict):
@@ -43,6 +45,26 @@ class Run(object):
         if which("git") is None:
             self.printer.error("git executable is not found, please install git from https://git-scm.com/downloads")
             ret_code |= 2
+
+        r = requests.get("https://pypi.python.org/pypi/fastds/json")
+        data = r.json()
+        latest_version = data["info"]["version"]
+        if latest_version != __version__:
+            questions = [
+                {
+                    'type': 'confirm',
+                    'message': f"You are using fds version {__version__}, however version {latest_version} is available. Should we upgrade using `pip install fastds --upgrade`",
+                    'name': 'install',
+                    'default': 'True',
+            },
+            ]
+            answers = PyInquirer.prompt(questions)
+            if answers["install"]:
+                print("\nUpgrading package. Please re-enter the command once upgrade has been completed.\n")
+                execute_command(["pip install fastds --upgrade"], shell=True, capture_output=False)
+                sys.exit()
+            else:
+                ret_code = 0
 
         return ret_code
 

@@ -1,4 +1,5 @@
 import setuptools
+from fds import __version__
 
 try:
     with open('README.md', 'r') as readme:
@@ -9,11 +10,9 @@ except Exception:
 with open('requirements.txt') as f:
     requirements = f.readlines()
 
-version = "0.1.8"
-
 setuptools.setup(
     name="fastds",
-    version=version,
+    version=__version__,
     author="DAGsHub",
     license='MIT License',
     author_email="contact@dagshub.com",
