@@ -29,6 +29,16 @@ class TestGit(IntegrationTestCase):
         assert "new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
         assert "new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
 
+    def test_skip(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        self.git_service.add(".", ["./git_data"])
+        output = execute_command(["git", "status"], capture_output=True)
+        assert convert_bytes_to_string(output.stderr) == ""
+        # This means untracked file
+        assert "\n\tgit_data/\n\n" in convert_bytes_to_string(output.stdout)
+        assert "new file:" not in convert_bytes_to_string(output.stdout)
+
     def test_add_one(self):
         self.git_service.init()
         super().create_fake_git_data()
