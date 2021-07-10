@@ -9,6 +9,7 @@ from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.pretty_print import PrettyPrint
+from fds.services.types import DvcAdd
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
     construct_dvc_url_from_git_url_dagshub
@@ -173,7 +174,7 @@ class DVCService(object):
                 return AddToDvc(None, None, None)
         return AddToDvc(None, None, None)
 
-    def __add(self, add_argument: str):
+    def __add(self, add_argument: str) -> DvcAdd:
         chosen_files_or_folders = []
         # Keep track of dirs which are below threshold size, so we dont iterate the files inside these dirs
         ignored_dirs = []
@@ -222,18 +223,21 @@ class DVCService(object):
                     if add_to_dvc.file_to_skip is not None:
                         skipped_dirs.append(add_to_dvc.file_to_skip)
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
-        if len(chosen_files_or_folders) == 0:
-            return "Nothing to add in DVC"
+        if len(chosen_files_or_folders) > 0:
+            self.printer.warn("Adding to dvc...")
+            progress_tracker = Bar('Processing', max=len(chosen_files_or_folders))
+            for add_to_dvc in chosen_files_or_folders:
+                execute_command(["dvc", "add", add_to_dvc])
+                progress_tracker.next()
+            progress_tracker.finish()
+        return DvcAdd(chosen_files_or_folders, skipped_dirs)
 
-        self.printer.warn("Adding to dvc...")
-        progress_tracker = Bar('Processing', max=len(chosen_files_or_folders))
-        for add_to_dvc in chosen_files_or_folders:
-            execute_command(["dvc", "add", add_to_dvc])
-            progress_tracker.next()
-        progress_tracker.finish()
-        return "DVC add successfully executed"
-
-    def add(self, add_argument: str) -> Any:
+    def add(self, add_argument: str) -> DvcAdd:
+        """
+        Add files into dvc
+        :param add_argument: add_argument which is one of the AddCommands Enum
+        :return: DvcAdd dataclass
+        """
         return self.__add(add_argument)
 
     def commit(self, auto_confirm: bool) -> Any:

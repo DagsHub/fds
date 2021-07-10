@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore, \
@@ -24,12 +24,17 @@ class GitService(object):
     def status(self) -> Any:
         return execute_command(["git", "status"], capture_output=False)
 
-    def add(self, add_argument: str) -> Any:
+    def add(self, add_argument: str, skipped: List[str]) -> Any:
         git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
             return
         # This will take care of adding everything in the argument to add including the .dvc files inside it
-        execute_command(["git", "add", add_argument])
+        git_add_command = ["git", "add", add_argument]
+        # Ignore the skipped files if any
+        for skipped_file in skipped:
+            # git add . :!path/to/file1 :!path/to/file2 :!path/to/folder1/* Will ignore the files to be added
+            git_add_command.append(f':!{skipped_file}')
+        execute_command(git_add_command)
         # Explicitly adding the .dvc file in the root because that wont be added by git
         dvc_file = f"{add_argument}.dvc"
         if does_file_exist(dvc_file):

@@ -65,14 +65,17 @@ class FdsService(object):
         # Dvc add
         self.printer.warn("Adding...")
         try:
-            add_msg = self.dvc_service.add(add_command)
+            dvc_add = self.dvc_service.add(add_command)
+            add_msg = "DVC add successfully executed"
+            if len(dvc_add.files_added_to_dvc) == 0:
+                add_msg = "Nothing to add in DVC"
             self.printer.warn(add_msg)
         except Exception as e:
             self.printer.error(str(e))
             raise Exception("DVC add failed to execute")
         # Add remaining to git
         try:
-            self.git_service.add(add_command)
+            self.git_service.add(add_command, dvc_add.files_skipped)
             self.printer.success("Git add successfully executed")
         except Exception as e:
             self.printer.error(str(e))
