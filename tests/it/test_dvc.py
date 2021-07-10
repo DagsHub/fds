@@ -79,6 +79,16 @@ class TestDvc(IntegrationTestCase):
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
 
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.SKIP.value})
+    def test_skip_check_add_dvc(self, get_choice):
+        self.fds_service.init()
+        super().create_fake_dvc_data()
+        output = execute_command(["git", "status"], capture_output=True)
+        assert "large_file" in convert_bytes_to_string(output.stdout)
+        dvc_add = self.dvc_service.add(".")
+        assert len(dvc_add.files_added_to_dvc) == 0
+        assert dvc_add.files_skipped[0] == "./large_file"
+
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit_auto_confirm(self, get_choice):
         self.fds_service.init()
