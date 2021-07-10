@@ -35,7 +35,7 @@ class TestDvc(IntegrationTestCase):
         assert "large_file" in convert_bytes_to_string(output.stdout)
         dvc_add = self.dvc_service.add("large_file")
         assert does_file_exist(f"{self.repo_path}/large_file.dvc")
-        assert dvc_add.files_added_to_dvc[0] == "large_file"
+        assert dvc_add.files_added_to_dvc[0] == "./large_file"
 
     def test_add_nothing(self):
         self.git_service.init()
@@ -75,7 +75,7 @@ class TestDvc(IntegrationTestCase):
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
         dvc_add = self.dvc_service.add(".")
-        assert len(dvc_add.files_added_to_dvc) == 0
+        assert dvc_add.files_added_to_dvc[0] == "./large_file"
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
 
