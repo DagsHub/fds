@@ -97,7 +97,7 @@ class DVCService(object):
             "value": DvcChoices.IGNORE.value
         }, {
             "key": "s",
-            "name": "Skip - Skip the file/folder",
+            "name": "Skip - Don't add the file/folder to DVC or Git",
             "value": DvcChoices.SKIP.value
         }]
         if os.path.isdir(file_or_dir_to_check):
