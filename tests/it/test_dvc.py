@@ -54,7 +54,7 @@ class TestDvc(IntegrationTestCase):
         msg = self.dvc_service.add(".")
         assert does_file_exist(".gitignore") is True
         output = execute_command(["cat", ".dvcignore"], capture_output=True)
-        assert "large_file" in output
+        assert "large_file" in convert_bytes_to_string(output.stdout)
         assert msg == "Nothing to add in DVC"
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" not in convert_bytes_to_string(output.stdout)
