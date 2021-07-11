@@ -84,7 +84,7 @@ class DVCService(object):
             "value": DvcChoices.ADD_TO_GIT.value
         }, {
             "key": "i",
-            "name": "Ignore - Add to .gitignore",
+            "name": "Ignore - Add to .gitignore and .dvcignore",
             "value": DvcChoices.IGNORE.value
         }]
         if os.path.isdir(file_or_dir_to_check):
@@ -148,6 +148,9 @@ class DVCService(object):
                 # We should ignore the ./ in beginning when adding to gitignore
                 # Add files to gitignore
                 append_line_to_file(".gitignore",
+                                    file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
+                # Also add to dvcignore
+                append_line_to_file(".dvcignore",
                                     file_or_dir_to_check[file_or_dir_to_check.startswith('./') and 2:])
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
