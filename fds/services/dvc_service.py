@@ -225,11 +225,8 @@ class DVCService(object):
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
         if len(chosen_files_or_folders) > 0:
             self.printer.warn("Adding to dvc...")
-            progress_tracker = Bar('Processing', max=len(chosen_files_or_folders))
-            for add_to_dvc in chosen_files_or_folders:
-                execute_command(["dvc", "add", add_to_dvc])
-                progress_tracker.next()
-            progress_tracker.finish()
+            # executing a oneliner for performance
+            execute_command(['dvc', 'add'] + chosen_files_or_folders, capture_output=False)
         return DvcAdd(chosen_files_or_folders, skipped_dirs)
 
     def add(self, add_argument: str) -> DvcAdd:
