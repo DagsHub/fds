@@ -60,6 +60,16 @@ class TestFds(IntegrationTestCase):
         output = execute_command(["git", "diff", "--raw", "HEAD~1"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
 
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.SKIP.value})
+    def test_skip_in_add(self, get_choice):
+        self.fds_service.init()
+        super().create_fake_git_data()
+        super().create_fake_dvc_data()
+        self.fds_service.add(".")
+        output = execute_command(["git", "status"], capture_output=True)
+        # This means untracked, because added files will have new file: in git output
+        assert "\n\tlarge_file\n\n" in convert_bytes_to_string(output.stdout)
+
     def test_commit_git(self):
         self.fds_service.init()
         super().create_fake_git_data()
