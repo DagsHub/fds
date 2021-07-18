@@ -182,7 +182,8 @@ class DVCService(object):
         skipped_dirs = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        if paths_to_be_checked[0] == AddCommands.ALL.value:
+        # If . is in paths_to_be_checked then we should iterate through everything
+        if AddCommands.ALL.value in paths_to_be_checked:
             paths_to_walk = [self.repo_path]
         else:
             paths_to_walk = list(map(lambda path: f"{self.repo_path}/{path}", paths_to_be_checked))
