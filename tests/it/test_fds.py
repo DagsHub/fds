@@ -36,12 +36,15 @@ class TestFds(IntegrationTestCase):
     def test_add_multiple_paths(self, get_choice):
         self.fds_service.init()
         super().create_fake_git_data()
-        super().create_fake_dvc_data()
-        self.fds_service.add(["dvc_data"])
+        super().create_dummy_file("large_file_1", 11 * 1024)
+        super().create_dummy_file("large_file_2", 11 * 1024)
+        super().create_dummy_file("large_file_3", 11 * 1024)
+        self.fds_service.add(["large_file_1", "large_file_3"])
         output = execute_command(["git", "status"], capture_output=True)
-        # Check untracked
-        assert "\n\tlarge_file" in convert_bytes_to_string(output.stdout)
-        assert "\n\tgit_data/" in convert_bytes_to_string(output.stdout)
+        # Check DVC add
+        assert "new file:   large_file_3.dvc" in convert_bytes_to_string(output.stdout)
+        assert "new file:   large_file_1.dvc" in convert_bytes_to_string(output.stdout)
+        assert "\n\tlarge_file_2" in convert_bytes_to_string(output.stdout)
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE.value})
     def test_add_dvc_ignore(self, get_choice):

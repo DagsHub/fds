@@ -30,6 +30,12 @@ class GitService(object):
 
         # Handle multiple paths
         for path_to_add in paths_to_add:
+            # Explicitly adding the .dvc file in the root because that wont be added by git
+            dvc_file = f"{path_to_add}.dvc"
+            if does_file_exist(dvc_file):
+                git_add_command.append(dvc_file)
+
+            # Then check for git ignore, note that git ignore check should happen after the dvc check
             # Check if there file is git_ignored, then skip that file
             git_output = check_git_ignore(path_to_add)
             if convert_bytes_to_string(git_output.stdout) != '':
@@ -37,10 +43,6 @@ class GitService(object):
             # Add the file into git
             git_add_command.append(path_to_add)
 
-            # Explicitly adding the .dvc file in the root because that wont be added by git
-            dvc_file = f"{path_to_add}.dvc"
-            if does_file_exist(dvc_file):
-                git_add_command.append(dvc_file)
 
         ignore_file = ".gitignore"
         if does_file_exist(ignore_file):
