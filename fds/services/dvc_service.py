@@ -215,6 +215,9 @@ class DVCService(object):
                     # If the root is skipped because it is below threshold size then we don't need to check files
                     if root in ignored_dirs:
                         continue
+                    # If the root is added already then we dont need to scan for files
+                    if root in chosen_files_or_folders:
+                        continue
                     # Then check files
                     for file in files:
                         add_to_dvc = self.__get_to_add_to_dvc(f"{root}/{file}", [], "File")
@@ -224,11 +227,11 @@ class DVCService(object):
                             chosen_files_or_folders.append(add_to_dvc.file_to_add)
                         if add_to_dvc.file_to_skip is not None:
                             skipped_dirs.append(add_to_dvc.file_to_skip)
-            self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
-            if len(chosen_files_or_folders) > 0:
-                self.printer.warn("Adding to dvc...")
-                # executing a oneliner for performance
-                execute_command(['dvc', 'add'] + chosen_files_or_folders, capture_output=False)
+        self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
+        if len(chosen_files_or_folders) > 0:
+            self.printer.warn("Adding to dvc...")
+            # executing a oneliner for performance
+            execute_command(['dvc', 'add'] + chosen_files_or_folders, capture_output=False)
         return DvcAdd(chosen_files_or_folders, skipped_dirs)
 
     def add(self, paths_to_be_checked: List[str]) -> DvcAdd:
