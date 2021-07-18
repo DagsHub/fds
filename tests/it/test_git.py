@@ -52,6 +52,19 @@ class TestGit(IntegrationTestCase):
         assert "file-3" in convert_bytes_to_string(output.stdout)
         assert "file-4" in convert_bytes_to_string(output.stdout)
 
+    def test_add_multiple(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        self.git_service.add(["git_data/file-0", "git_data/file-1", "git_data/file-3"], [])
+        output = execute_command(["git", "status"], capture_output=True)
+        assert convert_bytes_to_string(output.stderr) == ""
+        assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
+        assert "Untracked files:" in convert_bytes_to_string(output.stdout)
+        assert "file-2" in convert_bytes_to_string(output.stdout)
+        assert "file-4" in convert_bytes_to_string(output.stdout)
+
     def test_add_gitignore(self):
         self.git_service.init()
         super().create_fake_git_data()
