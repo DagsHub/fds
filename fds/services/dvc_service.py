@@ -190,7 +190,7 @@ class DVCService(object):
             # if argument is to add a file
             if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
                 # Keep the file in chosen list
-                chosen_files_or_folders = [path_to_walk]
+                chosen_files_or_folders.append(path_to_walk)
             for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
                 # Now skip the un-necessary folders
                 [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]
