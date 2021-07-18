@@ -21,7 +21,7 @@ parser_status = command_subparser.add_parser('status', help='get status of your 
 
 # add
 parser_add = command_subparser.add_parser('add', help='add files/folders to git and dvc repository')
-parser_add.add_argument('add_command', help="choose what to add using . will add everything")
+parser_add.add_argument('add_command', help="choose what to add using . will add everything", nargs="+")
 
 # COMMIT
 parser_commit = command_subparser.add_parser('commit', help='commits added changes to git and dvc repository',
