@@ -1,3 +1,4 @@
+from typing import List
 import os
 from typing import Optional
 
@@ -56,7 +57,7 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("DVC status failed to execute")
 
-    def add(self, add_command: str):
+    def add(self, add_command: List[str]):
         """
         fds add
         """

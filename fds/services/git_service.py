@@ -24,6 +24,7 @@ class GitService(object):
     def status(self) -> Any:
         return execute_command(["git", "status"], capture_output=False)
 
+
     def add(self, add_argument: str, skipped: List[str]) -> Any:
         git_output = check_git_ignore(add_argument)
         if convert_bytes_to_string(git_output.stdout) != '':
