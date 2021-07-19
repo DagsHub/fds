@@ -1,10 +1,8 @@
 import os
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional
 import PyInquirer
-from progress.bar import Bar
-
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
@@ -22,6 +20,7 @@ class DvcChoices(Enum):
     IGNORE = "Ignore"
     SKIP = "Skip"
     STEP_INTO = "Step Into"
+
 
 @dataclass
 class AddToDvc:
@@ -174,7 +173,7 @@ class DVCService(object):
                 return AddToDvc(None, None, None)
         return AddToDvc(None, None, None)
 
-    def __add(self, add_argument: str) -> DvcAdd:
+    def __add(self, paths_to_be_checked: List[str]) -> DvcAdd:
         chosen_files_or_folders = []
         # Keep track of dirs which are below threshold size, so we dont iterate the files inside these dirs
         ignored_dirs = []
@@ -182,46 +181,51 @@ class DVCService(object):
         skipped_dirs = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        if add_argument == AddCommands.ALL.value:
-            path_to_walk = self.repo_path
+        # If . is in paths_to_be_checked then we should iterate through everything
+        if AddCommands.ALL.value in paths_to_be_checked:
+            paths_to_walk = [self.repo_path]
         else:
-            path_to_walk = f"{self.repo_path}/{add_argument}"
-        # if argument is to add a file
-        if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
-            # Keep the file in chosen list
-            chosen_files_or_folders = [path_to_walk]
-        for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
-            # Now skip the un-necessary folders
-            [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]
-            # Skip the already added files/folders
-            self.__skip_already_added(root, dirs)
-            # First check root
-            add_to_dvc = self.__get_to_add_to_dvc(root, dirs, "Dir")
-            if add_to_dvc.file_to_ignore is not None:
-                ignored_dirs.append(add_to_dvc.file_to_ignore)
-            if add_to_dvc.file_to_add is not None:
-                chosen_files_or_folders.append(add_to_dvc.file_to_add)
-            if add_to_dvc.file_to_skip is not None:
-                skipped_dirs.append(add_to_dvc.file_to_skip)
-            else:
-                # Only if they dont select the directory then ask for files,
-                # otherwise ignore asking about files of the directory
-                # We are also showing if the user chooses to skip because the user
-                # might not know there is a large file in the directory and choose skip
-                # because he doesn't want the entire directory to be added.
+            paths_to_walk = list(map(lambda path: f"{self.repo_path}/{path}", paths_to_be_checked))
+        for path_to_walk in paths_to_walk:
+            # if argument is to add a file
+            if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
+                # Keep the file in chosen list
+                chosen_files_or_folders.append(path_to_walk)
+            for (root, dirs, files) in os.walk(path_to_walk, topdown=True, followlinks=False):
+                # Now skip the un-necessary folders
+                [dirs.remove(d) for d in list(dirs) if d in folders_to_exclude]
+                # Skip the already added files/folders
+                self.__skip_already_added(root, dirs)
+                # First check root
+                add_to_dvc = self.__get_to_add_to_dvc(root, dirs, "Dir")
+                if add_to_dvc.file_to_ignore is not None:
+                    ignored_dirs.append(add_to_dvc.file_to_ignore)
+                if add_to_dvc.file_to_add is not None:
+                    chosen_files_or_folders.append(add_to_dvc.file_to_add)
+                if add_to_dvc.file_to_skip is not None:
+                    skipped_dirs.append(add_to_dvc.file_to_skip)
+                else:
+                    # Only if they dont select the directory then ask for files,
+                    # otherwise ignore asking about files of the directory
+                    # We are also showing if the user chooses to skip because the user
+                    # might not know there is a large file in the directory and choose skip
+                    # because he doesn't want the entire directory to be added.
 
-                # If the root is skipped because it is below threshold size then we don't need to check files
-                if root in ignored_dirs:
-                    continue
-                # Then check files
-                for file in files:
-                    add_to_dvc = self.__get_to_add_to_dvc(f"{root}/{file}", [], "File")
-                    if add_to_dvc.file_to_ignore is not None:
-                        ignored_dirs.append(add_to_dvc.file_to_ignore)
-                    if add_to_dvc.file_to_add is not None:
-                        chosen_files_or_folders.append(add_to_dvc.file_to_add)
-                    if add_to_dvc.file_to_skip is not None:
-                        skipped_dirs.append(add_to_dvc.file_to_skip)
+                    # If the root is skipped because it is below threshold size then we don't need to check files
+                    if root in ignored_dirs:
+                        continue
+                    # If the root is added already then we dont need to scan for files
+                    if root in chosen_files_or_folders:
+                        continue
+                    # Then check files
+                    for file in files:
+                        add_to_dvc = self.__get_to_add_to_dvc(f"{root}/{file}", [], "File")
+                        if add_to_dvc.file_to_ignore is not None:
+                            ignored_dirs.append(add_to_dvc.file_to_ignore)
+                        if add_to_dvc.file_to_add is not None:
+                            chosen_files_or_folders.append(add_to_dvc.file_to_add)
+                        if add_to_dvc.file_to_skip is not None:
+                            skipped_dirs.append(add_to_dvc.file_to_skip)
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
         if len(chosen_files_or_folders) > 0:
             self.printer.warn("Adding to dvc...")
@@ -229,13 +233,13 @@ class DVCService(object):
             execute_command(['dvc', 'add'] + chosen_files_or_folders, capture_output=False)
         return DvcAdd(chosen_files_or_folders, skipped_dirs)
 
-    def add(self, add_argument: str) -> DvcAdd:
+    def add(self, paths_to_be_checked: List[str]) -> DvcAdd:
         """
         Add files into dvc
-        :param add_argument: add_argument which is one of the AddCommands Enum
+        :param paths_to_be_checked: paths_to_be_checked is a list which can either be ['.'] or list of paths to be checked
         :return: DvcAdd dataclass
         """
-        return self.__add(add_argument)
+        return self.__add(paths_to_be_checked)
 
     def commit(self, auto_confirm: bool) -> Any:
         """

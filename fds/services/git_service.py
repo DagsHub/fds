@@ -24,24 +24,33 @@ class GitService(object):
     def status(self) -> Any:
         return execute_command(["git", "status"], capture_output=False)
 
-    def add(self, add_argument: str, skipped: List[str]) -> Any:
-        git_output = check_git_ignore(add_argument)
-        if convert_bytes_to_string(git_output.stdout) != '':
-            return
+    def add(self, paths_to_add: List[str], skipped: List[str]) -> Any:
         # This will take care of adding everything in the argument to add including the .dvc files inside it
-        git_add_command = ["git", "add", add_argument]
+        git_add_command = ["git", "add"]
+
+        # Handle multiple paths
+        for path_to_add in paths_to_add:
+            # Explicitly adding the .dvc file in the root because that wont be added by git
+            dvc_file = f"{path_to_add}.dvc"
+            if does_file_exist(dvc_file):
+                git_add_command.append(dvc_file)
+
+            # Then check for git ignore, note that git ignore check should happen after the dvc check
+            # Check if there file is git_ignored, then skip that file
+            git_output = check_git_ignore(path_to_add)
+            if convert_bytes_to_string(git_output.stdout) != '':
+                continue
+            # Add the file into git
+            git_add_command.append(path_to_add)
+
+        ignore_file = ".gitignore"
+        if does_file_exist(ignore_file):
+            git_add_command.append(ignore_file)
         # Ignore the skipped files if any
         for skipped_file in skipped:
             # git add . :!path/to/file1 :!path/to/file2 :!path/to/folder1/* Will ignore the files to be added
             git_add_command.append(f':!{skipped_file}')
         execute_command(git_add_command)
-        # Explicitly adding the .dvc file in the root because that wont be added by git
-        dvc_file = f"{add_argument}.dvc"
-        if does_file_exist(dvc_file):
-            execute_command(["git", "add", f"{add_argument}.dvc"])
-        ignore_file = ".gitignore"
-        if does_file_exist(ignore_file):
-            execute_command(["git", "add", ignore_file])
 
     def commit(self, message: str) -> Any:
         execute_command(["git", "commit", "-am", message], capture_output=False)

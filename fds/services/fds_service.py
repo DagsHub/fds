@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
@@ -56,7 +56,7 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("DVC status failed to execute")
 
-    def add(self, add_command: str):
+    def add(self, add_command: List[str]):
         """
         fds add
         """

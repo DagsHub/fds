@@ -12,6 +12,7 @@ from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command
 from .__init__ import __version__
 
+
 class Run(object):
     def __init__(self, arguments: dict):
         self.logger = Logger.get_logger("fds.Run")
@@ -53,10 +54,11 @@ class Run(object):
             questions = [
                 {
                     'type': 'confirm',
-                    'message': f"You are using fds version {__version__}, however version {latest_version} is available. Should we upgrade using `pip install fastds --upgrade`",
+                    'message': f"You are using fds version {__version__}, however version {latest_version}"
+                               f" is available.Should we upgrade using `pip install fastds --upgrade`",
                     'name': 'install',
                     'default': 'True',
-            },
+                },
             ]
             answers = PyInquirer.prompt(questions)
             if answers["install"]:
