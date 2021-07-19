@@ -1,10 +1,8 @@
 import os
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional
 import PyInquirer
-from progress.bar import Bar
-
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
@@ -22,6 +20,7 @@ class DvcChoices(Enum):
     IGNORE = "Ignore"
     SKIP = "Skip"
     STEP_INTO = "Step Into"
+
 
 @dataclass
 class AddToDvc:

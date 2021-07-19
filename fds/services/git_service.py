@@ -43,7 +43,6 @@ class GitService(object):
             # Add the file into git
             git_add_command.append(path_to_add)
 
-
         ignore_file = ".gitignore"
         if does_file_exist(ignore_file):
             git_add_command.append(ignore_file)
@@ -52,7 +51,6 @@ class GitService(object):
             # git add . :!path/to/file1 :!path/to/file2 :!path/to/folder1/* Will ignore the files to be added
             git_add_command.append(f':!{skipped_file}')
         execute_command(git_add_command)
-
 
     def commit(self, message: str) -> Any:
         execute_command(["git", "commit", "-am", message], capture_output=False)
