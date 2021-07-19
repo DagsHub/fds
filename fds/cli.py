@@ -54,6 +54,12 @@ parser_save.add_argument('-gr', '--git-remote', help="git remote name, default '
 parser_save.add_argument('-dr', '--dvc-remote', help="dvc remote name, default 'origin'", default="origin")
 parser_save.add_argument('message', help="save message")
 
+# clone
+parser_clone = command_subparser.add_parser('clone', help='clone git repository and pull dvc repository based on dvc.yaml')
+parser_clone.add_argument('url', help="url of the git repository")
+parser_clone.add_argument('folder_name', nargs="*", help="Optional folder name to clone into", default=[None])
+parser_clone.add_argument('-dr', '--dvc-remote', help="Optional DVC remote name", default="origin")
+
 # argument for log level
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
                         action="store_true", default=False)

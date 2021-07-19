@@ -20,7 +20,7 @@ class TestGit(IntegrationTestCase):
     def test_add(self):
         self.git_service.init()
         super().create_fake_git_data()
-        self.git_service.add(".")
+        self.git_service.add(".", [])
         output = execute_command(["git", "status"], capture_output=True)
         assert convert_bytes_to_string(output.stderr) == ""
         assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
@@ -29,10 +29,20 @@ class TestGit(IntegrationTestCase):
         assert "new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
         assert "new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
 
+    def test_skip(self):
+        self.git_service.init()
+        super().create_fake_git_data()
+        self.git_service.add(".", ["./git_data"])
+        output = execute_command(["git", "status"], capture_output=True)
+        assert convert_bytes_to_string(output.stderr) == ""
+        # This means untracked file
+        assert "\n\tgit_data/\n\n" in convert_bytes_to_string(output.stdout)
+        assert "new file:" not in convert_bytes_to_string(output.stdout)
+
     def test_add_one(self):
         self.git_service.init()
         super().create_fake_git_data()
-        self.git_service.add("git_data/file-0")
+        self.git_service.add("git_data/file-0", [])
         output = execute_command(["git", "status"], capture_output=True)
         assert convert_bytes_to_string(output.stderr) == ""
         assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
@@ -46,7 +56,7 @@ class TestGit(IntegrationTestCase):
         self.git_service.init()
         super().create_fake_git_data()
         super().create_dummy_file(".gitignore", 100)
-        self.git_service.add("git_data/file-0")
+        self.git_service.add("git_data/file-0", [])
         output = execute_command(["git", "status"], capture_output=True)
         assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
         assert "new file:   .gitignore" in convert_bytes_to_string(output.stdout)
@@ -54,7 +64,17 @@ class TestGit(IntegrationTestCase):
     def test_commit(self):
         self.git_service.init()
         super().create_fake_git_data()
-        self.git_service.add(".")
+        self.git_service.add(".", [])
         self.git_service.commit("Commit 1")
         output = execute_command(["git", "log", "--oneline"], capture_output=True)
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
+
+    def test_clone(self):
+        self.git_service.clone(self.get_remote_url_for_test(), None)
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/hello-world")
+
+    def test_clone_with_dir(self):
+        self.git_service.clone(self.get_remote_url_for_test(), "test")
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/test")
