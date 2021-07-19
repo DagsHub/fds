@@ -56,10 +56,10 @@ def does_file_exist(filename: str) -> bool:
         return False
 
 
-def check_git_ignore(filename: List[str]) -> Any:
+def check_git_ignore(filename: str) -> Any:
     # You can ignore return code 1 too here, because it shows that the file is not ignored
     # return code 0 is when file is ignored
-    git_output = execute_command(["git", "check-ignore"] + filename, capture_output=True, ignorable_return_codes=[0, 1])
+    git_output = execute_command(["git", "check-ignore", filename], capture_output=True, ignorable_return_codes=[0, 1])
     return git_output
 
 
