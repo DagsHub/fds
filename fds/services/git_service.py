@@ -53,6 +53,7 @@ class GitService(object):
             git_add_command.append(f':!{skipped_file}')
         execute_command(git_add_command)
 
+
     def commit(self, message: str) -> Any:
         execute_command(["git", "commit", "-am", message], capture_output=False)
 
