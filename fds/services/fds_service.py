@@ -1,6 +1,6 @@
 from typing import List
 import os
-from typing import Optional
+from typing import Optional, List
 
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService

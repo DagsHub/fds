@@ -33,15 +33,32 @@ class TestDvc(IntegrationTestCase):
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
-        dvc_add = self.dvc_service.add("large_file")
+        dvc_add = self.dvc_service.add(["large_file"])
         assert does_file_exist(f"{self.repo_path}/large_file.dvc")
         assert dvc_add.files_added_to_dvc[0] == "./large_file"
+
+    def test_add_multiple(self):
+        self.git_service.init()
+        self.dvc_service.init()
+        super().create_fake_git_data()
+        super().create_dummy_file("large_file_1", 11 * 1024)
+        super().create_dummy_file("large_file_2", 11 * 1024)
+        super().create_dummy_file("large_file_3", 11 * 1024)
+        output = execute_command(["git", "status"], capture_output=True)
+        assert "large_file_1" in convert_bytes_to_string(output.stdout)
+        assert "large_file_2" in convert_bytes_to_string(output.stdout)
+        assert "large_file_3" in convert_bytes_to_string(output.stdout)
+        dvc_add = self.dvc_service.add(["large_file_1", "large_file_3"])
+        assert does_file_exist(f"{self.repo_path}/large_file_1.dvc")
+        assert does_file_exist(f"{self.repo_path}/large_file_3.dvc")
+        assert "./large_file_1" in dvc_add.files_added_to_dvc
+        assert "./large_file_3" in dvc_add.files_added_to_dvc
 
     def test_add_nothing(self):
         self.git_service.init()
         self.dvc_service.init()
         super().create_fake_dvc_data()
-        dvc_add = self.dvc_service.add("dvc_data/file-0")
+        dvc_add = self.dvc_service.add(["dvc_data/file-0"])
         assert len(dvc_add.files_added_to_dvc) == 0
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE.value})
@@ -51,7 +68,7 @@ class TestDvc(IntegrationTestCase):
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
         assert does_file_exist(".gitignore") is False
-        dvc_add = self.dvc_service.add(".")
+        dvc_add = self.dvc_service.add(["."])
         assert does_file_exist(".gitignore") is True
         assert len(dvc_add.files_added_to_dvc) == 0
         output = execute_command(["cat", ".dvcignore"], capture_output=True)
@@ -65,7 +82,7 @@ class TestDvc(IntegrationTestCase):
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
-        dvc_add = self.dvc_service.add(".")
+        dvc_add = self.dvc_service.add(["."])
         assert len(dvc_add.files_added_to_dvc) == 0
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
@@ -74,7 +91,7 @@ class TestDvc(IntegrationTestCase):
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
-        dvc_add = self.dvc_service.add(".")
+        dvc_add = self.dvc_service.add(["."])
         assert dvc_add.files_added_to_dvc[0] == "./large_file"
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
@@ -85,7 +102,7 @@ class TestDvc(IntegrationTestCase):
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
-        dvc_add = self.dvc_service.add(".")
+        dvc_add = self.dvc_service.add(["."])
         assert len(dvc_add.files_added_to_dvc) == 0
         assert dvc_add.files_skipped[0] == "./large_file"
 
@@ -93,7 +110,7 @@ class TestDvc(IntegrationTestCase):
     def test_commit_auto_confirm(self, get_choice):
         self.fds_service.init()
         super().create_fake_dvc_data()
-        self.dvc_service.add(".")
+        self.dvc_service.add(["."])
         self.dvc_service.commit(True)
         execute_command(["git", "add", "large_file.dvc"], capture_output=True)
         output = execute_command(["dvc", "dag"], capture_output=True)
@@ -107,7 +124,7 @@ class TestDvc(IntegrationTestCase):
     def test_commit_no_auto_confirm(self, get_choice):
         self.fds_service.init()
         super().create_fake_dvc_data()
-        self.dvc_service.add(".")
+        self.dvc_service.add(["."])
         self.dvc_service.commit(False)
         output = execute_command(["dvc", "dag"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
