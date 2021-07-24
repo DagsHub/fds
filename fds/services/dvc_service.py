@@ -258,7 +258,15 @@ class DVCService(object):
         if remote:
             push_cmd.append("-r")
             push_cmd.append(remote)
-        execute_command(push_cmd, capture_output=False)
+        # Ignoring return code so we can capture the output
+        push_output_bytes = execute_command(
+            push_cmd,
+            capture_output=False,
+            capture_output_and_write_to_stdout=True
+        )
+        # Check if its unauthorized
+        if '401 Unauthorized' in convert_bytes_to_string(push_output_bytes.stderr):
+            execute_command(commit_cmd, capture_output=False)
 
     @staticmethod
     def __get_remotes_list() -> dict:
