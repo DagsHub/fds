@@ -275,6 +275,7 @@ class DVCService(object):
             execute_command(dvc_remote_modify+["user", user_name], capture_output=False)
             # Add password
             execute_command(dvc_remote_modify+["user", password], capture_output=False)
+            # Try to push again
             self.push(remote)
 
     @staticmethod
