@@ -7,7 +7,7 @@ import humanize
 import select
 import sys
 from fds.logger import Logger
-
+import PyInquirer
 
 def get_size_of_path(path: str) -> int:
     if os.path.isdir(path):
@@ -110,3 +110,21 @@ def construct_dvc_url_from_git_url_dagshub(git_url: str) -> str:
     :return: The dvc url
     """
     return git_url.replace(".git", ".dvc")
+
+
+def get_input_from_user(question: str, type: str = "input") -> str:
+    """
+    Get input from user
+    :param question: The question to ask user
+    :param type: The type of input
+    :return: output from the user
+    """
+    questions = [
+        {
+            'type': type,
+            'message': question,
+            'name': 'question'
+        }
+    ]
+    answers = PyInquirer.prompt(questions)
+    return answers['question']

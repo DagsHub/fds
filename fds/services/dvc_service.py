@@ -10,7 +10,7 @@ from fds.services.pretty_print import PrettyPrint
 from fds.services.types import DvcAdd
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
-    construct_dvc_url_from_git_url_dagshub
+    construct_dvc_url_from_git_url_dagshub, get_input_from_user
 
 
 # Choices for DVC
@@ -252,8 +252,7 @@ class DVCService(object):
             commit_cmd.append("-f")
         execute_command(commit_cmd, capture_output=False)
 
-    @staticmethod
-    def push(remote: str) -> Any:
+    def push(self, remote: str) -> Any:
         push_cmd = ["dvc", "push"]
         if remote:
             push_cmd.append("-r")
@@ -266,7 +265,17 @@ class DVCService(object):
         )
         # Check if its unauthorized
         if '401 Unauthorized' in convert_bytes_to_string(push_output_bytes.stderr):
-            execute_command(commit_cmd, capture_output=False)
+            self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
+            user_name = get_input_from_user("Enter your dvc username")
+            password = get_input_from_user("Enter your dvc password", type="password")
+            dvc_remote_modify=["dvc", "remote", "modify", remote, "--local"]
+            # Add auth basic
+            execute_command(dvc_remote_modify+["auth", "basic"], capture_output=False)
+            # Add username
+            execute_command(dvc_remote_modify+["user", user_name], capture_output=False)
+            # Add password
+            execute_command(dvc_remote_modify+["user", password], capture_output=False)
+            self.push(remote)
 
     @staticmethod
     def __get_remotes_list() -> dict:
