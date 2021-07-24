@@ -253,8 +253,8 @@ class DVCService(object):
             commit_cmd.append("-f")
         execute_command(commit_cmd, capture_output=False)
 
-
-    def __execute_push_command(self, remote: str) -> CompletedProcess:
+    @staticmethod
+    def __execute_push_command(remote: str) -> CompletedProcess:
         push_cmd = ["dvc", "push"]
         # We will only retry once
         if remote:

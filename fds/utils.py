@@ -49,7 +49,6 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
             if output.poll() != None:
                 break
         # create a completed process to have same convention
-        # joining bytes
         return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))
     else:
         output = subprocess.run(command, shell=shell)
