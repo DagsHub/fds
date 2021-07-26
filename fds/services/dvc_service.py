@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from enum import Enum
 from subprocess import CompletedProcess
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 import PyInquirer
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
@@ -266,13 +266,29 @@ class DVCService(object):
             capture_output_and_write_to_stdout=True
         )
 
+    def __handle_dagshub_remote(self) -> Tuple[str, str]:
+        self.printer.warn("Please enter your credentials, so we can pull from DAGsHub remote")
+        user_name = get_input_from_user("Enter your DAGsHub username")
+        self.printer.warn("You can navigate to https://dagshub.com/user/settings/tokens to get the token")
+        password = get_input_from_user("Enter your DAGsHub token", type="password")
+        return user_name, password
+
     def push(self, remote: str) -> Any:
         push_output_bytes = self.__execute_push_command(remote)
         # Check if its unauthorized
         if '401 Unauthorized' in convert_bytes_to_string(push_output_bytes.stderr):
-            self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
-            user_name = get_input_from_user("Enter your dvc username")
-            password = get_input_from_user("Enter your dvc password", type="password")
+            # Check if remote is DagsHub.com
+            remotes_available = self.__get_remotes_list()
+            is_dagshub_remote = False
+            for remote in remotes_available.values():
+                if "dagshub.com" in remote.lower():
+                    is_dagshub_remote = True
+            if is_dagshub_remote:
+                user_name, password = self.__handle_dagshub_remote()
+            else:
+                self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
+                user_name = get_input_from_user("Enter your dvc username")
+                password = get_input_from_user("Enter your dvc password", type="password")
             dvc_remote_modify=["dvc", "remote", "modify", remote, "--local"]
             # Add auth basic
             execute_command(dvc_remote_modify+["auth", "basic"], capture_output=False)
