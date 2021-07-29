@@ -1,7 +1,8 @@
 import os
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional
+from subprocess import CompletedProcess
+from typing import Any, List, Optional, Tuple
 import PyInquirer
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
@@ -10,7 +11,7 @@ from fds.services.pretty_print import PrettyPrint
 from fds.services.types import DvcAdd
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
-    construct_dvc_url_from_git_url_dagshub
+    construct_dvc_url_from_git_url_dagshub, get_input_from_user
 
 
 # Choices for DVC
@@ -253,12 +254,48 @@ class DVCService(object):
         execute_command(commit_cmd, capture_output=False)
 
     @staticmethod
-    def push(remote: str) -> Any:
+    def __execute_push_command(remote: str) -> CompletedProcess:
         push_cmd = ["dvc", "push"]
+        # We will only retry once
         if remote:
             push_cmd.append("-r")
             push_cmd.append(remote)
-        execute_command(push_cmd, capture_output=False)
+        return execute_command(
+            push_cmd,
+            capture_output=False,
+            capture_output_and_write_to_stdout=True
+        )
+
+    def __handle_dagshub_remote(self) -> Tuple[str, str]:
+        self.printer.warn("Please enter your credentials, so we can pull from DAGsHub remote")
+        user_name = get_input_from_user("Enter your DAGsHub username")
+        self.printer.warn("You can navigate to https://dagshub.com/user/settings/tokens to get the token")
+        password = get_input_from_user("Enter your DAGsHub token", type="password")
+        return user_name, password
+
+    def push(self, remote: str) -> Any:
+        push_output_bytes = self.__execute_push_command(remote)
+        # Check if its unauthorized
+        if '401 Unauthorized' in convert_bytes_to_string(push_output_bytes.stderr):
+            # Check if remote is DagsHub.com
+            if "dagshub.com" in remote.lower():
+                user_name, password = self.__handle_dagshub_remote()
+            else:
+                self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
+                user_name = get_input_from_user("Enter your dvc username")
+                password = get_input_from_user("Enter your dvc password", type="password")
+            dvc_remote_modify=["dvc", "remote", "modify", remote, "--local"]
+            # Add auth basic
+            execute_command(dvc_remote_modify+["auth", "basic"], capture_output=False)
+            # Add username
+            execute_command(dvc_remote_modify+["user", user_name], capture_output=False)
+            # Add password
+            execute_command(dvc_remote_modify+["user", password], capture_output=False)
+            # Try to push again
+            push_output_bytes = self.__execute_push_command(remote)
+            if push_output_bytes.returncode != 0:
+                # Not giving any message because we already print the message in execute_command
+                raise Exception()
 
     @staticmethod
     def __get_remotes_list() -> dict:

@@ -44,4 +44,4 @@ class IntegrationTestCase(unittest.TestCase):
         self.create_dummy_file("large_file", 11 * 1024)
 
     def get_remote_url_for_test(self):
-        return "https://dagshub.com/Dean/hello-world.git"
+        return "https://dagshub.com/mohithg/hello-world.git"
