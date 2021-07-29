@@ -278,12 +278,7 @@ class DVCService(object):
         # Check if its unauthorized
         if '401 Unauthorized' in convert_bytes_to_string(push_output_bytes.stderr):
             # Check if remote is DagsHub.com
-            remotes_available = self.__get_remotes_list()
-            is_dagshub_remote = False
-            for remote in remotes_available.values():
-                if "dagshub.com" in remote.lower():
-                    is_dagshub_remote = True
-            if is_dagshub_remote:
+            if "dagshub.com" in remote.lower():
                 user_name, password = self.__handle_dagshub_remote()
             else:
                 self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
