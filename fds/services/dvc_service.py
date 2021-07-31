@@ -364,4 +364,7 @@ class DVCService(object):
                         return 0
                 else:
                     remote_name = default_remote
-        self.__handle_dvc_auth(remote_name, lambda: execute_command(["dvc", "pull", "-r", remote_name], capture_output=False))
+        self.__handle_dvc_auth(remote_name, lambda: execute_command(
+            ["dvc", "pull", "-r", remote_name],
+            capture_output=False,
+            capture_output_and_write_to_stdout=True))
