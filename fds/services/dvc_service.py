@@ -298,9 +298,7 @@ class DVCService(object):
                 raise Exception()
 
     def push(self, remote: str) -> Any:
-        def __handle_push():
-            return self.__execute_push_command(remote)
-        self.__handle_dvc_auth(remote, __handle_push)
+        self.__handle_dvc_auth(remote, lambda: self.__execute_push_command(remote))
 
     @staticmethod
     def __get_remotes_list() -> dict:
@@ -366,5 +364,4 @@ class DVCService(object):
                         return 0
                 else:
                     remote_name = default_remote
-
-        execute_command(["dvc", "pull", "-r", remote_name], capture_output=False)
+        self.__handle_dvc_auth(remote_name, lambda: execute_command(["dvc", "pull", "-r", remote_name], capture_output=False))
