@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from enum import Enum
 from subprocess import CompletedProcess
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Callable
 import PyInquirer
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
@@ -273,10 +273,10 @@ class DVCService(object):
         password = get_input_from_user("Enter your DAGsHub token", type="password")
         return user_name, password
 
-    def push(self, remote: str) -> Any:
-        push_output_bytes = self.__execute_push_command(remote)
+    def __handle_dvc_auth(self, remote: str, handler: Callable) -> None:
+        output_bytes = handler()
         # Check if its unauthorized
-        if '401 Unauthorized' in convert_bytes_to_string(push_output_bytes.stderr):
+        if '401 Unauthorized' in convert_bytes_to_string(output_bytes.stderr):
             # Check if remote is DagsHub.com
             if "dagshub.com" in remote.lower():
                 user_name, password = self.__handle_dagshub_remote()
@@ -292,10 +292,15 @@ class DVCService(object):
             # Add password
             execute_command(dvc_remote_modify+["user", password], capture_output=False)
             # Try to push again
-            push_output_bytes = self.__execute_push_command(remote)
-            if push_output_bytes.returncode != 0:
+            output_bytes = handler()
+            if output_bytes.returncode != 0:
                 # Not giving any message because we already print the message in execute_command
                 raise Exception()
+
+    def push(self, remote: str) -> Any:
+        def __handle_push():
+            return self.__execute_push_command(remote)
+        self.__handle_dvc_auth(remote, __handle_push)
 
     @staticmethod
     def __get_remotes_list() -> dict:
