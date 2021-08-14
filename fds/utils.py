@@ -53,6 +53,8 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))
     else:
         output = subprocess.run(command, shell=shell)
+        if output.returncode not in ignorable_return_codes:
+            raise Exception()
     if output.stderr is None or output.stdout is None:
         return
     logger = Logger.get_logger("fds")
