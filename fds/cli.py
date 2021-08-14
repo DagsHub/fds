@@ -65,7 +65,8 @@ arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
                         action="store_true", default=False)
 
 # argument for version
-command_subparser.add_parser("version", help="Show current version")
+arg_parser.add_argument("-V", "--version", help="Show current version",
+                        action="store_true", default=False)
 
 
 def parse_args(args):

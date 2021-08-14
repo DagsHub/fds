@@ -151,7 +151,7 @@ class FdsService(object):
     def version(self):
         # Print fds version
         from fds import __version__
-        self.printer.success(f"fds version: {__version__}")
+        self.printer.log(f"fds version: {__version__}")
         # Print git version
         git_version = self.git_service.version()
         self.printer.success(git_version.strip())

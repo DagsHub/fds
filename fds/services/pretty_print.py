@@ -11,7 +11,7 @@ class PrettyPrint(object):
         print(Fore.YELLOW + text)
 
     def log(self, text: str):
-        print(Fore.reset + text)
+        print(Fore.RESET + text)
 
     def error(self, text: str):
         print(Fore.RED + text)
