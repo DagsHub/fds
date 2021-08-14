@@ -145,7 +145,6 @@ class HooksRunner(object):
             failed = hook()
             if failed:
                 ret_code |= exit_code
-
         return ret_code
 
 
