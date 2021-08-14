@@ -50,3 +50,6 @@ class IntegrationTestCase(unittest.TestCase):
 
     def get_remote_url_for_test(self):
         return "https://dagshub.com/mohithg/hello-world.git"
+
+    def get_remote_git_url_for_test(self):
+        return "https://github.com/octocat/Hello-World.git"

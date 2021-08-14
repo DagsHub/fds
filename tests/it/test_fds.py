@@ -98,6 +98,22 @@ class TestFds(IntegrationTestCase):
         # Checking dvc pull
         assert does_file_exist(f"{self.repo_path}/hello-world/data")
 
+    @patch("fds.services.dvc_service.get_input_from_user", return_value=False)
+    def test_clone_no_dvc(self, input):
+        self.fds_service.clone(self.get_remote_git_url_for_test(), None, None)
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/Hello-World")
+        # Checking dvc doesn't exist
+        assert does_file_exist(f"{self.repo_path}/Hello-World/.dvc") is False
+
+    @patch("fds.services.dvc_service.get_input_from_user", return_value=True)
+    def test_clone_with_dvc_init(self, input):
+        self.fds_service.clone(self.get_remote_git_url_for_test(), None, None)
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/Hello-World")
+        # Checking dvc doesn't exist
+        assert does_file_exist(f"{self.repo_path}/Hello-World/.dvc")
+
     def test_clone_empty(self):
         self.fds_service.clone(self.get_remote_url_for_test(), "", None)
         # Check git clone
