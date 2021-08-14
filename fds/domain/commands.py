@@ -10,6 +10,7 @@ class Commands(Enum):
     PUSH = "push"
     SAVE = "save"
     CLONE = "clone"
+    VERSION = "version"
 
 
 class AddCommands(Enum):

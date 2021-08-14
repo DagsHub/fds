@@ -75,3 +75,11 @@ class GitService(object):
             folder_name = get_git_repo_name_from_url(url)
         execute_command(["git", "clone", url, folder_name], capture_output=False)
         return folder_name
+
+    @staticmethod
+    def version() -> str:
+        """
+        Return current version of git
+        :return:
+        """
+        return convert_bytes_to_string(execute_command(["git", "--version"], capture_output=True).stdout)

@@ -368,3 +368,11 @@ class DVCService(object):
             ["dvc", "pull", "-r", remote_name],
             capture_output=False,
             capture_output_and_write_to_stdout=True))
+
+    @staticmethod
+    def version() -> str:
+        """
+        Return current version of dvc
+        :return:
+        """
+        return convert_bytes_to_string(execute_command(["dvc", "--version"], capture_output=True).stdout)
