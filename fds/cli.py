@@ -55,7 +55,7 @@ parser_save.add_argument('-dr', '--dvc-remote', help="dvc remote name, default '
 parser_save.add_argument('message', help="save message")
 
 # clone
-parser_clone = command_subparser.add_parser('clone', help='clone git repository and pull dvc repository based on dvc.yaml')
+parser_clone = command_subparser.add_parser('clone', help='clone git repository and pull dvc repository based on tracked dvc config file')
 parser_clone.add_argument('url', help="url of the git repository")
 parser_clone.add_argument('folder_name', nargs="*", help="Optional folder name to clone into", default=[None])
 parser_clone.add_argument('-dr', '--dvc-remote', help="Optional DVC remote name", default="origin")
