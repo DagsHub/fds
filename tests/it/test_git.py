@@ -15,6 +15,8 @@ class TestGit(IntegrationTestCase):
         assert msg == "git already initialized"
 
     def test_status(self):
+        self.assertRaises(Exception, self.git_service.status)
+        self.git_service.init()
         self.git_service.status()
 
     def test_add(self):
