@@ -112,5 +112,8 @@ class Run(object):
             # Run save command stuff
             self.service.save(arguments["message"], arguments["git_remote"], arguments["dvc_remote"])
             return 0
+        elif arguments["command"] == Commands.VERSION.value:
+            self.service.version()
+            return 0
         else:
             raise Exception("Invalid operation")

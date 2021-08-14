@@ -64,6 +64,9 @@ parser_clone.add_argument('-dr', '--dvc-remote', help="Optional DVC remote name"
 arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
                         action="store_true", default=False)
 
+# argument for version
+command_subparser.add_parser("version", help="Show current version")
+
 
 def parse_args(args):
     arguments = vars(arg_parser.parse_args(args=args or ["--help"]))

@@ -147,3 +147,14 @@ class FdsService(object):
         self.push(git_remote, dvc_remote)
         self.printer.success("====================================")
         self.printer.success("Successfully saved current workspace")
+
+    def version(self):
+        # Print fds version
+        from fds import __version__
+        self.printer.success(f"fds version: {__version__}")
+        # Print git version
+        git_version = self.git_service.version()
+        self.printer.success(git_version.strip())
+        # Print dvc version
+        dvc_version = self.dvc_service.version().strip()
+        self.printer.warn(f"dvc version: {dvc_version}")
