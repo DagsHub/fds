@@ -1,13 +1,14 @@
 import subprocess
 from pathlib import Path
 import os
-from typing import List, Union, Any
+from typing import List, Union, Any, Optional
 
 import humanize
 import select
 import sys
 from fds.logger import Logger
 import PyInquirer
+
 
 def get_size_of_path(path: str) -> int:
     if os.path.isdir(path):
@@ -61,6 +62,19 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
     if output.returncode not in ignorable_return_codes:
         raise Exception(error_message)
     return output
+
+
+def rerun_in_new_shell_and_exit(
+    cmd: Optional[List[str]] = None
+):
+    cmd = cmd or ["fds"] + sys.argv
+
+    output = execute_command(
+        cmd,
+        shell=True,
+        capture_output=False,
+    )
+    sys.exit(output.returncode)
 
 
 def append_line_to_file(filename: str, data: str) -> None:

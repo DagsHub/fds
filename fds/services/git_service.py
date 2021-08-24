@@ -2,11 +2,12 @@ import os
 from typing import Any, Optional, List
 
 from fds.services.pretty_print import PrettyPrint
+from fds.services.types import InnerService
 from fds.utils import execute_command, convert_bytes_to_string, does_file_exist, check_git_ignore, \
     get_git_repo_name_from_url
 
 
-class GitService(object):
+class GitService(InnerService):
     """
     Git Service responsible for all the git commands of fds
     """
@@ -16,13 +17,16 @@ class GitService(object):
 
     def init(self) -> str:
         # Check if git is already initialized
-        if does_file_exist(f"{self.repo_path}/.git"):
+        if self.is_initialized():
             return "git already initialized"
         execute_command(['git', 'init', self.repo_path])
         return "git initialized successfully"
 
     def status(self) -> Any:
         return execute_command(["git", "status"], capture_output=False)
+
+    def is_initialized(self) -> Any:
+        return does_file_exist(f"{self.repo_path}/.git")
 
     def add(self, paths_to_add: List[str], skipped: List[str]) -> Any:
         # This will take care of adding everything in the argument to add including the .dvc files inside it
