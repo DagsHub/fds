@@ -36,10 +36,22 @@ class DVCService(object):
     """
 
     def __init__(self):
-        self.repo_path = os.path.curdir
+        self.repo_path = self.get_repo_path()
         self.logger = Logger.get_logger("fds.DVCService")
         self.printer = PrettyPrint()
         self.selection_message_count = 0
+
+    def get_repo_path(self):
+        try:
+            path_cmd = execute_command(["dvc", "root"], capture_output=True)
+            absolute_path = convert_bytes_to_string(path_cmd.stdout).strip()
+            self.repo_path = os.path.abspath(os.path.join(os.path.curdir, absolute_path))
+        except Exception as e:
+            self.repo_path = os.path.curdir
+        return self.repo_path
+
+    def is_initialized(self):
+        return does_file_exist(f"{self.repo_path}/.dvc")
 
     def init(self):
         """
@@ -47,7 +59,7 @@ class DVCService(object):
         :return:
         """
         # Check if dvc is already initialized
-        if does_file_exist(f"{self.repo_path}/.dvc"):
+        if self.is_initialized():
             return "DVC already initialized"
         execute_command(["dvc", "init", "--subdir"])
         return "DVC initialized successfully"
