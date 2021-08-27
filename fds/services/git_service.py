@@ -22,13 +22,12 @@ class GitService(object):
             self.repo_path = os.path.curdir
         return self.repo_path
 
-    @staticmethod
     def is_initialized(self):
         return does_file_exist(f"{self.repo_path}/.git")
 
     def init(self) -> str:
         # Check if git is already initialized
-        if does_file_exist(f"{self.repo_path}/.git"):
+        if self.is_initialized():
             return "git already initialized"
         execute_command(['git', 'init', self.repo_path])
         return "git initialized successfully"
