@@ -91,3 +91,12 @@ class TestGit(IntegrationTestCase):
         self.git_service.clone(self.get_remote_url_for_test(), "test")
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/test")
+
+    def test_get_repo_path(self):
+        self.git_service.init()
+        path = self.git_service.get_repo_path()
+        assert path == self.repo_path
+        self.create_dummy_folder("test_git")
+        path = self.git_service.get_repo_path()
+        assert path == self.repo_path
+

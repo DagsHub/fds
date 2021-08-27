@@ -162,3 +162,13 @@ class TestDvc(IntegrationTestCase):
         os.chdir(folder_name)
         self.dvc_service.pull(url, "storage")
         assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
+
+    def test_get_repo_path(self):
+        self.git_service.init()
+        self.dvc_service.init()
+        path = self.dvc_service.get_repo_path()
+        assert path == self.repo_path
+        self.create_dummy_folder("test_dvc")
+        path = self.dvc_service.get_repo_path()
+        assert path == self.repo_path
+

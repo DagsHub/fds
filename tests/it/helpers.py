@@ -34,6 +34,11 @@ class IntegrationTestCase(unittest.TestCase):
         with open(file_name, 'wb') as fout:
             fout.write(os.urandom(size))
 
+    def create_dummy_folder(self, folder_name: str):
+        new_folder = f"{self.repo_path}/{folder_name}"
+        Path(new_folder).mkdir(parents=True, exist_ok=True)
+        os.chdir(new_folder)
+
     def create_fake_dvc_data(self):
         dvc_path = f"{self.repo_path}/dvc_data"
         Path(dvc_path).mkdir(parents=True, exist_ok=True)
