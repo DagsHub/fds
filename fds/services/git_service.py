@@ -18,7 +18,7 @@ class GitService(object):
         try:
             path_cmd = execute_command(["git", "rev-parse", "--show-toplevel"], capture_output=True)
             self.repo_path = convert_bytes_to_string(path_cmd.stdout).strip()
-        except Exception as e:
+        except Exception:
             self.repo_path = os.path.curdir
         return self.repo_path
 

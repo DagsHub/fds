@@ -99,4 +99,3 @@ class TestGit(IntegrationTestCase):
         self.create_dummy_folder("test_git")
         path = self.git_service.get_repo_path()
         assert path == self.repo_path
-

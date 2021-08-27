@@ -9,6 +9,7 @@ import sys
 from fds.logger import Logger
 import PyInquirer
 
+
 def get_size_of_path(path: str) -> int:
     if os.path.isdir(path):
         return sum(p.stat().st_size for p in Path(path).rglob('*'))
@@ -31,8 +32,8 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         output = subprocess.run(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif capture_output_and_write_to_stdout:
         output = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout=[]
-        stderr=[]
+        stdout = []
+        stderr = []
         while True:
             reads = [output.stdout.fileno(), output.stderr.fileno()]
             ret = select.select(reads, [], [])
@@ -46,7 +47,7 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
                     read = output.stderr.readline()
                     sys.stderr.write(convert_bytes_to_string(read))
                     stderr.append(read)
-            if output.poll() != None:
+            if output.poll() is not None:
                 break
         # create a completed process to have same convention
         return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))

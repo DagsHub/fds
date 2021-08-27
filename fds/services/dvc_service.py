@@ -46,7 +46,7 @@ class DVCService(object):
             path_cmd = execute_command(["dvc", "root"], capture_output=True)
             absolute_path = convert_bytes_to_string(path_cmd.stdout).strip()
             self.repo_path = os.path.abspath(os.path.join(os.path.curdir, absolute_path))
-        except Exception as e:
+        except Exception:
             self.repo_path = os.path.curdir
         return self.repo_path
 
@@ -296,7 +296,7 @@ class DVCService(object):
                 self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
                 user_name = get_input_from_user("Enter your dvc username")
                 password = get_input_from_user("Enter your dvc password", type="password")
-            dvc_remote_modify=["dvc", "remote", "modify", remote, "--local"]
+            dvc_remote_modify = ["dvc", "remote", "modify", remote, "--local"]
             # Add auth basic
             execute_command(dvc_remote_modify+["auth", "basic"], capture_output=False)
             # Add username
