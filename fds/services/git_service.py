@@ -14,13 +14,14 @@ class GitService(object):
         self.repo_path = self.get_repo_path()
         self.printer = PrettyPrint()
 
-    def get_repo_path(self):
+    @staticmethod
+    def get_repo_path():
         try:
             path_cmd = execute_command(["git", "rev-parse", "--show-toplevel"], capture_output=True)
-            self.repo_path = convert_bytes_to_string(path_cmd.stdout).strip()
+            repo_path = convert_bytes_to_string(path_cmd.stdout).strip()
         except Exception:
-            self.repo_path = os.path.curdir
-        return self.repo_path
+            repo_path = os.path.curdir
+        return repo_path
 
     def is_initialized(self):
         return does_file_exist(f"{self.repo_path}/.git")

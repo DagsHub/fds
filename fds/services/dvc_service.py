@@ -41,14 +41,15 @@ class DVCService(object):
         self.printer = PrettyPrint()
         self.selection_message_count = 0
 
-    def get_repo_path(self):
+    @staticmethod
+    def get_repo_path():
         try:
             path_cmd = execute_command(["dvc", "root"], capture_output=True)
             absolute_path = convert_bytes_to_string(path_cmd.stdout).strip()
-            self.repo_path = os.path.abspath(os.path.join(os.path.curdir, absolute_path))
+            repo_path = os.path.abspath(os.path.join(os.path.curdir, absolute_path))
         except Exception:
-            self.repo_path = os.path.curdir
-        return self.repo_path
+            repo_path = os.path.curdir
+        return repo_path
 
     def is_initialized(self):
         return does_file_exist(f"{self.repo_path}/.dvc")
