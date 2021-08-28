@@ -43,12 +43,15 @@ class DVCService(object):
 
     @staticmethod
     def get_repo_path():
-        try:
-            path_cmd = execute_command(["dvc", "root"], capture_output=True)
+
+        path_cmd = execute_command(["dvc", "root"], capture_output=True, ignorable_return_codes=[0, 253])
+        stderr = convert_bytes_to_string(path_cmd.stderr).strip()
+        # If its not inside dvc directory, then it means dvc is not initalized yet
+        if "not inside of a DVC repository" in stderr:
+            repo_path = os.path.curdir
+        else:
             absolute_path = convert_bytes_to_string(path_cmd.stdout).strip()
             repo_path = os.path.abspath(os.path.join(os.path.curdir, absolute_path))
-        except Exception:
-            repo_path = os.path.curdir
         return repo_path
 
     def is_initialized(self):
