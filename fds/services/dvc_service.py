@@ -8,7 +8,7 @@ from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.pretty_print import PrettyPrint
-from fds.services.types import DvcAdd
+from fds.services.types import DvcAdd, InnerService
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
     construct_dvc_url_from_git_url_dagshub, get_input_from_user
@@ -30,7 +30,7 @@ class AddToDvc:
     file_to_skip: Optional[str]
 
 
-class DVCService(object):
+class DVCService(InnerService):
     """
     DVC Service responsible for all the dvc commands of fds
     """
@@ -47,10 +47,13 @@ class DVCService(object):
         :return:
         """
         # Check if dvc is already initialized
-        if does_file_exist(f"{self.repo_path}/.dvc"):
+        if self.is_initialized():
             return "DVC already initialized"
         execute_command(["dvc", "init", "--subdir"])
         return "DVC initialized successfully"
+
+    def is_initialized(self) -> Any:
+        return does_file_exist(f"{self.repo_path}/.dvc")
 
     def status(self) -> Any:
         """
