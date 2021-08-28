@@ -16,11 +16,13 @@ class GitService(object):
 
     @staticmethod
     def get_repo_path():
-        try:
-            path_cmd = execute_command(["git", "rev-parse", "--show-toplevel"], capture_output=True)
-            repo_path = convert_bytes_to_string(path_cmd.stdout).strip()
-        except Exception:
+        path_cmd = execute_command(["git", "rev-parse", "--show-toplevel"], capture_output=True, ignorable_return_codes=[0, 128])
+        stderr = convert_bytes_to_string(path_cmd.stderr).strip()
+        # If its not git directory, then it means git is not initalized yet
+        if "not a git repository" in stderr:
             repo_path = os.path.curdir
+        else:
+            repo_path = convert_bytes_to_string(path_cmd.stdout).strip()
         return repo_path
 
     def is_initialized(self):
