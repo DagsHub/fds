@@ -78,24 +78,20 @@ class HooksRunner(object):
         r = requests.get("https://pypi.python.org/pypi/fastds/json")
         data = r.json()
         latest_version = data["info"]["version"]
-
-        if latest_version != __version__:
-            questions = [
-                {
-                    'type': 'confirm',
-                    'message': f"You are using fds version {__version__}, however version {latest_version}"
-                               f" is available.Should we upgrade using `pip install fastds --upgrade`",
-                    'name': 'install',
-                    'default': 'True',
-                },
-            ]
-            answers = PyInquirer.prompt(questions)
-            if answers["install"]:
-                print("\nUpgrading package. Please re-enter the command once upgrade has been completed.\n")
-                execute_command(["pip install fastds --upgrade"], shell=True, capture_output=False)
-                sys.exit()
-            else:
-                ret_code = 0
+        if latest_version == __version__:
+            return 0
+        questions = [
+            {
+                'type': 'confirm',
+                'message': f"You are using fds version {__version__}, however version {latest_version}"
+                           f" is available.Should we upgrade using `pip install fastds --upgrade`",
+                'name': 'install',
+                'default': 'True',
+            },
+        ]
+        answers = PyInquirer.prompt(questions)
+        if not answers["install"]:
+            return 0
 
         print("\nUpgrading package.\n")
         execute_command(["pip install fastds --upgrade"], shell=True, capture_output=False)
