@@ -353,7 +353,7 @@ class DVCService(InnerService):
         :return:
         """
         # Check if dvc clone can happen
-        if not does_file_exist(".dvc"):
+        if not self.is_initialized():
             self.printer.warn("This is not a dvc repository to clone from DVC remote")
             should_init = get_input_from_user("Would you like us to init a dvc repository?", type="confirm")
             if should_init is True:
