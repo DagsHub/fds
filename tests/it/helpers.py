@@ -14,10 +14,10 @@ class IntegrationTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.repo_path = tempfile.mkdtemp()
+        os.chdir(self.repo_path)
         self.git_service = GitService()
         self.dvc_service = DVCService()
         self.fds_service = FdsService(self.git_service, self.dvc_service)
-        os.chdir(self.repo_path)
 
     def tearDown(self):
         super().tearDown()
@@ -33,6 +33,11 @@ class IntegrationTestCase(unittest.TestCase):
     def create_dummy_file(self, file_name: str, size: int):
         with open(file_name, 'wb') as fout:
             fout.write(os.urandom(size))
+
+    def create_dummy_folder(self, folder_name: str):
+        new_folder = f"{self.repo_path}/{folder_name}"
+        Path(new_folder).mkdir(parents=True, exist_ok=True)
+        os.chdir(new_folder)
 
     def create_fake_dvc_data(self):
         dvc_path = f"{self.repo_path}/dvc_data"

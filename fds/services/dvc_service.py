@@ -36,10 +36,26 @@ class DVCService(InnerService):
     """
 
     def __init__(self):
-        self.repo_path = os.path.curdir
+        self.repo_path = self.get_repo_path()
         self.logger = Logger.get_logger("fds.DVCService")
         self.printer = PrettyPrint()
         self.selection_message_count = 0
+
+    @staticmethod
+    def get_repo_path():
+
+        path_cmd = execute_command(["dvc", "root"], capture_output=True, ignorable_return_codes=[0, 253])
+        stderr = convert_bytes_to_string(path_cmd.stderr).strip()
+        # If its not inside dvc directory, then it means dvc is not initalized yet
+        if "not inside of a DVC repository" in stderr:
+            repo_path = os.path.curdir
+        else:
+            absolute_path = convert_bytes_to_string(path_cmd.stdout).strip()
+            repo_path = os.path.abspath(os.path.join(os.path.curdir, absolute_path))
+        return repo_path
+
+    def is_initialized(self):
+        return does_file_exist(f"{self.repo_path}/.dvc")
 
     def init(self):
         """
@@ -287,7 +303,7 @@ class DVCService(InnerService):
                 self.printer.warn("Please enter your credentials, so we can pull from your dvc remote")
                 user_name = get_input_from_user("Enter your dvc username")
                 password = get_input_from_user("Enter your dvc password", type="password")
-            dvc_remote_modify=["dvc", "remote", "modify", remote, "--local"]
+            dvc_remote_modify = ["dvc", "remote", "modify", remote, "--local"]
             # Add auth basic
             execute_command(dvc_remote_modify+["auth", "basic"], capture_output=False)
             # Add username
