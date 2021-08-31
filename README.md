@@ -16,7 +16,7 @@ At a high level, `fds` is a command line wrapper around Git and [DVC](https://dv
 =======
 ## Installation
 
-- Install `fds` using PIP `pip install fastds`
+- Install `fds` using PIP `pip3 install fastds`
 - Once installed successfully, you can start using `fds`
 - eg: `fds init` should trigger the init command
 - You can also use `sdf` instead of `fds` - it's identical, but might be more fun to type 🤓 
