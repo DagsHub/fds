@@ -200,7 +200,7 @@ class TestFdsHooks:
         assert mock_execute_command.call_count == 1
 
         args = mock_execute_command.call_args_list[0].args[0]
-        assert re.findall(r"^pip install .*'dvc", args[0])
+        assert re.findall(r"^pip3 install .*'dvc", args[0])
 
     @pytest.mark.parametrize("git_preinstalled", BOOLS)
     @patch('fds.run.sys.exit')
@@ -276,7 +276,7 @@ class TestFdsHooks:
         assert mock_execute_command.call_count == 1
 
         lst = mock_execute_command.call_args_list[0]
-        assert re.findall(r"^pip install .*fastds.*--upgrade", lst.args[0][0])
+        assert re.findall(r"^pip3 install .*fastds.*--upgrade", lst.args[0][0])
 
         assert mock_rerun.call_count == 1
         mock_rerun.assert_called_with()

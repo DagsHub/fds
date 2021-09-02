@@ -53,14 +53,14 @@ class HooksRunner(object):
             {
                 'type': 'confirm',
                 'message': 'Should we install dvc [https://dvc.org/] for you right now?\n' +
-                           '  Will install using `pip install dvc<3`',
+                           '  Will install using `pip3 install dvc<3`',
                 'name': 'install',
                 'default': False,
             },
         ]
         answers = PyInquirer.prompt(questions)
         if answers["install"]:
-            execute_command(["pip install 'dvc<3'"], shell=True, capture_output=False)
+            execute_command(["pip3 install 'dvc<3'"], shell=True, capture_output=False)
             ret_code = 0
         else:
             # Provide instructions
@@ -84,7 +84,7 @@ class HooksRunner(object):
             {
                 'type': 'confirm',
                 'message': f"You are using fds version {__version__}, however version {latest_version}"
-                           f" is available.Should we upgrade using `pip install fastds --upgrade`",
+                           f" is available.Should we upgrade using `pip3 install fastds --upgrade`",
                 'name': 'install',
                 'default': 'True',
             },
@@ -94,7 +94,7 @@ class HooksRunner(object):
             return 0
 
         print("\nUpgrading package.\n")
-        execute_command(["pip install fastds --upgrade"], shell=True, capture_output=False)
+        execute_command(["pip3 install fastds --upgrade"], shell=True, capture_output=False)
         print("\nfds upgraded. Running command...\n")
         rerun_in_new_shell_and_exit()
         return 0
