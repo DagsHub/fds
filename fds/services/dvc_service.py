@@ -352,7 +352,15 @@ class DVCService(InnerService):
         :param remote_name: Optional Remote dvc name to pull the dvc repository
         :return:
         """
-        self.printer.warn("Staring DVC Clone...")
+        # Check if dvc clone can happen
+        if not self.is_initialized():
+            self.printer.warn("This is not a dvc repository to clone from DVC remote")
+            should_init = get_input_from_user("Would you like us to init a dvc repository?", type="confirm")
+            if should_init is True:
+                self.init()
+                self.printer.warn("DVC initialized successfully")
+            return
+        self.printer.warn("Starting DVC Clone...")
         if remote_name is None:
             # If nothing is specified
             # First check if its dagshub repo

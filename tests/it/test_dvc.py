@@ -25,6 +25,9 @@ class TestDvc(IntegrationTestCase):
         self.assertRaises(Exception, self.dvc_service.init)
 
     def test_status(self):
+        self.assertRaises(Exception, self.dvc_service.status)
+        self.git_service.init()
+        self.dvc_service.init()
         self.dvc_service.status()
 
     def test_add(self):
