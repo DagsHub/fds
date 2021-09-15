@@ -4,6 +4,7 @@ from typing import Optional, List
 from fds.services.dvc_service import DVCService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
+from fds.version import __version__
 
 
 class FdsService(object):
@@ -150,7 +151,6 @@ class FdsService(object):
 
     def version(self):
         # Print fds version
-        from fds import __version__
         self.printer.log(f"fds version: {__version__}")
         # Print git version
         git_version = self.git_service.version()
