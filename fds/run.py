@@ -186,6 +186,10 @@ class Run(object):
             # Run init command stuff
             self.service.init()
             return 0
+        elif arguments["command"] == Commands.CLONE.value:
+            # Run clone command stuff
+            self.service.clone(arguments["url"], arguments["folder_name"][0], arguments["dvc_remote"])
+            return 0
 
         # Run pre execute hooks After git and dvc are initialized
         hook_ret_code = self.hooks_runner.run(self.hooks_runner.pre_execute_hooks)
@@ -199,10 +203,6 @@ class Run(object):
         elif arguments["command"] == Commands.ADD.value:
             # Run add command stuff
             self.service.add(arguments["add_command"])
-            return 0
-        elif arguments["command"] == Commands.CLONE.value:
-            # Run clone command stuff
-            self.service.clone(arguments["url"], arguments["folder_name"][0], arguments["dvc_remote"])
             return 0
         elif arguments["command"] == Commands.COMMIT.value:
             if len(arguments.get("message", [])) == 1:
