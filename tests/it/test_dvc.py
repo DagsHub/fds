@@ -150,21 +150,21 @@ class TestDvc(IntegrationTestCase):
         self.dvc_service.pull(self.get_remote_url_for_test(), None)
         assert does_file_exist(f"{self.repo_path}/hello-world/data")
 
-    @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
-    def test_clone_show_remotes_list(self, get_choice):
-        url = "https://github.com/iterative/example-get-started.git"
-        folder_name = self.git_service.clone(url, None)
-        os.chdir(folder_name)
-        self.dvc_service.pull(url, None)
-        assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
-
-    @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
-    def test_clone_given_remote(self, get_choice):
-        url = "https://github.com/iterative/example-get-started.git"
-        folder_name = self.git_service.clone(url, None)
-        os.chdir(folder_name)
-        self.dvc_service.pull(url, "storage")
-        assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
+    # @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
+    # def test_clone_show_remotes_list(self, get_choice):
+    #     url = "https://github.com/iterative/example-get-started.git"
+    #     folder_name = self.git_service.clone(url, None)
+    #     os.chdir(folder_name)
+    #     self.dvc_service.pull(url, None)
+    #     assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
+    #
+    # @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
+    # def test_clone_given_remote(self, get_choice):
+    #     url = "https://github.com/iterative/example-get-started.git"
+    #     folder_name = self.git_service.clone(url, None)
+    #     os.chdir(folder_name)
+    #     self.dvc_service.pull(url, "storage")
+    #     assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
 
     def test_get_repo_path(self):
         self.git_service.init()
