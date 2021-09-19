@@ -154,7 +154,7 @@ class TestRun(IntegrationTestCase):
         url = "https://github.com/iterative/example-get-started.git"
         self.run({
             "command": Commands.CLONE.value,
-            'url': self.get_remote_url_for_test(),
+            'url': url,
             'dvc_remote': 'storage',
             'folder_name': ["start"]}).execute()
         # Check git clone
