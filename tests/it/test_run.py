@@ -26,6 +26,7 @@ class TestRun(IntegrationTestCase):
         output = execute_command(["git", "status"], capture_output=True)
         # Check DVC add
         assert "new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
+        assert "new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
         # Check Git add
         assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
         assert "new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
@@ -93,8 +94,11 @@ class TestRun(IntegrationTestCase):
         assert "Commit 1" in convert_bytes_to_string(output.stdout)
 
     def test_clone(self):
-        self.run({"command": Commands.CLONE.value, 'url': self.get_remote_url_for_test(), 'dvc_remote': 'origin', 'folder_name': [None]})\
-            .execute()
+        self.run({
+            "command": Commands.CLONE.value,
+            'url': self.get_remote_url_for_test(),
+            'dvc_remote': 'origin',
+            'folder_name': [None]}).execute()
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/hello-world")
         # Checking dvc pull
@@ -102,8 +106,11 @@ class TestRun(IntegrationTestCase):
 
     @patch("fds.services.dvc_service.get_input_from_user", return_value=False)
     def test_clone_no_dvc(self, input):
-        self.run({"command": Commands.CLONE.value, 'url': self.get_remote_git_url_for_test(), 'dvc_remote': 'origin', 'folder_name': [None]}) \
-            .execute()
+        self.run({
+            "command": Commands.CLONE.value,
+            'url': self.get_remote_git_url_for_test(),
+            'dvc_remote': 'origin',
+            'folder_name': [None]}).execute()
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/Hello-World")
         # Checking dvc doesn't exist
@@ -111,24 +118,33 @@ class TestRun(IntegrationTestCase):
 
     @patch("fds.services.dvc_service.get_input_from_user", return_value=True)
     def test_clone_with_dvc_init(self, input):
-        self.run({"command": Commands.CLONE.value, 'url': self.get_remote_git_url_for_test(), 'dvc_remote': 'origin', 'folder_name': [None]}) \
-            .execute()
+        self.run({
+            "command": Commands.CLONE.value,
+            'url': self.get_remote_git_url_for_test(),
+            'dvc_remote': 'origin',
+            'folder_name': [None]}).execute()
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/Hello-World")
         # Checking dvc doesn't exist
         assert does_file_exist(f"{self.repo_path}/Hello-World/.dvc")
 
     def test_clone_empty(self):
-        self.run({"command": Commands.CLONE.value, 'url': self.get_remote_url_for_test(), 'dvc_remote': 'origin', 'folder_name': [""]}) \
-            .execute()
+        self.run({
+            "command": Commands.CLONE.value,
+            'url': self.get_remote_url_for_test(),
+            'dvc_remote': 'origin',
+            'folder_name': [""]}).execute()
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/hello-world")
         # Checking dvc pull
         assert does_file_exist(f"{self.repo_path}/hello-world/data")
 
     def test_clone_git_custom_name(self):
-        self.run({"command": Commands.CLONE.value, 'url': self.get_remote_url_for_test(), 'dvc_remote': 'origin', 'folder_name': ["test"]}) \
-            .execute()
+        self.run({
+            "command": Commands.CLONE.value,
+            'url': self.get_remote_url_for_test(),
+            'dvc_remote': 'origin',
+            'folder_name': ["test"]}).execute()
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/test")
         # Checking dvc pull
@@ -136,8 +152,11 @@ class TestRun(IntegrationTestCase):
 
     def test_clone_given_remote(self):
         url = "https://github.com/iterative/example-get-started.git"
-        self.run({"command": Commands.CLONE.value, 'url': self.get_remote_url_for_test(), 'dvc_remote': 'storage', 'folder_name': ["start"]}) \
-            .execute()
+        self.run({
+            "command": Commands.CLONE.value,
+            'url': self.get_remote_url_for_test(),
+            'dvc_remote': 'storage',
+            'folder_name': ["start"]}).execute()
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/start")
         # Checking dvc pull of storage remote
