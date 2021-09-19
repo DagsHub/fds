@@ -82,15 +82,12 @@ def main(args=None):
     printer = PrettyPrint()
     if bool(parsed_args["verbose"]):
         Logger.set_logging_level(logging.DEBUG)
-    print("################")
-    print(parsed_args)
-    print("################")
-    # try:
-    #     result = Run(arguments=parsed_args).execute()
-    # except Exception as e:
-    #     printer.error(str(e))
-    #     result = 1
-    # sys.exit(result)
+    try:
+        result = Run(arguments=parsed_args).execute()
+    except Exception as e:
+        printer.error(str(e))
+        result = 1
+    sys.exit(result)
 
 
 if __name__ == "__main__":
