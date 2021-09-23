@@ -13,7 +13,7 @@ from fds.services.types import InnerService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
 from fds.utils import execute_command, rerun_in_new_shell_and_exit
-from .__init__ import __version__
+from .version import __version__
 
 
 class HooksRunner(object):

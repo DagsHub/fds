@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 import re
 
-from fds import __version__
+from fds.version import __version__
 from fds.services.fds_service import FdsService
 from fds.run import HooksRunner
 

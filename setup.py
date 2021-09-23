@@ -1,5 +1,5 @@
 import setuptools
-from fds import __version__
+from fds.version import __version__
 
 try:
     with open('README.md', 'r') as readme:
