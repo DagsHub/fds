@@ -53,14 +53,14 @@ class HooksRunner(object):
             {
                 'type': 'confirm',
                 'message': 'Should we install dvc [https://dvc.org/] for you right now?\n' +
-                           '  Will install using `pip3 install dvc<3`',
+                           '  Will install using `pip3 install dvc==2.3.0`',
                 'name': 'install',
                 'default': False,
             },
         ]
         answers = PyInquirer.prompt(questions)
         if answers["install"]:
-            execute_command(["pip3 install 'dvc<3'"], shell=True, capture_output=False)
+            execute_command(["pip3 install 'dvc==2.3.0'"], shell=True, capture_output=False)
             ret_code = 0
         else:
             # Provide instructions
