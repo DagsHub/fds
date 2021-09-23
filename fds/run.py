@@ -170,13 +170,16 @@ class Run(object):
         arguments = self.arguments
         self.logger.debug(f"arguments passed: {arguments}")
 
-        hook_ret_code = self.hooks_runner.run(self.hooks_runner.update_check)
-        if hook_ret_code != 0:
-            return hook_ret_code
         # No need to run any hooks
         if arguments.get(Commands.VERSION.value):
             self.service.version()
+            # Do version check after showing the version
+            self.hooks_runner.run(self.hooks_runner.update_check)
             return 0
+
+        hook_ret_code = self.hooks_runner.run(self.hooks_runner.update_check)
+        if hook_ret_code != 0:
+            return hook_ret_code
 
         # Run pre execute hooks pre git and dvc init hooks
         hook_ret_code = self.hooks_runner.run(self.hooks_runner.pre_git_dvc_hooks)
