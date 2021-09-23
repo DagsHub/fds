@@ -35,10 +35,16 @@ class HooksRunner(object):
         self.printer = printer
         self.logger = logger
 
-        self.pre_execute_hooks = [
+        self.update_check = [
+            (self.ExitCodes.FDS_UPDATE_FAILED.value, self._ensure_fds_updated)
+        ]
+
+        self.pre_git_dvc_hooks = [
             (self.ExitCodes.DVC_INSTALL_FAILED.value, self._ensure_dvc_installed),
             (self.ExitCodes.GIT_INSTALL_FAILED.value, self._ensure_git_installed),
-            (self.ExitCodes.FDS_UPDATE_FAILED.value, self._ensure_fds_updated),
+        ]
+
+        self.pre_execute_hooks = [
             (self.ExitCodes.GIT_INITIALIZE_FAILED.value, self._ensure_git_initialized),
             (self.ExitCodes.DVC_INITIALIZE_FAILED.value, self._ensure_dvc_initialized),
         ]
@@ -137,10 +143,10 @@ class HooksRunner(object):
     def _ensure_dvc_initialized(self):
         return self.__ensure_initialized("dvc", self.service.dvc_service)
 
-    def run(self):
+    def run(self, hooks):
         # Check if dvc is installed
         ret_code = 0
-        for exit_code, hook in self.pre_execute_hooks:
+        for exit_code, hook in hooks:
             self.logger.debug(f"Running {hook.__qualname__}")
             failed = hook()
             if failed:
@@ -161,28 +167,45 @@ class Run(object):
         )
 
     def execute(self):
-        # Run pre execute hook
-        hook_ret_code = self.hooks_runner.run()
+        arguments = self.arguments
+        self.logger.debug(f"arguments passed: {arguments}")
+
+        # No need to run any hooks
+        if arguments.get(Commands.VERSION.value):
+            self.service.version()
+            # Do version check after showing the version
+            self.hooks_runner.run(self.hooks_runner.update_check)
+            return 0
+
+        hook_ret_code = self.hooks_runner.run(self.hooks_runner.update_check)
         if hook_ret_code != 0:
             return hook_ret_code
 
-        arguments = self.arguments
-        self.logger.debug(f"arguments passed: {arguments}")
+        # Run pre execute hooks pre git and dvc init hooks
+        hook_ret_code = self.hooks_runner.run(self.hooks_runner.pre_git_dvc_hooks)
+        if hook_ret_code != 0:
+            return hook_ret_code
         if arguments["command"] == Commands.INIT.value:
             # Run init command stuff
             self.service.init()
             return 0
-        elif arguments["command"] == Commands.STATUS.value:
+        elif arguments["command"] == Commands.CLONE.value:
+            # Run clone command stuff
+            self.service.clone(arguments["url"], arguments["folder_name"][0], arguments["dvc_remote"])
+            return 0
+
+        # Run pre execute hooks After git and dvc are initialized
+        hook_ret_code = self.hooks_runner.run(self.hooks_runner.pre_execute_hooks)
+        if hook_ret_code != 0:
+            return hook_ret_code
+
+        if arguments["command"] == Commands.STATUS.value:
             # Run status command stuff
             self.service.status()
             return 0
         elif arguments["command"] == Commands.ADD.value:
             # Run add command stuff
             self.service.add(arguments["add_command"])
-            return 0
-        elif arguments["command"] == Commands.CLONE.value:
-            # Run clone command stuff
-            self.service.clone(arguments["url"], arguments["folder_name"][0], arguments["dvc_remote"])
             return 0
         elif arguments["command"] == Commands.COMMIT.value:
             if len(arguments.get("message", [])) == 1:
@@ -201,9 +224,6 @@ class Run(object):
         elif arguments["command"] == Commands.SAVE.value:
             # Run save command stuff
             self.service.save(arguments["message"], arguments["git_remote"], arguments["dvc_remote"])
-            return 0
-        elif arguments.get(Commands.VERSION.value):
-            self.service.version()
             return 0
         else:
             raise Exception("Invalid operation")

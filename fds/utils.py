@@ -59,7 +59,7 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         return
     logger = Logger.get_logger("fds")
     error_message = convert_bytes_to_string(output.stderr)
-    if error_message != '':
+    if error_message != '' and output.returncode not in ignorable_return_codes:
         logger.error(error_message)
     if output.returncode not in ignorable_return_codes:
         raise Exception(error_message)

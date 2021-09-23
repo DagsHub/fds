@@ -4,6 +4,7 @@ import unittest
 import tempfile
 from pathlib import Path
 
+from fds.run import Run
 from fds.services.dvc_service import DVCService
 from fds.services.fds_service import FdsService
 from fds.services.git_service import GitService
@@ -18,6 +19,7 @@ class IntegrationTestCase(unittest.TestCase):
         self.git_service = GitService()
         self.dvc_service = DVCService()
         self.fds_service = FdsService(self.git_service, self.dvc_service)
+        self.run = Run
 
     def tearDown(self):
         super().tearDown()
