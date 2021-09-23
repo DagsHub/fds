@@ -178,7 +178,7 @@ class Run(object):
             self.service.version()
             return 0
 
-        # Run pre execute hooks pre git and dvc init
+        # Run pre execute hooks pre git and dvc init hooks
         hook_ret_code = self.hooks_runner.run(self.hooks_runner.pre_git_dvc_hooks)
         if hook_ret_code != 0:
             return hook_ret_code
