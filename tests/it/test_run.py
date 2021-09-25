@@ -18,6 +18,23 @@ class TestRun(IntegrationTestCase):
         self.run({"command": Commands.STATUS.value}).execute()
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    def test_add(self, get_choice):
+        self.run({"command": Commands.INIT.value}).execute()
+        super().create_fake_git_data()
+        super().create_fake_dvc_data()
+        self.run({"command": Commands.ADD.value, 'add_command': ['.']}).execute()
+        output = execute_command(["git", "status"], capture_output=True)
+        # Check DVC add
+        assert "new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
+        assert "new file:   large_file.dvc" in convert_bytes_to_string(output.stdout)
+        # Check Git add
+        assert "new file:   git_data/file-0" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-1" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-2" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-3" in convert_bytes_to_string(output.stdout)
+        assert "new file:   git_data/file-4" in convert_bytes_to_string(output.stdout)
+
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_add_multiple_paths(self, get_choice):
         self.run({"command": Commands.INIT.value}).execute()
         super().create_fake_git_data()
@@ -39,6 +56,42 @@ class TestRun(IntegrationTestCase):
         self.run({"command": Commands.ADD.value, 'add_command': ['.']}).execute()
         output = execute_command(["cat", ".dvcignore"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
+
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    def test_commit(self, get_choice):
+        self.run({"command": Commands.INIT.value}).execute()
+        super().create_fake_git_data()
+        super().create_fake_dvc_data()
+        self.run({"command": Commands.ADD.value, 'add_command': ['.']}).execute()
+        self.run({"command": Commands.COMMIT.value, 'message': ['Commit 1'], 'yes': True}).execute()
+        output = execute_command(["git", "log", "--oneline"], capture_output=True)
+        assert "Commit 1" in convert_bytes_to_string(output.stdout)
+        output = execute_command(["dvc", "dag"], capture_output=True)
+        assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
+        super().create_fake_dvc_data()
+        self.run({"command": Commands.COMMIT.value, 'message': ['Commit 2'], 'yes': True}).execute()
+        output = execute_command(["git", "log", "--oneline"], capture_output=True)
+        assert "Commit 2" in convert_bytes_to_string(output.stdout)
+        output = execute_command(["git", "diff", "--raw", "HEAD~1"], capture_output=True)
+        assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
+
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.SKIP.value})
+    def test_skip_in_add(self, get_choice):
+        self.run({"command": Commands.INIT.value}).execute()
+        super().create_fake_git_data()
+        super().create_fake_dvc_data()
+        self.run({"command": Commands.ADD.value, 'add_command': ['.']}).execute()
+        output = execute_command(["git", "status"], capture_output=True)
+        # This means untracked, because added files will have new file: in git output
+        assert "\n\tlarge_file\n\n" in convert_bytes_to_string(output.stdout)
+
+    def test_commit_git(self):
+        self.run({"command": Commands.INIT.value}).execute()
+        super().create_fake_git_data()
+        self.run({"command": Commands.ADD.value, 'add_command': ['.']}).execute()
+        self.run({"command": Commands.COMMIT.value, 'message': ['Commit 1'], 'yes': False}).execute()
+        output = execute_command(["git", "log", "--oneline"], capture_output=True)
+        assert "Commit 1" in convert_bytes_to_string(output.stdout)
 
     def test_clone(self):
         self.run({
