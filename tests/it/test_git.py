@@ -112,4 +112,4 @@ class TestGit(IntegrationTestCase):
     def test_pull_branch(self):
         self.git_service.clone(self.get_remote_url_for_test(), None)
         os.chdir(f"{self.repo_path}/hello-world")
-        self.git_service.pull("origin", "main")
+        self.git_service.pull("origin", "master")
