@@ -140,6 +140,23 @@ class FdsService(object):
             self.printer.error(str(e))
             raise Exception("DVC push failed to execute")
 
+    def pull(self, git_remote: str, dvc_remote: str, ref: str = None):
+        """
+        fds pull
+        """
+        try:
+            git_url = self.git_service.pull(remote=git_remote, ref=ref)
+            self.printer.success("Successfully pulled from Git remote")
+        except Exception as e:
+            self.printer.error(str(e))
+            raise Exception("Git pull failed to execute")
+        try:
+            self.dvc_service.pull(git_url, remote_name=dvc_remote)
+            self.printer.warn("Successfully pulled to DVC remote")
+        except Exception as e:
+            self.printer.error(str(e))
+            raise Exception("DVC pull failed to execute")
+
     def save(self, message: str, git_remote: str, dvc_remote: str):
         self.add(".")
         self.commit(message)
