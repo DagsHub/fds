@@ -67,7 +67,7 @@ class GitService(InnerService):
         # Ignore the skipped files if any
         for skipped_file in skipped:
             # git add . :!path/to/file1 :!path/to/file2 :!path/to/folder1/* Will ignore the files to be added
-            git_add_command.append(f':!{skipped_file}')
+            git_add_command.append(f':!{os.path.relpath(skipped_file)}')
         execute_command(git_add_command)
 
     def commit(self, message: str) -> Any:
