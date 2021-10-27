@@ -78,14 +78,13 @@ class DVCService(InnerService):
         """
         return execute_command(["dvc", "status"], capture_output=False)
 
-    @staticmethod
-    def __should_skip_list_add(directory: str) -> bool:
+    def __should_skip_list_add(self, directory: str) -> bool:
         """
         Check if the given dir should be skipped or not
         :param directory: the name of the dir
         :return: True if we should skip, else return False
         """
-        if directory == ".":
+        if directory == "." or directory == self.repo_path:
             return True
         git_output = check_git_ignore(directory)
         if convert_bytes_to_string(git_output.stdout) != '':
