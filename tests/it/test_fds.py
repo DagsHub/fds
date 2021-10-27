@@ -9,16 +9,19 @@ class TestFds(IntegrationTestCase):
 
     def test_init_success(self):
         self.fds_service.init()
+        self.re_init_services()
         assert does_file_exist(f"{self.repo_path}/.git")
         assert does_file_exist(f"{self.repo_path}/.dvc")
 
     def test_status(self):
         self.fds_service.init()
+        self.re_init_services()
         self.fds_service.status()
 
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_add(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_git_data()
         super().create_fake_dvc_data()
         self.fds_service.add(["."])
@@ -35,6 +38,7 @@ class TestFds(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_add_multiple_paths(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_git_data()
         super().create_dummy_file("large_file_1", 11 * 1024)
         super().create_dummy_file("large_file_2", 11 * 1024)
@@ -49,6 +53,7 @@ class TestFds(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE.value})
     def test_add_dvc_ignore(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_git_data()
         super().create_fake_dvc_data()
         self.fds_service.add(["."])
@@ -58,6 +63,7 @@ class TestFds(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_git_data()
         super().create_fake_dvc_data()
         self.fds_service.add(["."])
@@ -76,6 +82,7 @@ class TestFds(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.SKIP.value})
     def test_skip_in_add(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_git_data()
         super().create_fake_dvc_data()
         self.fds_service.add(["."])
@@ -85,6 +92,7 @@ class TestFds(IntegrationTestCase):
 
     def test_commit_git(self):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_git_data()
         self.fds_service.add(["."])
         self.fds_service.commit("Commit 1", False)

@@ -78,14 +78,13 @@ class DVCService(InnerService):
         """
         return execute_command(["dvc", "status"], capture_output=False)
 
-    @staticmethod
-    def __should_skip_list_add(directory: str) -> bool:
+    def __should_skip_list_add(self, directory: str) -> bool:
         """
         Check if the given dir should be skipped or not
         :param directory: the name of the dir
         :return: True if we should skip, else return False
         """
-        if directory == ".":
+        if os.path.abspath(directory) == self.repo_path:
             return True
         git_output = check_git_ignore(directory)
         if convert_bytes_to_string(git_output.stdout) != '':
@@ -201,11 +200,7 @@ class DVCService(InnerService):
         skipped_dirs = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        # If . is in paths_to_be_checked then we should iterate through everything
-        if AddCommands.ALL.value in paths_to_be_checked:
-            paths_to_walk = [self.repo_path]
-        else:
-            paths_to_walk = list(map(lambda path: f"{self.repo_path}/{path}", paths_to_be_checked))
+        paths_to_walk = list(map(lambda path: os.path.normpath(os.path.join(os.path.curdir, path)), paths_to_be_checked))
         for path_to_walk in paths_to_walk:
             # if argument is to add a file
             if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
