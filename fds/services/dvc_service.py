@@ -205,10 +205,8 @@ class DVCService(InnerService):
         if AddCommands.ALL.value in paths_to_be_checked:
             paths_to_walk = [self.repo_path]
         else:
-            paths_to_walk = list(map(lambda path: f"{self.repo_path}/{path}", paths_to_be_checked))
+            paths_to_walk = list(map(lambda path: os.path.join(os.path.curdir, path), paths_to_be_checked))
         for path_to_walk in paths_to_walk:
-            # Get relative path because we are using root repo path
-            path_to_walk = os.path.relpath(path_to_walk, self.repo_path)
             # if argument is to add a file
             if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
                 # Keep the file in chosen list
