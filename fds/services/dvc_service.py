@@ -84,7 +84,7 @@ class DVCService(InnerService):
         :param directory: the name of the dir
         :return: True if we should skip, else return False
         """
-        if directory == "." or directory == self.repo_path:
+        if os.path.abspath(directory) == self.repo_path:
             return True
         git_output = check_git_ignore(directory)
         if convert_bytes_to_string(git_output.stdout) != '':
