@@ -54,7 +54,7 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
     else:
         output = subprocess.run(command, shell=shell)
         if output.returncode not in ignorable_return_codes:
-            raise Exception()
+            raise Exception(f"Command returned error code {output.returncode}: {command}")
     if output.stderr is None or output.stdout is None:
         return
     logger = Logger.get_logger("fds")
