@@ -67,6 +67,7 @@ class TestDvc(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE.value})
     def test_add_check_ignore(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
@@ -82,6 +83,7 @@ class TestDvc(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_GIT.value})
     def test_add_check_add_git(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
@@ -91,6 +93,7 @@ class TestDvc(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_add_check_add_dvc(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
@@ -102,6 +105,7 @@ class TestDvc(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.SKIP.value})
     def test_skip_check_add_dvc(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_dvc_data()
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" in convert_bytes_to_string(output.stdout)
@@ -112,6 +116,7 @@ class TestDvc(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit_auto_confirm(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_dvc_data()
         self.dvc_service.add(["."])
         self.dvc_service.commit(True)
@@ -126,6 +131,7 @@ class TestDvc(IntegrationTestCase):
     @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
     def test_commit_no_auto_confirm(self, get_choice):
         self.fds_service.init()
+        self.re_init_services()
         super().create_fake_dvc_data()
         self.dvc_service.add(["."])
         self.dvc_service.commit(False)

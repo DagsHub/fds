@@ -16,10 +16,13 @@ class IntegrationTestCase(unittest.TestCase):
         super().setUp()
         self.repo_path = tempfile.mkdtemp()
         os.chdir(self.repo_path)
+        self.re_init_services()
+        self.run = Run
+
+    def re_init_services(self):
         self.git_service = GitService()
         self.dvc_service = DVCService()
         self.fds_service = FdsService(self.git_service, self.dvc_service)
-        self.run = Run
 
     def tearDown(self):
         super().tearDown()

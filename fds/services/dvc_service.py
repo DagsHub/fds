@@ -200,7 +200,7 @@ class DVCService(InnerService):
         skipped_dirs = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        paths_to_walk = list(map(lambda path: os.path.join(os.path.curdir, path), paths_to_be_checked))
+        paths_to_walk = list(map(lambda path: os.path.curdir if path == AddCommands.ALL.value else os.path.join(os.path.curdir, path), paths_to_be_checked))
         for path_to_walk in paths_to_walk:
             # if argument is to add a file
             if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
