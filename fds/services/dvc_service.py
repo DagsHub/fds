@@ -202,7 +202,7 @@ class DVCService(InnerService):
         folders_to_exclude = ['.git', '.dvc']
         # If . is in paths_to_be_checked then we should iterate through everything
         if AddCommands.ALL.value in paths_to_be_checked:
-            paths_to_walk = [self.repo_path]
+            paths_to_walk = [os.path.curdir]
         else:
             paths_to_walk = list(map(lambda path: os.path.join(os.path.curdir, path), paths_to_be_checked))
         for path_to_walk in paths_to_walk:
