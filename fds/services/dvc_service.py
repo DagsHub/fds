@@ -3,8 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from subprocess import CompletedProcess
 from typing import Any, List, Optional, Tuple, Callable
-import InquirerPy
-from fds.domain.commands import AddCommands
+import inquirer
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.pretty_print import PrettyPrint
@@ -125,17 +124,10 @@ class DVCService(InnerService):
                 "value": DvcChoices.STEP_INTO.value
             })
 
-        questions = [
-            {
-                "type": "expand",
-                "message": f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
-                           f"{convert_bytes_to_readable(path_size)}?",
-                "name": "selection_choice",
-                "choices": choices,
-                "default": DvcChoices.ADD_TO_DVC.value
-            }
+        questions = [inquirer.List("selection_choice", message=f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
+                                                               f"{convert_bytes_to_readable(path_size)}?", choices=list(map(lambda x: (x["name"], x["value"]), choices)))
         ]
-        answers = InquirerPy.prompt(questions)
+        answers = inquirer.prompt(questions)
         return answers
 
     def __get_to_add_to_dvc(self,
@@ -337,8 +329,8 @@ class DVCService(InnerService):
                 'choices': choices
             }
         ]
-        answers = InquirerPy.prompt(questions)
-        return answers["remote"]
+        # answers = InquirerPy.prompt(questions)
+        return "test"
 
     def pull(self, git_url: str, remote_name: Optional[str]) -> Any:
         """
