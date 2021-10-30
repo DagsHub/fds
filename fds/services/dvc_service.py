@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from subprocess import CompletedProcess
 from typing import Any, List, Optional, Tuple, Callable
-import inquirer
+import questionary
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.pretty_print import PrettyPrint
@@ -124,11 +124,9 @@ class DVCService(InnerService):
                 "value": DvcChoices.STEP_INTO.value
             })
 
-        questions = [inquirer.List("selection_choice", message=f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
-                                                               f"{convert_bytes_to_readable(path_size)}?", choices=list(map(lambda x: (x["name"], x["value"]), choices)))
-        ]
-        answers = inquirer.prompt(questions)
-        return answers
+        questionary.rawselect(message=f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
+                                                               f"{convert_bytes_to_readable(path_size)}?", choices=list(map(lambda x: {x["name"]: x["value"]}, choices))).ask()
+        return ""
 
     def __get_to_add_to_dvc(self,
                             file_or_dir_to_check: str,
