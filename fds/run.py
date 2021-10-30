@@ -1,6 +1,6 @@
 import enum
 from shutil import which
-import PyInquirer
+import InquirerPy
 import requests
 from pathlib import Path
 import sys
@@ -64,7 +64,7 @@ class HooksRunner(object):
                 'default': False,
             },
         ]
-        answers = PyInquirer.prompt(questions)
+        answers = InquirerPy.prompt(questions)
         if answers["install"]:
             execute_command(["pip3 install 'dvc==2.3.0'"], shell=True, capture_output=False)
             ret_code = 0
@@ -95,7 +95,7 @@ class HooksRunner(object):
                 'default': 'True',
             },
         ]
-        answers = PyInquirer.prompt(questions)
+        answers = InquirerPy.prompt(questions)
         if not answers["install"]:
             return 0
 
@@ -125,7 +125,7 @@ class HooksRunner(object):
                 'default': False,
             },
         ]
-        answers = PyInquirer.prompt(questions)
+        answers = InquirerPy.prompt(questions)
         if answers["initialize"]:
             service.init()
             return 0

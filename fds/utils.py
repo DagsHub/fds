@@ -7,7 +7,7 @@ import humanize
 import select
 import sys
 from fds.logger import Logger
-import PyInquirer
+import InquirerPy
 
 
 def get_size_of_path(path: str) -> int:
@@ -141,5 +141,5 @@ def get_input_from_user(question: str, type: str = "input") -> str:
             'name': 'question'
         }
     ]
-    answers = PyInquirer.prompt(questions)
+    answers = InquirerPy.prompt(questions)
     return answers['question']

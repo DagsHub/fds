@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from subprocess import CompletedProcess
 from typing import Any, List, Optional, Tuple, Callable
-import PyInquirer
+import InquirerPy
 from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
@@ -135,7 +135,7 @@ class DVCService(InnerService):
                 "default": DvcChoices.ADD_TO_DVC.value
             }
         ]
-        answers = PyInquirer.prompt(questions)
+        answers = InquirerPy.prompt(questions)
         return answers
 
     def __get_to_add_to_dvc(self,
@@ -337,7 +337,7 @@ class DVCService(InnerService):
                 'choices': choices
             }
         ]
-        answers = PyInquirer.prompt(questions)
+        answers = InquirerPy.prompt(questions)
         return answers["remote"]
 
     def pull(self, git_url: str, remote_name: Optional[str]) -> Any:
