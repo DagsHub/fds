@@ -166,7 +166,7 @@ class TestFdsHooks:
     @pytest.mark.parametrize("dvc_preinstalled", BOOLS)
     @pytest.mark.parametrize("install_prompt_accept", BOOLS)
     @patch('fds.run.execute_command')
-    @patch('fds.run.PyInquirer.prompt')
+    @patch('fds.utils.get_confirm_from_user')
     @patch('fds.services.fds_service.FdsService')
     @patch('fds.run.which')
     def test_dvc_installed(
@@ -232,7 +232,7 @@ class TestFdsHooks:
     @pytest.mark.parametrize("install_prompt_accept", BOOLS)
     @patch('fds.run.rerun_in_new_shell_and_exit')
     @patch('fds.run.execute_command')
-    @patch('fds.run.PyInquirer.prompt')
+    @patch('fds.utils.get_confirm_from_user')
     @patch('fds.services.fds_service.FdsService')
     @patch('fds.run.requests.get')
     def test_fds_update(
@@ -286,7 +286,7 @@ class TestFdsHooks:
     @pytest.mark.parametrize("initialize_prompt_accept", BOOLS)
     @pytest.mark.parametrize("service_name", ["git", "dvc"])
     @patch('fds.run.sys.exit')
-    @patch('fds.run.PyInquirer.prompt')
+    @patch('fds.utils.get_confirm_from_user')
     @patch('fds.services.fds_service.FdsService')
     def test_service_initialized(
         self,
