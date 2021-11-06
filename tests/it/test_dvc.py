@@ -158,7 +158,7 @@ class TestDvc(IntegrationTestCase):
 
     @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
     def test_clone_show_remotes_list(self, get_choice):
-        url = "https://github.com/iterative/example-get-started.git"
+        url = self.get_remote_url_for_test()
         folder_name = self.git_service.clone(url, None)
         os.chdir(folder_name)
         self.dvc_service.pull(self.get_remote_url_for_test(), "origin")
