@@ -166,7 +166,7 @@ class TestFdsHooks:
     @pytest.mark.parametrize("dvc_preinstalled", BOOLS)
     @pytest.mark.parametrize("install_prompt_accept", BOOLS)
     @patch('fds.run.execute_command')
-    @patch('fds.utils.get_confirm_from_user')
+    @patch('fds.run.get_confirm_from_user')
     @patch('fds.services.fds_service.FdsService')
     @patch('fds.run.which')
     def test_dvc_installed(
@@ -179,7 +179,7 @@ class TestFdsHooks:
         install_prompt_accept: bool
     ):
         mock_which.return_value = dvc_preinstalled or None
-        mock_prompt.return_value = {"install": install_prompt_accept}
+        mock_prompt.return_value = install_prompt_accept
         hooks_runner = HooksRunner(
             mock_fds_service.service,
             mock_fds_service.printer,
@@ -232,7 +232,7 @@ class TestFdsHooks:
     @pytest.mark.parametrize("install_prompt_accept", BOOLS)
     @patch('fds.run.rerun_in_new_shell_and_exit')
     @patch('fds.run.execute_command')
-    @patch('fds.utils.get_confirm_from_user')
+    @patch('fds.run.get_confirm_from_user')
     @patch('fds.services.fds_service.FdsService')
     @patch('fds.run.requests.get')
     def test_fds_update(
@@ -256,7 +256,7 @@ class TestFdsHooks:
                 }
             }
         )()
-        mock_prompt.return_value = {"install": install_prompt_accept}
+        mock_prompt.return_value = install_prompt_accept
 
         hooks_runner = HooksRunner(
             mock_fds_service.service,
@@ -286,7 +286,7 @@ class TestFdsHooks:
     @pytest.mark.parametrize("initialize_prompt_accept", BOOLS)
     @pytest.mark.parametrize("service_name", ["git", "dvc"])
     @patch('fds.run.sys.exit')
-    @patch('fds.utils.get_confirm_from_user')
+    @patch('fds.run.get_confirm_from_user')
     @patch('fds.services.fds_service.FdsService')
     def test_service_initialized(
         self,
@@ -309,7 +309,7 @@ class TestFdsHooks:
             mock_fds_service.logger,
         )
         fut = getattr(hooks_runner, fut_name)
-        mock_prompt.return_value = {"initialize": initialize_prompt_accept}
+        mock_prompt.return_value = initialize_prompt_accept
 
         with patch.object(
             svc,
