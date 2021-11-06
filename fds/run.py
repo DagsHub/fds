@@ -18,17 +18,17 @@ from .version import __version__
 class HooksRunner(object):
     class ExitCodes(enum.IntFlag):
         OK = 0
-        DVC_INSTALL_FAILED = 2**0
-        GIT_INSTALL_FAILED = 2**1
-        FDS_UPDATE_FAILED = 2**1
-        GIT_INITIALIZE_FAILED = 2**3
-        DVC_INITIALIZE_FAILED = 2**4
+        DVC_INSTALL_FAILED = 2 ** 0
+        GIT_INSTALL_FAILED = 2 ** 1
+        FDS_UPDATE_FAILED = 2 ** 1
+        GIT_INITIALIZE_FAILED = 2 ** 3
+        DVC_INITIALIZE_FAILED = 2 ** 4
 
     def __init__(
-        self,
-        service: FdsService,
-        printer: PrettyPrint,
-        logger: Logger,
+            self,
+            service: FdsService,
+            printer: PrettyPrint,
+            logger: Logger,
     ):
         self.service = service
         self.printer = printer
@@ -55,7 +55,7 @@ class HooksRunner(object):
         ret_code = 1
         self.printer.error("dvc executable is not installed or found")
         answer = get_confirm_from_user('Should we install dvc [https://dvc.org/] for you right now?\n' +
-                                        '  Will install using `pip3 install dvc==2.3.0`', False)
+                                       '  Will install using `pip3 install dvc==2.3.0`', False)
         if answer:
             execute_command(["pip3 install 'dvc==2.3.0'"], shell=True, capture_output=False)
             ret_code = 0
@@ -89,10 +89,10 @@ class HooksRunner(object):
         return 0
 
     def __ensure_initialized(
-        self,
-        service_name: str,
-        service: InnerService,
-        raise_on_reject=True,
+            self,
+            service_name: str,
+            service: InnerService,
+            raise_on_reject=True,
     ):
         path = Path(service.repo_path).resolve()
         if service.is_initialized():
@@ -100,7 +100,7 @@ class HooksRunner(object):
 
         self.printer.error(f"{service_name} has not been initialized in `{path}`")
         answer = get_confirm_from_user(f'Should we initialize {service_name} for you right now?\n' +
-                                        f'  Will initialize in `{path}`', False)
+                                       f'  Will initialize in `{path}`', False)
         if answer:
             service.init()
             return 0

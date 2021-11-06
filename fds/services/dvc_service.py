@@ -66,9 +66,6 @@ class DVCService(InnerService):
         execute_command(["dvc", "init", "--subdir"])
         return "DVC initialized successfully"
 
-    def is_initialized(self) -> Any:
-        return does_file_exist(f"{self.repo_path}/.dvc")
-
     def status(self) -> Any:
         """
         Responsible for running dvc status
@@ -124,13 +121,15 @@ class DVCService(InnerService):
             })
 
         answer = get_expand_input_from_user(f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
-                                             f"{convert_bytes_to_readable(path_size)}?", choices, DvcChoices.ADD_TO_DVC.value)
+                                            f"{convert_bytes_to_readable(path_size)}?", choices, DvcChoices.ADD_TO_DVC.value)
         return answer
 
-    def __get_to_add_to_dvc(self,
-                            file_or_dir_to_check: str,
-                            dirs: List[str],
-                            file_dir_type: str) -> AddToDvc:
+    def __get_to_add_to_dvc(
+        self,
+        file_or_dir_to_check: str,
+        dirs: List[str],
+        file_dir_type: str
+    ) -> AddToDvc:
         """
         Returns the tuple (file/folder to be added to dvc, folder to be ignored)
         :param file_or_dir_to_check: File or folder to check if its to be added or ignored
@@ -154,8 +153,8 @@ class DVCService(InnerService):
                 self.selection_message_count = 1
                 self.printer.warn('========== Make your selection, Press "h" for help ==========')
             answer = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check,
-                                             path_size=path_size,
-                                             file_dir_type=file_dir_type)
+                                            path_size=path_size,
+                                            file_dir_type=file_dir_type)
             if answer == DvcChoices.ADD_TO_DVC.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]

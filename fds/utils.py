@@ -168,7 +168,7 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
         display_text_to_user = f"{display_text_to_user}\n{detailed_choices_string} \nAnswer:"
         input_value = input(display_text_to_user)
     if input_value in choice_keys:
-        choice_made = list(filter(lambda x: x['key'] == input_value,choices))[0]
+        choice_made = list(filter(lambda x: x['key'] == input_value, choices))[0]
         return choice_made["value"]
     else:
         print(f"Not a valid choice: please choose from the given choices ({choices_string})")
