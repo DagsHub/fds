@@ -12,7 +12,7 @@ from fds.services.fds_service import FdsService
 from fds.services.types import InnerService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
-from fds.utils import execute_command, rerun_in_new_shell_and_exit
+from fds.utils import execute_command, rerun_in_new_shell_and_exit, get_confirm_from_user
 from .version import __version__
 
 
@@ -55,17 +55,9 @@ class HooksRunner(object):
 
         ret_code = 1
         self.printer.error("dvc executable is not installed or found")
-        questions = [
-            {
-                'type': 'confirm',
-                'message': 'Should we install dvc [https://dvc.org/] for you right now?\n' +
-                           '  Will install using `pip3 install dvc==2.3.0`',
-                'name': 'install',
-                'default': False,
-            },
-        ]
-        answers = PyInquirer.prompt(questions)
-        if answers["install"]:
+        answer = get_confirm_from_user('Should we install dvc [https://dvc.org/] for you right now?\n' +
+                                        '  Will install using `pip3 install dvc==2.3.0`', False)
+        if answer:
             execute_command(["pip3 install 'dvc==2.3.0'"], shell=True, capture_output=False)
             ret_code = 0
         else:

@@ -145,7 +145,7 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     return answers['question']
 
 
-def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: str) -> str:
+def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool]) -> str:
     """
     Get expand input from the user
     :param question: Question to ask the user
@@ -174,3 +174,15 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
     else:
         print(f"Not a valid choice: please choose from the given choices ({choices_string})")
         return get_expand_input_from_user(question, choices, default)
+
+
+def get_confirm_from_user(message: str, default: bool) -> bool:
+    """
+    Get the confirm response from user
+    :param message: Message to be shown to user
+    :param default: Default value
+    :return: User choice of confirm
+    """
+    choices = [{"key": "y", "value": True, "name": "Yes"}, {"key": "n", "value": False, "name": "No"}]
+    return bool(get_expand_input_from_user(message, choices, default))
+
