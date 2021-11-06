@@ -8,7 +8,6 @@ import humanize
 import select
 import sys
 from fds.logger import Logger
-import PyInquirer
 
 
 def get_size_of_path(path: str) -> int:

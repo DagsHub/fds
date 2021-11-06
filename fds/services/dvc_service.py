@@ -3,8 +3,6 @@ from dataclasses import dataclass
 from enum import Enum
 from subprocess import CompletedProcess
 from typing import Any, List, Optional, Tuple, Callable
-import PyInquirer
-from fds.domain.commands import AddCommands
 from fds.domain.constants import MAX_THRESHOLD_SIZE
 from fds.logger import Logger
 from fds.services.pretty_print import PrettyPrint

@@ -1,6 +1,5 @@
 import enum
 from shutil import which
-import PyInquirer
 import requests
 from pathlib import Path
 import sys
