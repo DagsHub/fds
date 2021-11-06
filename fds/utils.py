@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 import os
-from typing import List, Union, Any, Optional
+from typing import List, Union, Any, Optional, Dict
 
 import humanize
 import select
@@ -143,3 +143,32 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     ]
     answers = PyInquirer.prompt(questions)
     return answers['question']
+
+
+def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: str) -> str:
+    """
+    Get expand input from the user
+    :param question: Question to ask the user
+    :param choices: List of choices from user
+    :param default: Default selected value
+    :return: user selected value
+    """
+    # Only pick choice keys
+    choice_keys = list(map(lambda x: x["key"], choices) )
+    # Add an extra 'h' for help
+    choice_keys.append("h")
+    choices_string = "".join(choice_keys)
+    display_text_to_user = f"{question}   ({choices_string})"
+    input_value = input(display_text_to_user)
+    while input_value == 'h' or input_value == 'help':
+        # User chose help then we should show the list again with full choices
+        detailed_choices = list(map(lambda x: f"{x['key']}) {x['name']}", choices))
+        detailed_choices_string = "\n".join(detailed_choices)
+        display_text_to_user = f"{question}   ({choices_string})\n{detailed_choices_string} \nAnswer:"
+        input_value = input(display_text_to_user)
+    if input_value in choice_keys:
+        choice_made = list(filter(lambda x: x['key'] == input_value,choices))[0]
+        return choice_made["value"]
+    else:
+        print(f"Not a valid choice: please choose from the given choices ({choices_string})")
+        return get_expand_input_from_user(question, choices, default)

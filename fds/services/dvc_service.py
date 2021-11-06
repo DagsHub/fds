@@ -11,7 +11,7 @@ from fds.services.pretty_print import PrettyPrint
 from fds.services.types import DvcAdd, InnerService
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
-    construct_dvc_url_from_git_url_dagshub, get_input_from_user
+    construct_dvc_url_from_git_url_dagshub, get_input_from_user, get_expand_input_from_user
 
 
 # Choices for DVC
@@ -100,7 +100,7 @@ class DVCService(InnerService):
                 dirs.remove(d)
 
     @staticmethod
-    def _get_choice(file_or_dir_to_check: str, path_size: int, file_dir_type: str) -> dict:
+    def _get_choice(file_or_dir_to_check: str, path_size: int, file_dir_type: str) -> str:
         choices = [{
             "key": "d",
             "name": "Add to DVC",
@@ -125,18 +125,9 @@ class DVCService(InnerService):
                 "value": DvcChoices.STEP_INTO.value
             })
 
-        questions = [
-            {
-                "type": "expand",
-                "message": f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
-                           f"{convert_bytes_to_readable(path_size)}?",
-                "name": "selection_choice",
-                "choices": choices,
-                "default": DvcChoices.ADD_TO_DVC.value
-            }
-        ]
-        answers = PyInquirer.prompt(questions)
-        return answers
+        answer = get_expand_input_from_user(f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
+                                             f"{convert_bytes_to_readable(path_size)}?", choices, DvcChoices.ADD_TO_DVC.value)
+        return answer
 
     def __get_to_add_to_dvc(self,
                             file_or_dir_to_check: str,
@@ -164,22 +155,22 @@ class DVCService(InnerService):
             if self.selection_message_count == 0:
                 self.selection_message_count = 1
                 self.printer.warn('========== Make your selection, Press "h" for help ==========')
-            answers = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check,
+            answer = DVCService._get_choice(file_or_dir_to_check=file_or_dir_to_check,
                                              path_size=path_size,
                                              file_dir_type=file_dir_type)
-            if answers["selection_choice"] == DvcChoices.ADD_TO_DVC.value:
+            if answer == DvcChoices.ADD_TO_DVC.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return AddToDvc(file_or_dir_to_check, None, None)
-            elif answers["selection_choice"] == DvcChoices.ADD_TO_GIT.value:
+            elif answer == DvcChoices.ADD_TO_GIT.value:
                 # Dont need to traverse deep
                 [dirs.remove(d) for d in list(dirs)]
                 return AddToDvc(None, None, None)
-            elif answers["selection_choice"] == DvcChoices.SKIP.value:
+            elif answer == DvcChoices.SKIP.value:
                 # Dont need to traverse deep as we are skipping the folder/file
                 [dirs.remove(d) for d in list(dirs)]
                 return AddToDvc(None, None, file_or_dir_to_check)
-            elif answers["selection_choice"] == DvcChoices.IGNORE.value:
+            elif answer == DvcChoices.IGNORE.value:
                 # We should ignore the ./ in beginning when adding to gitignore
                 # Add files to gitignore
                 append_line_to_file(".gitignore",
