@@ -154,17 +154,19 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
     :return: user selected value
     """
     # Only pick choice keys
-    choice_keys = list(map(lambda x: x["key"], choices) )
+    choice_keys = list(map(lambda x: x["key"], choices))
     # Add an extra 'h' for help
     choice_keys.append("h")
     choices_string = "".join(choice_keys)
-    display_text_to_user = f"{question}   ({choices_string})"
-    input_value = input(display_text_to_user)
+    default_choice = list(filter(lambda x: x['value'] == default, choices))[0]
+    default_key = default_choice["key"]
+    display_text_to_user = f"{question}   ({choices_string}) [{default_key}]"
+    input_value = input(display_text_to_user) or default_choice["key"]
     while input_value == 'h' or input_value == 'help':
         # User chose help then we should show the list again with full choices
         detailed_choices = list(map(lambda x: f"{x['key']}) {x['name']}", choices))
         detailed_choices_string = "\n".join(detailed_choices)
-        display_text_to_user = f"{question}   ({choices_string})\n{detailed_choices_string} \nAnswer:"
+        display_text_to_user = f"{display_text_to_user}\n{detailed_choices_string} \nAnswer:"
         input_value = input(display_text_to_user)
     if input_value in choice_keys:
         choice_made = list(filter(lambda x: x['key'] == input_value,choices))[0]
