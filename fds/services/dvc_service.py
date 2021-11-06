@@ -11,7 +11,7 @@ from fds.services.pretty_print import PrettyPrint
 from fds.services.types import DvcAdd, InnerService
 from fds.utils import get_size_of_path, convert_bytes_to_readable, convert_bytes_to_string, execute_command, \
     append_line_to_file, check_git_ignore, check_dvc_ignore, does_file_exist, \
-    construct_dvc_url_from_git_url_dagshub, get_input_from_user, get_expand_input_from_user
+    construct_dvc_url_from_git_url_dagshub, get_input_from_user, get_expand_input_from_user, get_list_choice_from_user
 
 
 # Choices for DVC
@@ -320,16 +320,8 @@ class DVCService(InnerService):
     def _show_choice_of_remotes(remotes: dict) -> str:
         choices = list(remotes.keys())
         choices.append("Cancel Pull")
-        questions = [
-            {
-                'type': 'list',
-                'name': 'remote',
-                'message': 'Choose the remote to use for pulling dvc repo?',
-                'choices': choices
-            }
-        ]
-        answers = PyInquirer.prompt(questions)
-        return answers["remote"]
+        answer = get_list_choice_from_user('Choose the remote to use for pulling dvc repo?', choices)
+        return answer
 
     def pull(self, git_url: str, remote_name: Optional[str]) -> Any:
         """

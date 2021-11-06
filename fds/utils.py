@@ -145,7 +145,7 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     return answers['question']
 
 
-def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool]) -> str:
+def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool, int]) -> str:
     """
     Get expand input from the user
     :param question: Question to ask the user
@@ -186,3 +186,13 @@ def get_confirm_from_user(message: str, default: bool) -> bool:
     choices = [{"key": "y", "value": True, "name": "Yes"}, {"key": "n", "value": False, "name": "No"}]
     return bool(get_expand_input_from_user(message, choices, default))
 
+
+def get_list_choice_from_user(message: str, items_list: List[str]) -> str:
+    """
+    Get List choice from user
+    :param message: Message to be shown to user
+    :param list: List value
+    :return: User choice of list
+    """
+    choices = list(map(lambda x: {"key": items_list.index(x) + 1, "value": x, "name": x}, items_list))
+    return get_expand_input_from_user(message, choices, 1)
