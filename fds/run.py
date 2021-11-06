@@ -78,17 +78,9 @@ class HooksRunner(object):
         latest_version = data["info"]["version"]
         if latest_version == __version__:
             return 0
-        questions = [
-            {
-                'type': 'confirm',
-                'message': f"You are using fds version {__version__}, however version {latest_version}"
-                           f" is available.Should we upgrade using `pip3 install fastds --upgrade`",
-                'name': 'install',
-                'default': 'True',
-            },
-        ]
-        answers = PyInquirer.prompt(questions)
-        if not answers["install"]:
+        answer = get_confirm_from_user(f"You are using fds version {__version__}, however version {latest_version}"
+                                       f" is available.Should we upgrade using `pip3 install fastds --upgrade`", True)
+        if not answer:
             return 0
 
         print("\nUpgrading package.\n")
@@ -108,17 +100,9 @@ class HooksRunner(object):
             return 0
 
         self.printer.error(f"{service_name} has not been initialized in `{path}`")
-        questions = [
-            {
-                'type': 'confirm',
-                'message': f'Should we initialize {service_name} for you right now?\n' +
-                           f'  Will initialize in `{path}`',
-                'name': 'initialize',
-                'default': False,
-            },
-        ]
-        answers = PyInquirer.prompt(questions)
-        if answers["initialize"]:
+        answer = get_confirm_from_user(f'Should we initialize {service_name} for you right now?\n' +
+                                        f'  Will initialize in `{path}`', False)
+        if answer:
             service.init()
             return 0
         # Provide instructions
