@@ -1,3 +1,4 @@
+import getpass
 import subprocess
 from pathlib import Path
 import os
@@ -134,15 +135,14 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     :param type: The type of input
     :return: output from the user
     """
-    questions = [
-        {
-            'type': type,
-            'message': question,
-            'name': 'question'
-        }
-    ]
-    answers = PyInquirer.prompt(questions)
-    return answers['question']
+    get_input = input
+    if type == "password":
+        get_input = getpass.getpass
+    display_text_to_user = f"{question}:"
+    answer = get_input(display_text_to_user)
+    if answer is None:
+        return get_input_from_user(question, type)
+    return answer
 
 
 def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool, int]) -> str:
