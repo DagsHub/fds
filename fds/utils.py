@@ -210,5 +210,5 @@ def get_list_choice_from_user(message: str, items_list: List[str]) -> str:
     :param list: List value
     :return: User choice of list
     """
-    choices = [{"key": items_list.index(x) + 1, "value": x, "name": x} for x in items_list]
+    choices = [{"key": i + 1, "value": x, "name": x} for (i, x) in enumerate(items_list)]
     return get_expand_input_from_user(message, choices, 1, True)
