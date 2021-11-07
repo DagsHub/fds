@@ -163,7 +163,7 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
         return display_text_to_user
 
     # Only pick choice keys
-    choice_keys = list(map(lambda x: x["key"], choices))
+    choice_keys = [x["key"] for x in choices]
     # Add an extra 'h' for help
     choice_keys.append("h")
     choices_string = "".join(choice_keys)
@@ -201,5 +201,5 @@ def get_list_choice_from_user(message: str, items_list: List[str]) -> str:
     :param list: List value
     :return: User choice of list
     """
-    choices = list(map(lambda x: {"key": items_list.index(x) + 1, "value": x, "name": x}, items_list))
+    choices = [{"key": items_list.index(x) + 1, "value": x, "name": x} for x in items_list]
     return get_expand_input_from_user(message, choices, 1, True)
