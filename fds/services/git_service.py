@@ -17,7 +17,8 @@ class GitService(InnerService):
 
     @staticmethod
     def get_repo_path():
-        path_cmd = execute_command(["git", "rev-parse", "--show-toplevel"], capture_output=True, ignorable_return_codes=[0, 128])
+        path_cmd = execute_command(["git", "rev-parse", "--show-toplevel"],
+                                   capture_output=True, ignorable_return_codes=[0, 128])
         stderr = convert_bytes_to_string(path_cmd.stderr).strip()
         # If its not git directory, then it means git is not initalized yet
         if "not a git repository" in stderr:
@@ -38,9 +39,6 @@ class GitService(InnerService):
 
     def status(self) -> Any:
         return execute_command(["git", "status"], capture_output=False)
-
-    def is_initialized(self) -> Any:
-        return does_file_exist(f"{self.repo_path}/.git")
 
     def add(self, paths_to_add: List[str], skipped: List[str]) -> Any:
         # This will take care of adding everything in the argument to add including the .dvc files inside it

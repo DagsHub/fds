@@ -64,7 +64,7 @@ class TestDvc(IntegrationTestCase):
         dvc_add = self.dvc_service.add(["dvc_data/file-0"])
         assert len(dvc_add.files_added_to_dvc) == 0
 
-    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.IGNORE.value})
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value=DvcChoices.IGNORE.value)
     def test_add_check_ignore(self, get_choice):
         self.fds_service.init()
         self.re_init_services()
@@ -80,7 +80,7 @@ class TestDvc(IntegrationTestCase):
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file" not in convert_bytes_to_string(output.stdout)
 
-    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_GIT.value})
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value=DvcChoices.ADD_TO_GIT.value)
     def test_add_check_add_git(self, get_choice):
         self.fds_service.init()
         self.re_init_services()
@@ -90,7 +90,7 @@ class TestDvc(IntegrationTestCase):
         dvc_add = self.dvc_service.add(["."])
         assert len(dvc_add.files_added_to_dvc) == 0
 
-    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value=DvcChoices.ADD_TO_DVC.value)
     def test_add_check_add_dvc(self, get_choice):
         self.fds_service.init()
         self.re_init_services()
@@ -102,7 +102,7 @@ class TestDvc(IntegrationTestCase):
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
 
-    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.SKIP.value})
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value=DvcChoices.SKIP.value)
     def test_skip_check_add_dvc(self, get_choice):
         self.fds_service.init()
         self.re_init_services()
@@ -113,7 +113,7 @@ class TestDvc(IntegrationTestCase):
         assert len(dvc_add.files_added_to_dvc) == 0
         assert dvc_add.files_skipped[0] == "./large_file"
 
-    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value=DvcChoices.ADD_TO_DVC.value)
     def test_commit_auto_confirm(self, get_choice):
         self.fds_service.init()
         self.re_init_services()
@@ -128,7 +128,7 @@ class TestDvc(IntegrationTestCase):
         output = execute_command(["git", "diff", "--raw"], capture_output=True)
         assert "large_file.dvc" in convert_bytes_to_string(output.stdout)
 
-    @patch("fds.services.dvc_service.DVCService._get_choice", return_value={"selection_choice": DvcChoices.ADD_TO_DVC.value})
+    @patch("fds.services.dvc_service.DVCService._get_choice", return_value=DvcChoices.ADD_TO_DVC.value)
     def test_commit_no_auto_confirm(self, get_choice):
         self.fds_service.init()
         self.re_init_services()
@@ -158,25 +158,11 @@ class TestDvc(IntegrationTestCase):
 
     @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
     def test_clone_show_remotes_list(self, get_choice):
-        url = "https://github.com/iterative/example-get-started.git"
+        url = self.get_remote_url_for_test()
         folder_name = self.git_service.clone(url, None)
         os.chdir(folder_name)
         self.dvc_service.pull(self.get_remote_url_for_test(), "origin")
         assert does_file_exist(f"{self.repo_path}/hello-world/data")
-
-    def test_clone_dagshub_url(self):
-        folder_name = self.git_service.clone(self.get_remote_url_for_test(), None)
-        os.chdir(folder_name)
-        self.dvc_service.pull(self.get_remote_url_for_test(), None)
-        assert does_file_exist(f"{self.repo_path}/hello-world/data")
-
-    @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
-    def test_clone_show_remotes_list(self, get_choice):
-        url = "https://github.com/iterative/example-get-started.git"
-        folder_name = self.git_service.clone(url, None)
-        os.chdir(folder_name)
-        self.dvc_service.pull(url, None)
-        assert does_file_exist(f"{self.repo_path}/example-get-started/data/data.xml")
 
     @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
     def test_clone_given_remote(self, get_choice):

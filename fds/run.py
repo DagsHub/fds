@@ -1,6 +1,5 @@
 import enum
 from shutil import which
-import PyInquirer
 import requests
 from pathlib import Path
 import sys
@@ -12,24 +11,24 @@ from fds.services.fds_service import FdsService
 from fds.services.types import InnerService
 from fds.services.git_service import GitService
 from fds.services.pretty_print import PrettyPrint
-from fds.utils import execute_command, rerun_in_new_shell_and_exit
+from fds.utils import execute_command, rerun_in_new_shell_and_exit, get_confirm_from_user
 from .version import __version__
 
 
 class HooksRunner(object):
     class ExitCodes(enum.IntFlag):
         OK = 0
-        DVC_INSTALL_FAILED = 2**0
-        GIT_INSTALL_FAILED = 2**1
-        FDS_UPDATE_FAILED = 2**1
-        GIT_INITIALIZE_FAILED = 2**3
-        DVC_INITIALIZE_FAILED = 2**4
+        DVC_INSTALL_FAILED = 2 ** 0
+        GIT_INSTALL_FAILED = 2 ** 1
+        FDS_UPDATE_FAILED = 2 ** 1
+        GIT_INITIALIZE_FAILED = 2 ** 3
+        DVC_INITIALIZE_FAILED = 2 ** 4
 
     def __init__(
-        self,
-        service: FdsService,
-        printer: PrettyPrint,
-        logger: Logger,
+            self,
+            service: FdsService,
+            printer: PrettyPrint,
+            logger: Logger,
     ):
         self.service = service
         self.printer = printer
@@ -55,17 +54,9 @@ class HooksRunner(object):
 
         ret_code = 1
         self.printer.error("dvc executable is not installed or found")
-        questions = [
-            {
-                'type': 'confirm',
-                'message': 'Should we install dvc [https://dvc.org/] for you right now?\n' +
-                           '  Will install using `pip3 install dvc==2.3.0`',
-                'name': 'install',
-                'default': False,
-            },
-        ]
-        answers = PyInquirer.prompt(questions)
-        if answers["install"]:
+        answer = get_confirm_from_user('Should we install dvc [https://dvc.org/] for you right now?\n' +
+                                       '  Will install using `pip3 install dvc==2.3.0`', False)
+        if answer:
             execute_command(["pip3 install 'dvc==2.3.0'"], shell=True, capture_output=False)
             ret_code = 0
         else:
@@ -86,17 +77,9 @@ class HooksRunner(object):
         latest_version = data["info"]["version"]
         if latest_version == __version__:
             return 0
-        questions = [
-            {
-                'type': 'confirm',
-                'message': f"You are using fds version {__version__}, however version {latest_version}"
-                           f" is available.Should we upgrade using `pip3 install fastds --upgrade`",
-                'name': 'install',
-                'default': 'True',
-            },
-        ]
-        answers = PyInquirer.prompt(questions)
-        if not answers["install"]:
+        answer = get_confirm_from_user(f"You are using fds version {__version__}, however version {latest_version}"
+                                       f" is available.Should we upgrade using `pip3 install fastds --upgrade`", True)
+        if not answer:
             return 0
 
         print("\nUpgrading package.\n")
@@ -106,27 +89,19 @@ class HooksRunner(object):
         return 0
 
     def __ensure_initialized(
-        self,
-        service_name: str,
-        service: InnerService,
-        raise_on_reject=True,
+            self,
+            service_name: str,
+            service: InnerService,
+            raise_on_reject=True,
     ):
         path = Path(service.repo_path).resolve()
         if service.is_initialized():
             return 0
 
         self.printer.error(f"{service_name} has not been initialized in `{path}`")
-        questions = [
-            {
-                'type': 'confirm',
-                'message': f'Should we initialize {service_name} for you right now?\n' +
-                           f'  Will initialize in `{path}`',
-                'name': 'initialize',
-                'default': False,
-            },
-        ]
-        answers = PyInquirer.prompt(questions)
-        if answers["initialize"]:
+        answer = get_confirm_from_user(f'Should we initialize {service_name} for you right now?\n' +
+                                       f'  Will initialize in `{path}`', False)
+        if answer:
             service.init()
             return 0
         # Provide instructions

@@ -1,13 +1,13 @@
+import getpass
 import subprocess
 from pathlib import Path
 import os
-from typing import List, Union, Any, Optional
+from typing import List, Union, Any, Optional, Dict
 
 import humanize
 import select
 import sys
 from fds.logger import Logger
-import PyInquirer
 
 
 def get_size_of_path(path: str) -> int:
@@ -134,12 +134,81 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     :param type: The type of input
     :return: output from the user
     """
-    questions = [
-        {
-            'type': type,
-            'message': question,
-            'name': 'question'
-        }
-    ]
-    answers = PyInquirer.prompt(questions)
-    return answers['question']
+    get_input = input
+    if type == "password":
+        get_input = getpass.getpass
+    while True:
+        display_text_to_user = f"{question}:"
+        answer = get_input(display_text_to_user)
+        if answer is not None:
+            break
+    return answer
+
+
+def get_expand_input_from_user(
+        question: str,
+        choices: List[Dict[str, str]],
+        default: Union[str, bool, int],
+        show_detailed_options: bool
+) -> str:
+    """
+    Get expand input from the user
+    :param question: Question to ask the user
+    :param choices: List of choices from user
+    :param default: Default selected value
+    :param show_detailed_options: Show detailed options in first start go
+    :return: user selected value
+    """
+
+    choices_dict = {x['key'] : x for x in choices}
+
+    def get_display_message(detailed: bool):
+        default_key = default_choice["key"]
+        display_text_to_user = f"{question}   ({choices_string}) [{default_key}]"
+        if detailed or show_detailed_options:
+            detailed_choices = [f"{x['key']}) {x['name']}" for x in choices]
+            detailed_choices_string = "\n".join(detailed_choices)
+            display_text_to_user = f"{display_text_to_user}\n{detailed_choices_string} \nAnswer:"
+        return display_text_to_user
+
+    # Only pick choice keys
+    choice_keys = list(choices_dict.keys())
+    # Add an extra 'h' for help
+    choice_keys.append("h")
+    choices_string = "".join(choice_keys)
+    default_choice = list(filter(lambda x: x['value'] == default, choices))[0]
+    input_value = input(get_display_message(detailed=False)) or default_choice["key"]
+    help_inputs = {'h', 'help', '?'}
+    while True:
+        if input_value in choice_keys and input_value not in help_inputs:
+            break
+        elif input_value in help_inputs:
+            # User chose help then we should show the list again with full choices
+            input_value = input(get_display_message(detailed=True)) or default_choice["key"]
+        else:
+            print(f"Not a valid choice: please choose from the given choices ({choices_string})")
+            input_value = input(get_display_message(detailed=False)) or default_choice["key"]
+    if input_value in choice_keys:
+        choice_made = choices_dict[input_value]
+        return choice_made["value"]
+
+def get_confirm_from_user(message: str, default: bool) -> bool:
+    """
+    Get the confirm response from user
+    :param message: Message to be shown to user
+    :param default: Default value
+    :return: User choice of confirm
+    """
+    choices = [{"key": "y", "value": True, "name": "Yes"}, {"key": "n", "value": False, "name": "No"}]
+    return bool(get_expand_input_from_user(message, choices, default, False))
+
+
+def get_list_choice_from_user(message: str, items_list: List[str]) -> str:
+    """
+    Get List choice from user
+    :param message: Message to be shown to user
+    :param list: List value
+    :return: User choice of list
+    """
+    choices = [{"key": i + 1, "value": x, "name": x} for (i, x) in enumerate(items_list)]
+    return get_expand_input_from_user(message, choices, 1, True)
