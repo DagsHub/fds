@@ -137,10 +137,11 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     get_input = input
     if type == "password":
         get_input = getpass.getpass
-    display_text_to_user = f"{question}:"
-    answer = get_input(display_text_to_user)
-    if answer is None:
-        return get_input_from_user(question, type)
+    while True:
+        display_text_to_user = f"{question}:"
+        answer = get_input(display_text_to_user)
+        if answer is not None:
+            break
     return answer
 
 
