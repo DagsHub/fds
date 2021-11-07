@@ -144,7 +144,7 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     return answer
 
 
-def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool, int]) -> str:
+def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool, int], show_detailed_options: bool) -> str:
     """
     Get expand input from the user
     :param question: Question to ask the user
@@ -152,28 +152,36 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
     :param default: Default selected value
     :return: user selected value
     """
+
+    def get_display_message(detailed: bool):
+        default_key = default_choice["key"]
+        display_text_to_user = f"{question}   ({choices_string}) [{default_key}]"
+        if detailed:
+            detailed_choices = [f"{x['key']}) {x['name']}" for x in choices]
+            detailed_choices_string = "\n".join(detailed_choices)
+            display_text_to_user = f"{display_text_to_user}\n{detailed_choices_string} \nAnswer:"
+        return display_text_to_user
+
     # Only pick choice keys
     choice_keys = list(map(lambda x: x["key"], choices))
     # Add an extra 'h' for help
     choice_keys.append("h")
     choices_string = "".join(choice_keys)
     default_choice = list(filter(lambda x: x['value'] == default, choices))[0]
-    default_key = default_choice["key"]
-    display_text_to_user = f"{question}   ({choices_string}) [{default_key}]"
-    input_value = input(display_text_to_user) or default_choice["key"]
-    while input_value == 'h' or input_value == 'help':
-        # User chose help then we should show the list again with full choices
-        detailed_choices = list(map(lambda x: f"{x['key']}) {x['name']}", choices))
-        detailed_choices_string = "\n".join(detailed_choices)
-        display_text_to_user = f"{display_text_to_user}\n{detailed_choices_string} \nAnswer:"
-        input_value = input(display_text_to_user)
+    input_value = input(get_display_message(detailed=False)) or default_choice["key"]
+    help_inputs = {'h', 'help', '?'}
+    while True:
+        if input_value in choice_keys and input_value not in help_inputs:
+            break
+        elif input_value in help_inputs:
+            # User chose help then we should show the list again with full choices
+            input_value = input(get_display_message(detailed=True)) or default_choice["key"]
+        else:
+            print(f"Not a valid choice: please choose from the given choices ({choices_string})")
+            input_value = input(get_display_message(detailed=False)) or default_choice["key"]
     if input_value in choice_keys:
         choice_made = list(filter(lambda x: x['key'] == input_value, choices))[0]
         return choice_made["value"]
-    else:
-        print(f"Not a valid choice: please choose from the given choices ({choices_string})")
-        return get_expand_input_from_user(question, choices, default)
-
 
 def get_confirm_from_user(message: str, default: bool) -> bool:
     """
@@ -183,7 +191,7 @@ def get_confirm_from_user(message: str, default: bool) -> bool:
     :return: User choice of confirm
     """
     choices = [{"key": "y", "value": True, "name": "Yes"}, {"key": "n", "value": False, "name": "No"}]
-    return bool(get_expand_input_from_user(message, choices, default))
+    return bool(get_expand_input_from_user(message, choices, default, False))
 
 
 def get_list_choice_from_user(message: str, items_list: List[str]) -> str:
@@ -194,4 +202,4 @@ def get_list_choice_from_user(message: str, items_list: List[str]) -> str:
     :return: User choice of list
     """
     choices = list(map(lambda x: {"key": items_list.index(x) + 1, "value": x, "name": x}, items_list))
-    return get_expand_input_from_user(message, choices, 1)
+    return get_expand_input_from_user(message, choices, 1, True)

@@ -121,7 +121,7 @@ class DVCService(InnerService):
             })
 
         answer = get_expand_input_from_user(f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
-                                            f"{convert_bytes_to_readable(path_size)}?", choices, DvcChoices.ADD_TO_DVC.value)
+                                            f"{convert_bytes_to_readable(path_size)}?", choices, DvcChoices.ADD_TO_DVC.value, False)
         return answer
 
     def __get_to_add_to_dvc(
