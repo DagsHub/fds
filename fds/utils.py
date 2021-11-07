@@ -144,12 +144,18 @@ def get_input_from_user(question: str, type: str = "input") -> str:
     return answer
 
 
-def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], default: Union[str, bool, int], show_detailed_options: bool) -> str:
+def get_expand_input_from_user(
+        question: str,
+        choices: List[Dict[str, str]],
+        default: Union[str, bool, int],
+        show_detailed_options: bool
+) -> str:
     """
     Get expand input from the user
     :param question: Question to ask the user
     :param choices: List of choices from user
     :param default: Default selected value
+    :param show_detailed_options: Show detailed options in first start go
     :return: user selected value
     """
 
@@ -158,7 +164,7 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
     def get_display_message(detailed: bool):
         default_key = default_choice["key"]
         display_text_to_user = f"{question}   ({choices_string}) [{default_key}]"
-        if detailed:
+        if detailed or show_detailed_options:
             detailed_choices = [f"{x['key']}) {x['name']}" for x in choices]
             detailed_choices_string = "\n".join(detailed_choices)
             display_text_to_user = f"{display_text_to_user}\n{detailed_choices_string} \nAnswer:"
