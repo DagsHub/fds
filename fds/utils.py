@@ -153,6 +153,8 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
     :return: user selected value
     """
 
+    choices_dict = {x['key'] : x for x in choices}
+
     def get_display_message(detailed: bool):
         default_key = default_choice["key"]
         display_text_to_user = f"{question}   ({choices_string}) [{default_key}]"
@@ -163,7 +165,7 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
         return display_text_to_user
 
     # Only pick choice keys
-    choice_keys = [x["key"] for x in choices]
+    choice_keys = list(choices_dict.keys())
     # Add an extra 'h' for help
     choice_keys.append("h")
     choices_string = "".join(choice_keys)
@@ -180,7 +182,7 @@ def get_expand_input_from_user(question: str, choices: List[Dict[str, str]], def
             print(f"Not a valid choice: please choose from the given choices ({choices_string})")
             input_value = input(get_display_message(detailed=False)) or default_choice["key"]
     if input_value in choice_keys:
-        choice_made = list(filter(lambda x: x['key'] == input_value, choices))[0]
+        choice_made = choices_dict[input_value]
         return choice_made["value"]
 
 def get_confirm_from_user(message: str, default: bool) -> bool:
