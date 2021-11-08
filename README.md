@@ -74,7 +74,7 @@ Finally, to close the loop of a real workflow, what happens when I change existi
 ### Important note on using FDS inside Jupyter notebooks and Google Colab
 
 FDS is designed for interactive use via prompts that require user input.  
-While this is possible to do inside Jupyter notebooks, **it won't worh with the `%%bash` magic**.  
+While this is possible to do inside Jupyter notebooks, **it won't work with the `%%bash` magic**.  
 You have to use `!fds` since `%%bash` prevents user input.  
 [See Colab example here](https://colab.research.google.com/drive/1Jiu2aaLGFbxHEFG4tvAN3qznTqT6n7QI?usp=sharing)
 
