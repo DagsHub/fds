@@ -51,5 +51,5 @@ jobs:
         git config --global user.name "Your Name"
     - name: Test with pytest
       run: |
-        echo "MAX_THRESHOLD_SIZE=10240" >> $GITHUB_ENV
+        export MAX_THRESHOLD_SIZE=10240
         pytest
