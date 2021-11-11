@@ -14,7 +14,7 @@ class IntegrationTestCase(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
-        self.repo_path = tempfile.mkdtemp()
+        self.repo_path = os.path.abspath(tempfile.mkdtemp())
         os.chdir(self.repo_path)
         self.re_init_services()
         self.run = Run
