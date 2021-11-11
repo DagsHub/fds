@@ -50,7 +50,6 @@ jobs:
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
     - name: Test with pytest
-      shell: bash
       run: |
         export MAX_THRESHOLD_SIZE=10240
         pytest
