@@ -1,3 +1,5 @@
+import os
+
 from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
 
@@ -97,7 +99,7 @@ class TestGit(IntegrationTestCase):
     def test_get_repo_path(self):
         self.git_service.init()
         path = self.git_service.get_repo_path()
-        assert self.repo_path.replace("\\", "/") in path
+        assert os.path.samefile(self.repo_path, path)
         self.create_dummy_folder("test_git")
         path = self.git_service.get_repo_path()
-        assert self.repo_path.replace("\\", "/") in path
+        assert os.path.samefile(self.repo_path, path)
