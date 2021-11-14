@@ -58,5 +58,6 @@ jobs:
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
     - name: Test with pytest
+      shell: bash
       run: |
-        pytest -s
+        pytest
