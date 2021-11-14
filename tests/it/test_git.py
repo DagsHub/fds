@@ -97,7 +97,7 @@ class TestGit(IntegrationTestCase):
     def test_get_repo_path(self):
         self.git_service.init()
         path = self.git_service.get_repo_path()
-        assert self.repo_path in path
+        assert self.repo_path.replace("\\", "/") in path
         self.create_dummy_folder("test_git")
         path = self.git_service.get_repo_path()
-        assert self.repo_path in path
+        assert self.repo_path.replace("\\", "/") in path
