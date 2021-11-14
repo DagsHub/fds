@@ -36,7 +36,7 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         sys.stdout.write(convert_bytes_to_string(stdout))
         sys.stderr.write(convert_bytes_to_string(stderr))
         # create a completed process to have same convention
-        return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))
+        return subprocess.CompletedProcess(command, output.returncode, stdout, stderr)
     else:
         output = subprocess.run(command, shell=shell)
         if output.returncode not in ignorable_return_codes:
