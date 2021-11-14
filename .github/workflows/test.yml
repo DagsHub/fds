@@ -50,8 +50,8 @@ jobs:
     - name: windows env variables
       if: startsWith(matrix.os, 'windows')
       run: |
-        set TMP=%userprofile%\AppData\Local\Temp
-        set TEMP=%userprofile%\AppData\Local\Temp
+        set TMP=%USERPROFILE%\AppData\Local\Temp
+        set TEMP=%USERPROFILE%\AppData\Local\Temp
     - name: Setup env for tests
       shell: bash
       run: |
