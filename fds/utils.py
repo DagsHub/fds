@@ -34,21 +34,11 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         output = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout = []
         stderr = []
-        while True:
-            reads = [output.stdout.fileno(), output.stderr.fileno()]
-            ret = select.select(reads, [], [])
-
-            for fd in ret[0]:
-                if fd == output.stdout.fileno():
-                    read = output.stdout.readline()
-                    sys.stdout.write(convert_bytes_to_string(read))
-                    stdout.append(read)
-                if fd == output.stderr.fileno():
-                    read = output.stderr.readline()
-                    sys.stderr.write(convert_bytes_to_string(read))
-                    stderr.append(read)
-            if output.poll() is not None:
-                break
+        out, err = output.communicate()
+        sys.stdout.write(convert_bytes_to_string(out))
+        stdout.append(out)
+        sys.stderr.write(convert_bytes_to_string(err))
+        stderr.append(err)
         # create a completed process to have same convention
         return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))
     else:
