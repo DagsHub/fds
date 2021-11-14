@@ -47,6 +47,11 @@ jobs:
         count=$(echo "$OUTPUT" | tail -1)
         # Fail test explicitly if count >= 10
         if [[ $count -ge 10 ]]; then exit $count; fi
+    - name: windows env variables
+      if: startsWith(matrix.os, 'windows')
+      run: |
+        set TMP=%userprofile%\AppData\Local\Temp
+        set TEMP=%userprofile%\AppData\Local\Temp
     - name: Setup env for tests
       shell: bash
       run: |
