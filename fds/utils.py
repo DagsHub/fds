@@ -55,7 +55,7 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         for t in (tout, terr, twrite):
             t.daemon = True
             t.start()
-        output.wait()
+        output.communicate()
         for t in (tout, terr):
             t.join()
         q.put(None)
