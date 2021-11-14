@@ -32,13 +32,9 @@ def execute_command(command: Union[str, List[str]], shell: bool = False, capture
         output = subprocess.run(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif capture_output_and_write_to_stdout:
         output = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = []
-        stderr = []
-        out, err = output.communicate()
+        stdout, stderr = output.communicate()
         sys.stdout.write(convert_bytes_to_string(out))
-        stdout.append(out)
         sys.stderr.write(convert_bytes_to_string(err))
-        stderr.append(err)
         # create a completed process to have same convention
         return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))
     else:
