@@ -1,11 +1,12 @@
 import getpass
 import subprocess
+import threading
 from pathlib import Path
+import queue
 import os
 from typing import List, Union, Any, Optional, Dict
 
 import humanize
-import select
 import sys
 from fds.logger import Logger
 
@@ -27,16 +28,39 @@ def convert_bytes_to_string(bytes_data: bytes) -> str:
 
 def execute_command(command: Union[str, List[str]], shell: bool = False, capture_output: bool = True,
                     ignorable_return_codes: List[int] = [0], capture_output_and_write_to_stdout: bool = False) -> Any:
+
+    # Helper functions to read from stdout
+    def read_output(pipe, funcs):
+        for line in iter(pipe.readline, ''):
+            for func in funcs:
+                func(line)
+        pipe.close()
+    # Helper functions to write to stdout
+    def write_output(get):
+        for line in iter(get, None):
+            sys.stdout.write(line)
+
     if capture_output:
         # capture_output is not available in python 3.6, so using PIPE manually
         output = subprocess.run(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif capture_output_and_write_to_stdout:
         output = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = output.communicate()
-        sys.stdout.write(convert_bytes_to_string(stdout))
-        sys.stderr.write(convert_bytes_to_string(stderr))
+        q = queue.Queue()
+        stdout, stderr = [], []
+        tout = threading.Thread(
+            target=read_output, args=(output.stdout, [q.put, stdout.append]))
+        terr = threading.Thread(
+            target=read_output, args=(output.stderr, [q.put, stderr.append]))
+        twrite = threading.Thread(target=write_output, args=(q.get,))
+        for t in (tout, terr, twrite):
+            t.daemon = True
+            t.start()
+        output.wait()
+        for t in (tout, terr):
+            t.join()
+        q.put(None)
         # create a completed process to have same convention
-        return subprocess.CompletedProcess(command, output.returncode, stdout, stderr)
+        return subprocess.CompletedProcess(command, output.returncode, b''.join(stdout), b''.join(stderr))
     else:
         output = subprocess.run(command, shell=shell)
         if output.returncode not in ignorable_return_codes:
