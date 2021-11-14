@@ -17,6 +17,7 @@ class IntegrationTestCase(unittest.TestCase):
         self.repo_path = tempfile.mkdtemp()
         os.chdir(self.repo_path)
         self.re_init_services()
+        os.chdir(self.dvc_service.get_repo_path())
         self.run = Run
 
     def re_init_services(self):
