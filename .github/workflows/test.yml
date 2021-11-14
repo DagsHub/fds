@@ -59,4 +59,4 @@ jobs:
         git config --global user.name "Your Name"
     - name: Test with pytest
       run: |
-        pytest
+        pytest -s
