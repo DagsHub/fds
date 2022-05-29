@@ -4,11 +4,11 @@
 [![Tests](https://github.com/dagshub/fds/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/DAGsHub/fds/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/fastds.svg)](https://pypi.python.org/pypi/fastds/)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
-<a href="https://twitter.com/TheRealDAGsHub" title="DAGsHub on Twitter"><img src="https://img.shields.io/twitter/follow/TheRealDAGsHub.svg?style=social"></a>
+<a href="https://twitter.com/TheRealDAGsHub" title="DagsHub on Twitter"><img src="https://img.shields.io/twitter/follow/TheRealDAGsHub.svg?style=social"></a>
 
 ---
 
-`fds` is a tool for Data Scientists made by [DAGsHub](https://dagshub.com/) to version control data and code at once.
+`fds` is a tool for Data Scientists made by [DagsHub](https://dagshub.com/) to version control data and code at once.
 
 At a high level, `fds` is a command line wrapper around Git and [DVC](https://dvc.org), meant to minimize the chances of human error, automate repetitive tasks, and provide a smoother landing for new users.
 
@@ -83,7 +83,7 @@ You have to use `!fds` since `%%bash` prevents user input.
 We would love for you to try out FDS yourself, and to give us feedback. It would really help us to prioritize future features, so please [vote on or create issues](https://github.com/dagshub/fds/issues)!  
 If you'd like to take a more active part, we have some [good first issues](https://github.com/DAGsHub/fds/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that you can start with. We'll be happy to provide guidance on the best way to do so.
 
-And of course, we're always happy to have you on the DAGsHub discord, where you can ask questions or give feedback on FDS:
+And of course, we're always happy to have you on the DagsHub discord, where you can ask questions or give feedback on FDS:
 [![Discord](https://img.shields.io/discord/698874030052212737)](https://discord.com/invite/9gU36Y6)
 
 ----
