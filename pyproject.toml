@@ -20,7 +20,13 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "<5.0.0"  # Unpin after compatibility with pytest-flake8 is fixed
-pdoc = "^14.0.0"
+pre-commit = "^3.3.3"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+pdoc = "^14.0"
 
 [tool.poetry.group.test]
 optional = true
@@ -28,7 +34,6 @@ optional = true
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
-pre-commit = "^3.3.3"
 pytest-flake8 = "^1.1.1"
 pytest-xdist = "^3.3.1"
 
