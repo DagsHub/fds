@@ -1,0 +1,63 @@
+[tool.poetry]
+name = "fastds"
+version = "0.6.1"
+description = "Fast Data Science, AKA fds, is a CLI for Data Scientists to version control data and code at once, by conveniently wrapping git and dvc"
+authors = []
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+colorama = "^0.4.6"
+humanize = "^4.7.0"
+progress = "^1.6"
+validators = "^0.20.0"
+requests = "^2.31.0"
+dvc = "^3.2.2"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "<5.0.0"  # Unpin after compatibility with pytest-flake8 is fixed
+pre-commit = "^3.3.3"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+pdoc = "^14.0"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-flake8 = "^1.1.1"
+pytest-xdist = "^3.3.1"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra --doctest-modules --flake8 --cov --cov-report="
+testpaths = [
+    "fds",
+    "tests"
+]
+doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "IGNORE_EXCEPTION_DETAIL",
+    "ALLOW_UNICODE",
+    "ALLOW_BYTES",
+]
+norecursedirs = ["docs", "extras", "spikes"]
+
+[tool.coverage.run]
+source = ["fds/"]
+
+[tool.coverage.report]
+omit = ["*/tests/*"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

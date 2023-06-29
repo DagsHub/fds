@@ -14,19 +14,30 @@ class IntegrationTestCase(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
+
+        # Save current working directory so that it can be restored after running each test
+        self.test_code_path = os.getcwd()
+
+        # --- Set up to run tests
+
         self.repo_path = tempfile.mkdtemp()
         os.chdir(self.repo_path)
+
         self.re_init_services()
         self.run = Run
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.repo_path)
+
+        # Restore the original working directory so that pytest plugins that depend on it
+        # (e.g., pytest-flake8) do not fail.
+        os.chdir(self.test_code_path)
 
     def re_init_services(self):
         self.git_service = GitService()
         self.dvc_service = DVCService()
         self.fds_service = FdsService(self.git_service, self.dvc_service)
-
-    def tearDown(self):
-        super().tearDown()
-        shutil.rmtree(self.repo_path)
 
     def create_fake_git_data(self):
         git_path = f"{self.repo_path}/git_data"

@@ -71,6 +71,9 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# pdoc documentation
+docs/fds
+
 # PyBuilder
 target/
 
@@ -102,6 +105,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.direnv
 .env
 .venv
 env/

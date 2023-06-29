@@ -120,8 +120,10 @@ class DVCService(InnerService):
                 "value": DvcChoices.STEP_INTO.value
             })
 
-        answer = get_expand_input_from_user(f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
-                                            f"{convert_bytes_to_readable(path_size)}?", choices, DvcChoices.ADD_TO_DVC.value, False)
+        answer = get_expand_input_from_user(
+                f"What would you like to do with {file_dir_type} {file_or_dir_to_check} of "
+                f"{convert_bytes_to_readable(path_size)}?",
+                choices, DvcChoices.ADD_TO_DVC.value, False)
         return answer
 
     def __get_to_add_to_dvc(
@@ -188,7 +190,10 @@ class DVCService(InnerService):
         skipped_dirs = []
         # May be add all the folders given in the .gitignore
         folders_to_exclude = ['.git', '.dvc']
-        paths_to_walk = list(map(lambda path: os.path.normpath(os.path.join(os.path.curdir, path)), paths_to_be_checked))
+        paths_to_walk = list(
+            map(lambda path: os.path.normpath(os.path.join(os.path.curdir, path)),
+                paths_to_be_checked)
+        )
         for path_to_walk in paths_to_walk:
             # if argument is to add a file
             if os.path.isfile(path_to_walk) and get_size_of_path(path_to_walk) >= MAX_THRESHOLD_SIZE:
@@ -239,7 +244,8 @@ class DVCService(InnerService):
     def add(self, paths_to_be_checked: List[str]) -> DvcAdd:
         """
         Add files into dvc
-        :param paths_to_be_checked: paths_to_be_checked is a list which can either be ['.'] or list of paths to be checked
+        :param paths_to_be_checked: paths_to_be_checked is a list which can either be ['.']
+            or list of paths to be checked
         :return: DvcAdd dataclass
         """
         return self.__add(paths_to_be_checked)
