@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "fastds"
+version = "0.6.1"
+description = "Fast Data Science, AKA fds, is a CLI for Data Scientists to version control data and code at once, by conveniently wrapping git and dvc"
+authors = []
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+colorama = "^0.4.6"
+humanize = "^4.7.0"
+progress = "^1.6"
+validators = "^0.20.0"
+requests = "^2.31.0"
+dvc = "^3.2.2"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pre-commit = "^3.3.3"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
