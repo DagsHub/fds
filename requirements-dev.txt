@@ -1,4 +1,6 @@
 pytest~=7.4.0
 pytest-cov
+pytest-flake8
+pytest-xdist
 pre-commit
 flake8~=4.0.1
