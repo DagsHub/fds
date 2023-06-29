@@ -23,7 +23,7 @@ PYTEST_OPTIONS=-n ${NPROCS}
 
 ## Run all tests
 test:
-	pytest ${PYTEST_OPTIONS}
+	export MAX_THRESHOLD_SIZE=10240; pytest ${PYTEST_OPTIONS}
 	-make coverage-report
 
 ## Run tests in fail-fast mode (i.e., stop at first failure)
