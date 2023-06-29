@@ -160,7 +160,7 @@ def get_expand_input_from_user(
     :return: user selected value
     """
 
-    choices_dict = {x['key'] : x for x in choices}
+    choices_dict = {x['key']: x for x in choices}
 
     def get_display_message(detailed: bool):
         default_key = default_choice["key"]
@@ -191,6 +191,7 @@ def get_expand_input_from_user(
     if input_value in choice_keys:
         choice_made = choices_dict[input_value]
         return choice_made["value"]
+
 
 def get_confirm_from_user(message: str, default: bool) -> bool:
     """
