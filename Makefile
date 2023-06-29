@@ -89,7 +89,7 @@ docs:
 clean:
 	find . -type d -name "__pycache__" -delete  # compiled python
 	find . -type f -name "*.py[co]" -delete  # compiled python
-	rm -rf .cache  # pytest
+	rm -rf .cache .pytest_cache  # pytest
 	rm -rf .coverage .coverage.* coverage htmlcov coverage.xml  # coverage
 	find . -name "*.log" -exec rm -f {} \;  # log files
 	rm -rf ${DOCS_DIR}  # generated API documentation
