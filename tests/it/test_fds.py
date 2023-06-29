@@ -40,9 +40,9 @@ class TestFds(IntegrationTestCase):
         self.fds_service.init()
         self.re_init_services()
         super().create_fake_git_data()
-        super().create_dummy_file("large_file_1", 11 * 1024)
-        super().create_dummy_file("large_file_2", 11 * 1024)
-        super().create_dummy_file("large_file_3", 11 * 1024)
+        super().create_dummy_file("large_file_1", 11 * 1024 * 1024)
+        super().create_dummy_file("large_file_2", 11 * 1024 * 1024)
+        super().create_dummy_file("large_file_3", 11 * 1024 * 1024)
         self.fds_service.add(["large_file_1", "large_file_3"])
         output = execute_command(["git", "status"], capture_output=True)
         # Check DVC add

@@ -44,9 +44,9 @@ class TestDvc(IntegrationTestCase):
         self.git_service.init()
         self.dvc_service.init()
         super().create_fake_git_data()
-        super().create_dummy_file("large_file_1", 11 * 1024)
-        super().create_dummy_file("large_file_2", 11 * 1024)
-        super().create_dummy_file("large_file_3", 11 * 1024)
+        super().create_dummy_file("large_file_1", 11 * 1024 * 1024)
+        super().create_dummy_file("large_file_2", 11 * 1024 * 1024)
+        super().create_dummy_file("large_file_3", 11 * 1024 * 1024)
         output = execute_command(["git", "status"], capture_output=True)
         assert "large_file_1" in convert_bytes_to_string(output.stdout)
         assert "large_file_2" in convert_bytes_to_string(output.stdout)
@@ -175,8 +175,10 @@ class TestDvc(IntegrationTestCase):
     def test_get_repo_path(self):
         self.git_service.init()
         self.dvc_service.init()
+
         path = self.dvc_service.get_repo_path()
-        assert path == self.repo_path
+        assert os.path.realpath(path) == os.path.realpath(self.repo_path)
+
         self.create_dummy_folder("test_dvc")
         path = self.dvc_service.get_repo_path()
-        assert path == self.repo_path
+        assert os.path.realpath(path) == os.path.realpath(self.repo_path)

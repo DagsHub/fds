@@ -51,7 +51,7 @@ class IntegrationTestCase(unittest.TestCase):
         for i in range(0, 101):
             self.create_dummy_file(f"{dvc_path}/file-{i}", 10)
         # creating one large file
-        self.create_dummy_file("large_file", 11 * 1024)
+        self.create_dummy_file("large_file", 11 * 1024 * 1024)
 
     def get_remote_url_for_test(self):
         return "https://dagshub.com/mohithg/hello-world.git"

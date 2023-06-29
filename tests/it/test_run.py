@@ -38,9 +38,9 @@ class TestRun(IntegrationTestCase):
     def test_add_multiple_paths(self, get_choice):
         self.run({"command": Commands.INIT.value}).execute()
         super().create_fake_git_data()
-        super().create_dummy_file("large_file_1", 11 * 1024)
-        super().create_dummy_file("large_file_2", 11 * 1024)
-        super().create_dummy_file("large_file_3", 11 * 1024)
+        super().create_dummy_file("large_file_1", 11 * 1024 * 1024)
+        super().create_dummy_file("large_file_2", 11 * 1024 * 1024)
+        super().create_dummy_file("large_file_3", 11 * 1024 * 1024)
         self.run({"command": Commands.ADD.value, 'add_command': ["large_file_1", "large_file_3"]}).execute()
         output = execute_command(["git", "status"], capture_output=True)
         # Check DVC add
