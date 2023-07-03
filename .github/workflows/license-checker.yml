@@ -14,3 +14,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: dagshub/python-license-checker-action@v1
+    - run: |
+        commit="$GITHUB_SHA"
+        base_link="github.com/$GITHUB_REPOSITORY"
+        date=`date "+%B %e %Y"`
+        awk -F',' -v "commit=$commit" -v "base_link=$base_link" -v "date=$date" '{OFS=","; print base_link,commit,date,$1_$2,$3,$4}' licenses.csv > python-licenses.csv
+        
+    - name: Upload python license report
+      uses: actions/upload-artifact@v3
+      with:
+        name: python-licenses.csv
+        path: python-licenses.csv
+        if-no-files-found: error
