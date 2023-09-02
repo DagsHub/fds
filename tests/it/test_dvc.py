@@ -176,7 +176,7 @@ class TestDvc(IntegrationTestCase):
         self.git_service.init()
         self.dvc_service.init()
         path = self.dvc_service.get_repo_path()
-        assert path == self.repo_path
+        assert os.path.samefile(self.repo_path, path)
         self.create_dummy_folder("test_dvc")
         path = self.dvc_service.get_repo_path()
-        assert path == self.repo_path
+        assert os.path.samefile(self.repo_path, path)

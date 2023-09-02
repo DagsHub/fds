@@ -26,7 +26,11 @@ class IntegrationTestCase(unittest.TestCase):
 
     def tearDown(self):
         super().tearDown()
-        shutil.rmtree(self.repo_path)
+        try:
+            shutil.rmtree(self.repo_path)
+        except Exception as e:
+            # In windows rmtree doesn't work fine, so using a command directly
+            os.system('rmdir /S /Q "{}"'.format(self.repo_path))
 
     def create_fake_git_data(self):
         git_path = f"{self.repo_path}/git_data"

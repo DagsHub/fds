@@ -9,14 +9,18 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  MAX_THRESHOLD_SIZE: 10240
+
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
 
     steps:
     - uses: actions/checkout@v2
@@ -25,12 +29,14 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
+      shell: bash
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
         pip install 'dvc'
     - name: Lint with flake8
+      shell: bash
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -41,11 +47,17 @@ jobs:
         count=$(echo "$OUTPUT" | tail -1)
         # Fail test explicitly if count >= 10
         if [[ $count -ge 10 ]]; then exit $count; fi
+    - name: windows env variables
+      if: startsWith(matrix.os, 'windows')
+      run: |
+        set TMP=%USERPROFILE%\AppData\Local\Temp
+        set TEMP=%USERPROFILE%\AppData\Local\Temp
     - name: Setup env for tests
+      shell: bash
       run: |
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
     - name: Test with pytest
+      shell: bash
       run: |
-        export MAX_THRESHOLD_SIZE=10240
         pytest
