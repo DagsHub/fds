@@ -196,6 +196,10 @@ class Run(object):
             # Run push command stuff
             self.service.push(arguments["git_remote"], arguments["dvc_remote"], arguments["branch"])
             return 0
+        elif arguments["command"] == Commands.PULL.value:
+            # Run pull command stuff
+            self.service.pull(arguments["git_remote"], arguments["dvc_remote"], arguments["branch"])
+            return 0
         elif arguments["command"] == Commands.SAVE.value:
             # Run save command stuff
             self.service.save(arguments["message"], arguments["git_remote"], arguments["dvc_remote"])

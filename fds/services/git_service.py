@@ -86,6 +86,23 @@ class GitService(InnerService):
                 push_cmd.append(curr_branch)
         execute_command(push_cmd, capture_output=False)
 
+    @staticmethod
+    def pull(remote: str, ref: Optional[str]) -> Any:
+        pull_cmd = ["git", "pull"]
+        pull_cmd.append(remote)
+        if ref:
+            pull_cmd.append(ref)
+        else:
+            check_curr_branch = execute_command(["git", "rev-parse", "--abbrev-ref", "HEAD"])
+            curr_branch = convert_bytes_to_string(check_curr_branch.stdout).rstrip('\n')
+            if curr_branch == '':
+                raise Exception("No git branch found to pull from")
+            pull_cmd.append(curr_branch)
+        execute_command(pull_cmd, capture_output=False)
+        git_url_cmd = execute_command(["git", "config", "--get", "remote.origin.url"])
+        git_url = convert_bytes_to_string(git_url_cmd.stdout).rstrip('\n')
+        return git_url
+
     def clone(self, url: str, folder_name: Optional[str]) -> Any:
         if folder_name is None or folder_name == "":
             folder_name = get_git_repo_name_from_url(url)

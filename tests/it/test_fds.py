@@ -143,3 +143,11 @@ class TestFds(IntegrationTestCase):
         assert does_file_exist(f"{self.repo_path}/start")
         # Checking dvc pull of storage remote
         assert does_file_exist(f"{self.repo_path}/start/data/data.xml")
+
+    def test_pull(self):
+        self.fds_service.clone(self.get_remote_url_for_test(), None, None)
+        # Check git clone
+        assert does_file_exist(f"{self.repo_path}/hello-world")
+        # Checking dvc pull
+        assert does_file_exist(f"{self.repo_path}/hello-world/data")
+        self.fds_service.pull("origin", "Origin", None)

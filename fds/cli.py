@@ -45,6 +45,19 @@ parser_push.add_argument(
     help="A git branch that you want to push to (accepts refspec), defaults to current branch",
     nargs='?'
 )
+
+# pull
+parser_pull = command_subparser.add_parser(
+    'pull',
+    help='pull commits from remote git and dvc repository'
+)
+parser_pull.add_argument('-gr', '--git-remote', help="git remote name, default 'origin'", default="origin")
+parser_pull.add_argument('-dr', '--dvc-remote', help="dvc remote name, default 'origin'", default="origin")
+parser_pull.add_argument(
+    'branch',
+    help="A git branch that you want to pull from to (accepts refspec), defaults to current branch",
+    nargs='?'
+)
 # save
 parser_save = command_subparser.add_parser(
     'save',

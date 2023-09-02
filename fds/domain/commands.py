@@ -8,6 +8,7 @@ class Commands(Enum):
     ADD = "add"
     COMMIT = "commit"
     PUSH = "push"
+    PULL = "pull"
     SAVE = "save"
     CLONE = "clone"
     VERSION = "version"

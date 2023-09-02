@@ -1,3 +1,5 @@
+import os
+
 from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
 
@@ -101,3 +103,13 @@ class TestGit(IntegrationTestCase):
         self.create_dummy_folder("test_git")
         path = self.git_service.get_repo_path()
         assert path == self.repo_path
+
+    def test_pull(self):
+        self.git_service.clone(self.get_remote_url_for_test(), None)
+        os.chdir(f"{self.repo_path}/hello-world")
+        self.git_service.pull("origin", None)
+
+    def test_pull_branch(self):
+        self.git_service.clone(self.get_remote_url_for_test(), None)
+        os.chdir(f"{self.repo_path}/hello-world")
+        self.git_service.pull("origin", "master")

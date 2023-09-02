@@ -180,3 +180,15 @@ class TestDvc(IntegrationTestCase):
         self.create_dummy_folder("test_dvc")
         path = self.dvc_service.get_repo_path()
         assert path == self.repo_path
+
+    def test_pull_default_remote(self):
+        folder_name = self.git_service.clone(self.get_remote_url_for_test(), None)
+        os.chdir(folder_name)
+        self.dvc_service.pull(self.get_remote_url_for_test(), None)
+        assert does_file_exist(f"{self.repo_path}/hello-world/data")
+
+    def test_pull_with_remote(self):
+        folder_name = self.git_service.clone(self.get_remote_url_for_test(), None)
+        os.chdir(folder_name)
+        self.dvc_service.pull(self.get_remote_url_for_test(), "origin")
+        assert does_file_exist(f"{self.repo_path}/hello-world/data")
