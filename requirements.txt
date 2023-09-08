@@ -2,4 +2,4 @@ colorama==0.4.4
 humanize==3.13.1
 progress==1.6
 validators==0.18.2
-requests==2.26.0
+requests==2.31.0
