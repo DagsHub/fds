@@ -1,6 +1,8 @@
 import os
 from unittest.mock import patch
 
+import pytest
+
 from fds.services.dvc_service import DvcChoices
 from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
@@ -164,6 +166,7 @@ class TestDvc(IntegrationTestCase):
         self.dvc_service.pull(self.get_remote_url_for_test(), "origin")
         assert does_file_exist(f"{self.repo_path}/hello-world/data")
 
+    @pytest.mark.skip("BROKEN: remote dataset no longer available for test")
     @patch("fds.services.dvc_service.DVCService._show_choice_of_remotes", return_value="storage")
     def test_clone_given_remote(self, get_choice):
         url = "https://github.com/iterative/example-get-started.git"

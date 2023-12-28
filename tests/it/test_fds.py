@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+import pytest
+
 from fds.services.dvc_service import DvcChoices
 from fds.utils import does_file_exist, execute_command, convert_bytes_to_string
 from tests.it.helpers import IntegrationTestCase
@@ -136,10 +138,12 @@ class TestFds(IntegrationTestCase):
         # Checking dvc pull
         assert does_file_exist(f"{self.repo_path}/test/data")
 
+    @pytest.mark.skip("BROKEN: remote dataset no longer available for test")
     def test_clone_given_remote(self):
         url = "https://github.com/iterative/example-get-started.git"
         self.fds_service.clone(url, "start", "storage")
         # Check git clone
         assert does_file_exist(f"{self.repo_path}/start")
+
         # Checking dvc pull of storage remote
         assert does_file_exist(f"{self.repo_path}/start/data/data.xml")
