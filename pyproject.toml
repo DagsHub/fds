@@ -8,19 +8,19 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-colorama = "^0.4.6"
-humanize = "^4.7.0"
-progress = "^1.6"
-validators = "^0.20.0"
-requests = "^2.31.0"
-dvc = "^3.2.2"
+colorama = "^0,>=0.4.6"
+humanize = "^4"
+progress = "^1"
+validators = "^0,>=0.20"
+requests = "^2"
+dvc = "^3"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "<5.0.0"  # Unpin after compatibility with pytest-flake8 is fixed
-pre-commit = "^3.3.3"
+pre-commit = "^3"
 
 [tool.poetry.group.docs]
 optional = true
